@@ -34,6 +34,28 @@
 
 }
 
+input.E-mail.Input{
+    border-radius: 10px;
+    border: none;
+
+}
+
+input.Password.Input{
+
+    border-radius: 10px;
+    border: none;
+}
+
+input.Name.Input{
+    border-radius: 10px;
+    border: none;
+}
+
+input.SurName.Input{
+     border-radius: 10px;
+     border: none;
+ }
+
 .input-area{
     display: flex;
     flex-direction: column;
