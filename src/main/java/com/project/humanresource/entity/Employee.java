@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "tblemployee")
-public class Employee {
+public class Employee extends User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -26,7 +26,7 @@ public class Employee {
     @Column(length = 100)
     String emailWork;
 
-    @Column(length = 15)
+    @Column(length = 11)
     String phoneWork;
 
     @Column(nullable = false)
