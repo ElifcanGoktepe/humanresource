@@ -1,0 +1,57 @@
+.fixed-side-bar{
+    background: #e6e6e6;
+    height: 650px;
+    padding-top: 20px;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+
+}
+.maneger-page{
+
+
+}
+.logo-left-menu{
+    width: 100%;
+    filter: drop-shadow(0 0 6px rgba(110, 110, 110, 0.7));
+}
+.fixed-bar-buttons{
+    background-color: transparent;
+    color: #00796B;
+    padding: 5px;
+    width: 100%;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: "Roboto Thin";
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    text-align: left;
+
+}
+.fixed-bar-buttons:hover{
+
+    color: #00796B;
+    font-weight: bolder;
+    border-radius: 5px;
+    background-color: rgb(255, 255, 255);
+}
+.small-image-fixed-bar{
+    height: 30px;
+    margin-right: 10px;
+}
+.bottom-bar{
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30%;
+    background: rgba(255, 255, 255, 0.64);
+}
+.line{
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

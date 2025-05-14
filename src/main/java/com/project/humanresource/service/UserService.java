@@ -1,24 +1,21 @@
 package com.project.humanresource.service;
 
+import com.project.humanresource.dto.request.AddUserRequestDto;
+import com.project.humanresource.dto.request.LoginRequestDto;
 import com.project.humanresource.entity.User;
 import com.project.humanresource.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+
 @Service
+@RequiredArgsConstructor
 public class UserService {
+
     private final UserRepository userRepository;
-
-    @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    public User save(User user) {
-        return userRepository.save(user);
-    }
 
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
@@ -27,4 +24,20 @@ public class UserService {
     public Optional<User> findById(Long id) {
         return userRepository.findById(id);
     }
-} 
+
+    public User createUser(@Valid AddUserRequestDto dto) {
+
+        User user = User.builder()
+                .email(dto.email())
+                .password(dto.password())
+                .isActive(true)
+                .build();
+
+        return userRepository.save(user);
+
+    }
+
+    public Optional<User> findByEmailPassword(@Valid LoginRequestDto dto) {
+        return userRepository.findOptionalByEmailAndPassword(dto.email(), dto.password());
+    }
+}

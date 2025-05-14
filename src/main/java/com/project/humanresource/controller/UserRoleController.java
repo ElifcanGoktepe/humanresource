@@ -1,12 +1,14 @@
 package com.project.humanresource.controller;
 
+import com.project.humanresource.dto.request.AddRoleRequestDto;
+import com.project.humanresource.dto.request.AddUserRequestDto;
+import com.project.humanresource.dto.response.BaseResponseShort;
 import com.project.humanresource.entity.User;
 import com.project.humanresource.entity.UserRole;
 import com.project.humanresource.service.UserRoleService;
 import com.project.humanresource.dto.response.BaseResponse;
 import com.project.humanresource.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,10 +21,12 @@ public class UserRoleController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<BaseResponse<UserRole>> createRole(@RequestBody UserRole userRole) {
-        UserRole saved = userRoleService.save(userRole);
-        BaseResponse<UserRole> response = new BaseResponse<>(true, "Role created", saved);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<BaseResponseShort<UserRole>> createRole(@RequestBody AddRoleRequestDto dto) {
+        return ResponseEntity.ok(BaseResponseShort.<UserRole>builder()
+                        .data(userRoleService.createUserRole(dto))
+                        .message("User role saved successfully")
+                        .code(200)
+                .build());
     }
 
     @GetMapping("/by-email")

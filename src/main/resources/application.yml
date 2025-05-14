@@ -14,7 +14,7 @@ spring:
       password: ADMINISTRATOR
   jpa:
     hibernate:
-      ddl-auto: update  # create
+      ddl-auto: update # create
     show-sql: true
     properties:
       hibernate:

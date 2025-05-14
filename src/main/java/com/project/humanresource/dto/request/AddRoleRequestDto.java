@@ -1,3 +1,8 @@
 package com.project.humanresource.dto.request;
 
-public record AddRoleRequestDto(String name) {} 
+import com.project.humanresource.utility.UserStatus;
+
+public record AddRoleRequestDto(
+        UserStatus userStatus,
+        Long userId
+) {}
