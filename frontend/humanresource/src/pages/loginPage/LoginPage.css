@@ -27,6 +27,18 @@
 
 }
 
+input.E-mail.Input{
+    border-radius: 10px;
+    border: none;
+
+}
+
+input.Password.Input{
+
+    border-radius: 10px;
+    border: none;
+}
+
 
 
 
