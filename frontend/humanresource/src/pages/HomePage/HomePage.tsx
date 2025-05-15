@@ -7,9 +7,12 @@ import FooterComponent from "../../components/molecules/FooterComponents.tsx";
 function HomePage(){
     return(
         <div className="container-xxl px-0 background">
-            <HeaderComponent/>
-            <Body/>
-            <FooterComponent/>
+            <img src="/img/logo4.png" className="logo-on-background" alt="Logo"/>
+            <div className="page-content">
+                <HeaderComponent/>
+                <Body/>
+                <FooterComponent/>
+            </div>
         </div>
 
     )

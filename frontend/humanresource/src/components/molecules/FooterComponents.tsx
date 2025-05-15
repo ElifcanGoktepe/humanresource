@@ -3,7 +3,9 @@ import './FooterComponent.css';
 
 function FooterComponent(){
     return(
+
         <div className="footer-container row">
+
             <div className="col-8">
                 <div>
                     <img className="logo1" src="/img/logo1.png" alt="logo" />
