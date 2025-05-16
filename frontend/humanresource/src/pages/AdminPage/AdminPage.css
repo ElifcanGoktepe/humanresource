@@ -1,0 +1,191 @@
+#root{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff;
+}
+
+.AdminPage {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vh;
+    background-color: #ffffff;
+
+}
+.AdminPage .Wrapper{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-content: flex-start;
+
+    width: 100vh;
+    height: 75vh;
+    background-color: #75ccc0;
+    border-radius: 5vh;
+    min-width:600px;
+    min-height: 700px;
+    border-style: solid;
+    border-color: #cbe9e2;
+
+
+}
+.AdminIdentityBackground{
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-content:flex-start;
+    align-items: center;
+    width: 30%;
+    height: 99%;
+    background-color: #fafcfc;
+
+    margin-left: 0.5%;
+    border-radius: 4.5vh 1vh 1vh 4.5vh;
+}
+.AdminIdentity1 {
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+
+
+}
+.AdminIdentity2{
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 95%;
+    background-color:  #fafcfc;
+    border-radius: 3%;
+
+
+
+}
+
+.AdminIdentityPhoto{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+
+}
+img{
+    border-radius: 15%
+}
+.AdminIdentityInfo{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
+
+
+
+
+}
+
+.AdminIdentityDetail{
+
+    font-family: "Roboto";
+    font-size:0.7rem;
+    color:#00655D;
+
+
+}
+p{
+    margin-bottom: 2%;
+    margin-top: 2%;
+
+
+}
+
+.AdminWaitingRequest{
+    display: flex;
+
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 40%;
+    width: 95%;
+    background-color: #fafcfc;
+    border-radius: 5%;
+    border: 1px solid #75ccc0;
+    margin-top: 5%;
+
+
+}
+
+.AdminCompletedRequest{
+    display: flex;
+
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 35%;
+    width: 95%;
+    background-color: #fafcfc;
+    border-radius: 1vh 1vh 1vh 4.5vh;
+    border: 1px solid #75ccc0;
+    margin-top: 3%;
+
+
+}
+
+
+
+
+
+
+.AdminTask{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-content: flex-start;
+    width: 70%;
+    height: 99%;
+    background-color: #fafcfc;
+margin-left: 0.5%;
+    margin-right: 0.5%;
+    border-radius: 1vh 4.5vh 4.5vh 1vh;
+
+
+}
+
+.CompanySection{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-content: flex-start;
+    margin-left: 1%;
+    margin-top: 1%;
+    margin-bottom: 0.5%;
+    width: 98%;
+    height: 50%;
+    border: 1px solid #75ccc0;
+    border-radius: 1vh 4.5vh 4.5vh 1vh;
+
+}
+
+.CompanyManagerSection{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-content: flex-start;
+    margin-left: 1%;
+    margin-bottom: 1%;
+    margin-top: 0.5%;
+    width: 98%;
+    height: 50%;
+    border: 1px solid #75ccc0;
+    border-radius: 1vh 4.5vh 4.5vh 1vh;
+
+}
