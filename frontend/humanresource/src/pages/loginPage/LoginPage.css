@@ -1,7 +1,7 @@
 
 .loginPage {
 
-    display: block;
+    display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
@@ -24,6 +24,24 @@
     height: 100%;
     border-radius: 50px;
     background-color: #76cec2;
+    min-width: 320px;
+    min-height: 660px;
+
+}
+
+
+
+label.Label{
+
+    display: flex;
+    flex-direction: column;
+    font-family: "Roboto";
+    font-size: 0.8rem;
+
+
+
+
+
 
 }
 

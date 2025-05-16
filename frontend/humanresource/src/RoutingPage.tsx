@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router'
 import RegisterPage from "./pages/registerPage/RegisterPage.tsx";
 import LoginPage from "./pages/loginPage/LoginPage";
 import HomePage from "./pages/HomePage/HomePage.tsx";
+import AdminPage from "./pages/AdminPage/AdninPage.tsx";
 
 
 function RoutingPage() {
@@ -12,6 +13,7 @@ function RoutingPage() {
                 <Route path='/' element={<HomePage />}/>
                 <Route path='/login' element={<LoginPage />}/>
                 <Route path='/register' element={<RegisterPage />}/>
+                <Route path='/admin' element={<AdminPage />}/>
             </Routes>
         </BrowserRouter>
     )
