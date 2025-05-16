@@ -1,13 +1,16 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './ManagerPage.css';
-import React from 'react';
+import LeaveChart from "../../components/atoms/LeaveChart.tsx";
+
 
 function ManagerPage() {
     const today = new Date();
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const dayIndex = today.getDay();
     const dayName = days[dayIndex];
-    const dateString = today.toLocaleDateString("en-US"); // example: 5/15/2025
+    const dateString = today.toLocaleDateString("en-US");
+
+
 
     return (
         <div className="row">
@@ -55,22 +58,38 @@ function ManagerPage() {
                     <h3>Today's Date: {dateString}, {dayName}</h3>
                     <hr/>
                 </div>
-                <div className="row manager-page-dashboard">
-                    <div className="col-2 box1-dashboard">
-                        <div className="profile-settings">
-                            <h2>Manager Profile</h2>
-                            <img className="small-image-fixed-bar2" src="/img/profileicon.png" />
+                <div className="row">
+                    <div className="col-3 box-dashboard">
+                        <div className="box1-dashboard">
+                            <div className="profile-settings-header">
+                                <h3>Manager Name</h3>
+                                <img className="small-image-fixed-bar2" src="/img/profileicon.png" />
+                            </div>
+                            <div className="profile-settings-body">
+                                <h4>Title</h4>
+                                <h6>Company</h6>
+                                <hr/>
+                                <button className="accountbutton">
+                                    Account →
+                                </button>
+                            </div>
                         </div>
-
+                    </div>
+                    <div className="col-3 box-dashboard">
+                        <div className="box1-dashboard">
+                            <div className="leave-settings-body">
+                                <LeaveChart/>
+                                <hr/>
+                                <button className="accountbutton">
+                                    Request →
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-3 box-dashboard">
 
                     </div>
-                    <div className="col-3 box1-dashboard">
-
-                    </div>
-                    <div className="col-3 box1-dashboard">
-
-                    </div>
-                    <div className="col-3 box1-dashboard">
+                    <div className="col-3 box-dashboard">
 
                     </div>
                 </div>
