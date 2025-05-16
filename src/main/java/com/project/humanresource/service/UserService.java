@@ -2,6 +2,7 @@ package com.project.humanresource.service;
 
 import com.project.humanresource.dto.request.AddUserRequestDto;
 import com.project.humanresource.dto.request.LoginRequestDto;
+import com.project.humanresource.entity.Employee;
 import com.project.humanresource.entity.User;
 import com.project.humanresource.repository.UserRepository;
 import jakarta.validation.Valid;
@@ -26,15 +27,13 @@ public class UserService {
     }
 
     public User createUser(@Valid AddUserRequestDto dto) {
-
-        User user = User.builder()
+        Employee employee = Employee.builder()
                 .email(dto.email())
                 .password(dto.password())
                 .isActive(true)
                 .build();
 
-        return userRepository.save(user);
-
+        return userRepository.save(employee);
     }
 
     public Optional<User> findByEmailPassword(@Valid LoginRequestDto dto) {
