@@ -12,6 +12,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 import './UserSettingsPage.css';
+import * as React from "react";
 
 // Backend'den çekilecek user datası için örnek type
 // Gerçek projede context veya props ile alınabilir

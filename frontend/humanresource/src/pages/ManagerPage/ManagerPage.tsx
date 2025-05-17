@@ -12,7 +12,7 @@ function ManagerPage() {
 
     const [chartData, setChartData] = useState({ total: 0, used: 0, remaining: 0 });
 
-    const handleChartInfo = (info) => {
+    const handleChartInfo = (info:any) => {
         setChartData(info);
     };
 
@@ -64,7 +64,7 @@ function ManagerPage() {
             </div>
             <div className="col-10">
                 <div className="manager-page-header">
-                    <h2>Hello Manager!</h2>
+                    <h2>Hello </h2>
                     <h3>Today's Date: {dateString}, {dayName}</h3>
                     <hr/>
                 </div>

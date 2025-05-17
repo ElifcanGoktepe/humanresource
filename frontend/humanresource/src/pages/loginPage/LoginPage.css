@@ -2,15 +2,16 @@
 .loginPage {
 
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    padding-right: 40%;
-    padding-left: 40%;
-    padding-top: 10%;
-    padding-bottom: 10%;
-    background: #e9ecea ;
+    align-content: center;
+    height: 50%;
+    width: 10%;
+    margin-top: 7%;
+    margin-left: 40%;
+
+    background: #ffffff ;
 
 
 }
