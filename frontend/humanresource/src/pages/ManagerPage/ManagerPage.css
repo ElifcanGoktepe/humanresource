@@ -5,12 +5,22 @@
     padding-left: 20px;
     display: flex;
     flex-direction: column;
-    justify-content: start;
+    justify-content: space-between;
+}
+.fixed-bar-image{
+    display: flex ;
+    height: 70px;
+    padding: 8px;
+    justify-content: center;
+}
+.fixed-bar-button-container{
+    height: 1000px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* içeriği yukarı hizala */
 }
 .logo-left-menu{
-
-    height: 70px;
-    width: 90%;
+    height: 100%;
     filter: drop-shadow(0 0 6px rgba(110, 110, 110, 0.7));
 }
 .fixed-bar-buttons{
@@ -31,6 +41,7 @@
     font-weight: bolder;
     border-radius: 5px;
     background-color: rgb(255, 255, 255);
+
 }
 .small-image-fixed-bar{
     height: 30px;
@@ -38,15 +49,13 @@
 }
 .bottom-bar{
     display: flex;
-    align-items: end;
+    align-content: end;
     justify-content: end;
     height: 30%;
     flex-direction: column;
-    margin-bottom: 10px;
+    margin-bottom: 50px;
 }
-
 .manager-page-header{
-
     margin-right: 20px;
     margin-top: 10px;
     height: 100px;
@@ -57,14 +66,15 @@
     max-height: 500px;
 }
 .box1-dashboard {
-    margin: 10px;
+    margin-top: 10px;
     border-color: rgba(239, 239, 239, 0.53);
     border-width: 5px;
     border-style: solid;
 }
 .small-image-fixed-bar2{
-    height: 80px;
+    height: 60px;
     margin-right: 10px;
+    margin-left: 10px;
 }
 .profile-settings-header{
     background: rgba(239, 239, 239, 0.53);
@@ -72,12 +82,16 @@
     flex-direction: row;
     width: 100%;
     align-items: center;
-    justify-content: center;
+    padding-right: 10px;
 }
-.profile-settings-header h3{
+.profile-settings-header-name{
     margin-left: 10px;
 }
-
+.profile-settings-header-icon{
+    align-content: end;
+    justify-content: end;
+    background-color: #00655D;
+}
 .profile-settings-body{
     margin:10px;
     height: 120px;
@@ -100,8 +114,17 @@
 }
 .leave-settings-body {
     margin: 20px;
-    height: 400px;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between; /* grafik + buton arası denge */
+}
+.fontstyle-shiftnames{
+    font-size: 14px;
+    color: #6e6e6e;
+}
+.fontstyle-shifthours{
+    font-size: 14px;
+    font-weight: bold;
+    color: #6e6e6e;
 }

@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './ManagerPage.css';
 import LeaveChart from "../../components/atoms/LeaveChart.tsx";
-
+import { useState } from "react";
 
 function ManagerPage() {
     const today = new Date();
@@ -10,33 +10,43 @@ function ManagerPage() {
     const dayName = days[dayIndex];
     const dateString = today.toLocaleDateString("en-US");
 
+    const [chartData, setChartData] = useState({ total: 0, used: 0, remaining: 0 });
 
+    const handleChartInfo = (info) => {
+        setChartData(info);
+    };
 
     return (
         <div className="row">
             <div className="col-2 fixed-side-bar">
-                <img className="logo-left-menu" src="/img/logo1.png" alt="logo" />
-                <hr />
-                <button className="fixed-bar-buttons">
-                    <img className="small-image-fixed-bar" src="/img/adminpage.png" />
-                    Company Page
-                </button>
-                <button className="fixed-bar-buttons">
-                    <img className="small-image-fixed-bar" src="/img/employee.png" />
-                    Employee
-                </button>
-                <button className="fixed-bar-buttons">
-                    <img className="small-image-fixed-bar" src="/img/expens.png" />
-                    Salary
-                </button>
-                <button className="fixed-bar-buttons">
-                    <img className="small-image-fixed-bar" src="/img/shift.png" />
-                    Shift
-                </button>
-                <button className="fixed-bar-buttons">
-                    <img className="small-image-fixed-bar" src="/img/assets.png" />
-                    Assignment
-                </button>
+                <div className="fixed-bar-image">
+                    <img className="logo-left-menu" src="/img/logo1.png" alt="logo" />
+
+                </div>
+                <hr/>
+                <div className="fixed-bar-button-container">
+                    <button className="fixed-bar-buttons">
+                        <img className="small-image-fixed-bar" src="/img/adminpage.png" />
+                        Company Page
+                    </button>
+                    <button className="fixed-bar-buttons">
+                        <img className="small-image-fixed-bar" src="/img/employee.png" />
+                        Employee
+                    </button>
+                    <button className="fixed-bar-buttons">
+                        <img className="small-image-fixed-bar" src="/img/expens.png" />
+                        Salary
+                    </button>
+                    <button className="fixed-bar-buttons">
+                        <img className="small-image-fixed-bar" src="/img/shift.png" />
+                        Shift
+                    </button>
+                    <button className="fixed-bar-buttons">
+                        <img className="small-image-fixed-bar" src="/img/assets.png" />
+                        Assignment
+                    </button>
+                </div>
+                <hr/>
                 <div className="bottom-bar">
                     <button className="fixed-bar-buttons">
                         <img className="small-image-fixed-bar" src="/img/profileicon.png" />
@@ -62,8 +72,12 @@ function ManagerPage() {
                     <div className="col-3 box-dashboard">
                         <div className="box1-dashboard">
                             <div className="profile-settings-header">
-                                <h3>Manager Name</h3>
-                                <img className="small-image-fixed-bar2" src="/img/profileicon.png" />
+                                <div className="col-8 profile-settings-header-name">
+                                    <h3>Manager Name</h3>
+                                </div>
+                                <div className="col-4 profile-settings-header-icon">
+                                    <img className="small-image-fixed-bar2" src="/img/profileicon.png" />
+                                </div>
                             </div>
                             <div className="profile-settings-body">
                                 <h4>Title</h4>
@@ -74,11 +88,18 @@ function ManagerPage() {
                                 </button>
                             </div>
                         </div>
+                        <div className="box1-dashboard">
+                            Leave Information
+                        </div>
                     </div>
                     <div className="col-3 box-dashboard">
                         <div className="box1-dashboard">
                             <div className="leave-settings-body">
-                                <LeaveChart/>
+                                <LeaveChart onDataReady={handleChartInfo} />
+                                <p> Total : {chartData.total} </p>
+                                <p> Used :  {chartData.used} </p>
+                                <p> Remaining : {chartData.remaining}</p>
+
                                 <hr/>
                                 <button className="accountbutton">
                                     Request →
@@ -87,7 +108,26 @@ function ManagerPage() {
                         </div>
                     </div>
                     <div className="col-3 box-dashboard">
-
+                        <div className="box1-dashboard row">
+                            <h3>Today's Shift List</h3>
+                            <hr/>
+                            <div className="col-7 fontstyle-shiftnames">
+                                FirstName LastName1
+                                FirstName LastName2
+                                FirstName LastName3
+                                FirstName LastName4
+                                FirstName LastName5
+                                FirstName LastName6
+                            </div>
+                            <div className="col-5 fontstyle-shifthours">
+                                08:00-12:00
+                                08:00-12:00
+                                13:00-17:00
+                                13:00-17:00
+                                18:00-22:00
+                                18:00-22:00
+                            </div>
+                        </div>
                     </div>
                     <div className="col-3 box-dashboard">
 
