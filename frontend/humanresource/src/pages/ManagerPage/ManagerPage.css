@@ -53,7 +53,7 @@
     justify-content: end;
     height: 30%;
     flex-direction: column;
-    margin-bottom: 50px;
+    margin-bottom: 40px;
 }
 .manager-page-header{
     margin-right: 20px;
@@ -88,13 +88,18 @@
     margin-left: 10px;
 }
 .profile-settings-header-icon{
+    display: flex;
     align-content: end;
     justify-content: end;
-    background-color: #00655D;
 }
 .profile-settings-body{
     margin:10px;
     height: 120px;
+}
+.account-button-container{
+    display: flex;
+    align-content: end;
+    justify-content: end;
 }
 .accountbutton{
     width: 100px;
@@ -127,4 +132,9 @@
     font-size: 14px;
     font-weight: bold;
     color: #6e6e6e;
+}
+.request-button-container{
+    display: flex;
+    align-content: end;
+    justify-content: end;
 }
