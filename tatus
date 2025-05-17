@@ -1,0 +1,22 @@
+9c18ce7 | Goksel | 2025-05-16 | düzeltme: User ve Employee varlıkları TABLE_PER_CLASS kalıtım stratejisi için güncellendi
+3bffb1e | serkankilicdere | 2025-05-16 | admin page deneme login page ve register page güncelleme yapıldı
+50c2243 | serkankilicdere | 2025-05-16 | admin page deneme login page ve register page güncelleme yapıldı
+cad6807 | ElifcanGoktepe | 2025-05-16 | Merge remote-tracking branch 'origin/elifcan'
+92ab934 | ElifcanGoktepe | 2025-05-16 | Merge remote-tracking branch 'origin/SerkanKlcdr'
+7706fdc | ElifcanGoktepe | 2025-05-16 | Leave chart eklendi
+9d2b098 | serkankilicdere | 2025-05-16 | admin page deneme login page ve register page güncelleme yapıldı
+9d5d87b | ElifcanGoktepe | 2025-05-15 | manager sayfasında güncellemeler yapıldı
+cffae6e | ElifcanGoktepe | 2025-05-14 | 14.05.2025
+dafff04 | ElifcanGoktepe | 2025-05-14 | Merge remote-tracking branch 'refs/remotes/origin/sercan'
+1a0086e | ElifcanGoktepe | 2025-05-14 | Merge remote-tracking branch 'refs/remotes/origin/SerkanKlcdr'
+b1cc5f4 | serkankilicdere | 2025-05-14 | login ve register page form düzenlendi
+30fe631 | sercan94 | 2025-05-14 | Employee güncellendi.
+a094d3b | ElifcanGoktepe | 2025-05-14 | Merge remote-tracking branch 'origin/elifcan'
+31beb57 | ElifcanGoktepe | 2025-05-14 | ShiftService'e eklemeler yapıldı. Employee Service metot eklenmesi gerekti.
+90ddff6 | ElifcanGoktepe | 2025-05-14 | Security ile uyumluluğun sağlanması için sınıflarda düzeltmeler yapıldı. Footer, Header, Hompage, Product frıntendlerinde güncelleme yapıldı.
+e07e403 | Goksel | 2025-05-14 | görev 1 v5
+71c905d | ElifcanGoktepe | 2025-05-14 | Merge remote-tracking branch 'origin/SerkanKlcdr'
+290685c | serkankilicdere | 2025-05-13 | gereksiz img ve font dosyaları silindi
+d032bf1 | serkankilicdere | 2025-05-13 | register ve login sayfaları uyeniden düzenlendi
+f371f52 | Goksel | 2025-05-13 | Entitylerden Hibernate anotasyonları kaldırıldı, AddRoleRequestDto ve AddUserRequestDto eklendi
+eb3f6a0 | ElifcanGoktepe | 2025-05-13 | arka plan v erenkler yeniden düzenlendi.
