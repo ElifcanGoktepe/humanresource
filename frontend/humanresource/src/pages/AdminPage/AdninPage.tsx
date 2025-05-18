@@ -23,12 +23,13 @@ function AdminPage(){
 <div className="row">
 
     <div className="col-2 APfixed-side-bar">
-        <div className="fixed-bar-image">
-        <img className="logo-left-menu" src="/img/logo1.png" alt="logo" />
+        <div className="APfixed-bar-image">
+        <img className="APlogo-left-menu" src="/img/logo1.png" alt="logo" />
+        </div>
         <hr />
-            </div>
+
              <div className="h2JQ">
-                <h2 >JOB QUEUE</h2>
+                <h2 className="JobQueueText">JOB QUEUE</h2>
 
             </div>
 
@@ -49,6 +50,11 @@ function AdminPage(){
                     <li className="JobItem"></li>
                     <li className="JobItem"></li>
                     <li className="JobItem"></li>
+                    <li className="JobItem"></li>
+                    <li className="JobItem"></li>
+                    <li className="JobItem"></li>
+                    <li className="JobItem"></li>
+
                 </ol>
             </div>
             <div className="h5">
@@ -56,6 +62,10 @@ function AdminPage(){
             </div>
             <div className="Accepted-Approval">
                 <ol className="Accepted-Approval-List">
+                    <li className="JobItem"></li>
+                    <li className="JobItem"></li>
+                    <li className="JobItem"></li>
+                    <li className="JobItem"></li>
                     <li className="JobItem"></li>
                     <li className="JobItem"></li>
                     <li className="JobItem"></li>

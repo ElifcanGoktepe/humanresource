@@ -8,16 +8,16 @@
 
 }
 
-.fixed-bar-image{
+.APfixed-bar-image{
     display: flex ;
-    height: 12%;
+    height: 10%;
 
     justify-content: space-between;
 }
 
-.logo-left-menu{
-    display: flex ;
-    width: 100%;
+.APlogo-left-menu{
+    height: 100%;
+    filter: drop-shadow(0 0 6px rgba(110, 110, 110, 0.7));
 
     justify-content: space-between;
 }
@@ -35,7 +35,7 @@
     display: flex;
     flex-direction: column;
     justify-content: normal;
-    height: 60%;
+    height: 70%;
     background-color: #cbe8e1;
     padding-left: 3%;
     padding-right: 3%;
@@ -45,16 +45,20 @@
 
 
 }
+
+.JobQueueText{
+    font-weight: bold;
+}
 .Waiting-Approval{
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
 
     height: 43%;
-    background-color: white;
+
     overflow-y: auto;
-
-
+    background-color: #f7f7f7;
+font-family: Roboto;
 
 
 }
@@ -65,16 +69,29 @@
     justify-content: flex-start;
 
     height: 43%;
-    background-color: white;
+
     overflow-y: auto;
+    background-color: #f7f7f7;
+    font-family: Roboto;
+
+
 
 }
+
+.JobItem{
+    opacity: 0.5;
+
+}
+
 .h5{
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin: unset;
+    color: #6e6e6e;
+    margin-top: 2%;
+    margin-bottom: 1px;
+    font-family: Roboto;
 
 
 
@@ -83,6 +100,7 @@
 
 .JobQueue::-webkit-scrollbar {
     width: 8px;
+
 
 }
 .JobQueue::-webkit-scrollbar-thumb {
@@ -101,6 +119,10 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+    color: #6e6e6e;
+    font-family: Roboto;
+
+
 
 }
 
