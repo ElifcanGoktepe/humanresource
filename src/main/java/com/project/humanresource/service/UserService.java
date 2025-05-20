@@ -27,10 +27,19 @@ public class UserService {
     }
 
     public User createUser(@Valid AddUserRequestDto dto) {
+        // Önce bir User ID oluştur (örneğin 1L)
+        Long userId = 1L;
+        
         Employee employee = Employee.builder()
                 .email(dto.email())
                 .password(dto.password())
                 .isActive(true)
+                .firstName(dto.firstName())
+                .lastName(dto.lastName())
+                .companyId(dto.companyId())
+                .titleId(dto.titleId())
+                .personalFiledId(dto.personalFiledId())
+                .userId(userId) // userId değerini ayarla
                 .build();
 
         return userRepository.save(employee);
