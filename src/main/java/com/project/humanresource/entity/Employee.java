@@ -15,10 +15,10 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "tblemployee")
 public class Employee extends User {
 
-    @Column(nullable = false,length = 50)
+    @Column(nullable = true, length = 50)
     String firstName;
 
-    @Column(nullable = false,length = 50)
+    @Column(nullable = true, length = 50)
     String lastName;
 
     @Column(length = 100)
@@ -27,16 +27,16 @@ public class Employee extends User {
     @Column(length = 11)
     String phoneWork;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     Long companyId;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     Long titleId;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     Long personalFiledId;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     Long userId;
 
 
