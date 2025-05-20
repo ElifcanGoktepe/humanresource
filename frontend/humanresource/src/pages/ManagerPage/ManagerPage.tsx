@@ -80,35 +80,42 @@ function ManagerPage() {
                                 </div>
                             </div>
                             <div className="profile-settings-body">
-                                <h4>Title</h4>
-                                <h6>Company</h6>
+                                <div>
+                                    <h4>Title</h4>
+                                    <h6>Company</h6>
+                                </div>
                                 <hr/>
-                                <button className="accountbutton">
-                                    Account →
-                                </button>
+                                <div className="account-button-container">
+                                    <button className="accountbutton">
+                                        Account →
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                        <div className="box1-dashboard">
-                            Leave Information
+                        <div className="box1-dashboard p-3">
+                            <p> Employee Number : 20 </p>
                         </div>
                     </div>
                     <div className="col-3 box-dashboard">
                         <div className="box1-dashboard">
                             <div className="leave-settings-body">
-                                <LeaveChart onDataReady={handleChartInfo} />
-                                <p> Total : {chartData.total} </p>
-                                <p> Used :  {chartData.used} </p>
-                                <p> Remaining : {chartData.remaining}</p>
-
+                                <div>
+                                    <LeaveChart onDataReady={handleChartInfo} />
+                                    <p> Total : {chartData.total} </p>
+                                    <p> Used :  {chartData.used} </p>
+                                    <p> Remaining : {chartData.remaining}</p>
+                                </div>
                                 <hr/>
-                                <button className="accountbutton">
-                                    Request →
-                                </button>
+                                <div className="request-button-container">
+                                    <button className="accountbutton">
+                                        Request →
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div className="col-3 box-dashboard">
-                        <div className="box1-dashboard row">
+                        <div className="box1-dashboard row p-1">
                             <h3>Today's Shift List</h3>
                             <hr/>
                             <div className="col-7 fontstyle-shiftnames">

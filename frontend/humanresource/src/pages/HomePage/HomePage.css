@@ -5,7 +5,8 @@
     flex-grow: 6;
 }
 .background{
-    position: relative; /* ZORUNLU! */
+
+    position: relative;
     background-image: url('/img/background.png');
     background-size: cover;
     background-repeat: no-repeat;
