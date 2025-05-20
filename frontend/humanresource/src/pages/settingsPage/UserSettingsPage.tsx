@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 import LockIcon from '@mui/icons-material/Lock';
 import PersonIcon from '@mui/icons-material/Person';
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import './UserSettingsPage.css';
 
 // Backend'den çekilecek user datası için örnek type
@@ -64,6 +65,8 @@ const UserSettingsPage = () => {
   const [message, setMessage] = useState<{text: string; type: 'success' | 'error'} | null>(null);
   const [errors, setErrors] = useState<FormErrors>({});
   const [activeTab, setActiveTab] = useState<number>(0);
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   useEffect(() => {
     setFormData(user);
@@ -94,6 +97,14 @@ const UserSettingsPage = () => {
       setPasswordData(prev => ({ ...prev, [name]: value }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setProfileImage(file);
+      setPreviewUrl(URL.createObjectURL(file));
     }
   };
 
@@ -232,8 +243,26 @@ const UserSettingsPage = () => {
         <Container maxWidth="lg">
           <Box className="settings-container">
             <Box className="settings-header">
-              <Box className="user-avatar">
-                {formData.firstName?.charAt(0).toUpperCase()}{formData.lastName?.charAt(0).toUpperCase()}
+              <Box className="user-avatar" sx={{ position: 'relative' }}>
+                {previewUrl ? (
+                  <img src={previewUrl} alt="Profile Preview" className="profile-img-preview" />
+                ) : (
+                  <>
+                    {formData.firstName?.charAt(0).toUpperCase()}{formData.lastName?.charAt(0).toUpperCase()}
+                  </>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  id="profile-image-upload"
+                  onChange={handleImageChange}
+                />
+                <label htmlFor="profile-image-upload" className="profile-img-upload-label">
+                  <IconButton component="span" sx={{ position: 'absolute', bottom: 0, right: 0, backgroundColor: 'white', boxShadow: 1 }}>
+                    <PhotoCamera sx={{ color: '#00796B' }} />
+                  </IconButton>
+                </label>
               </Box>
               <Typography variant="h4" component="h1" className="settings-title">
                 Account Settings
