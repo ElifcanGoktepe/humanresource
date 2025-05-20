@@ -30,7 +30,7 @@ public class UserRoleController {
     }
 
     @GetMapping("/by-email")
-    public ResponseEntity<BaseResponse<User>> getUserByEmail(@RequestParam String email) {
+    public ResponseEntity<BaseResponse<User>> getUserByEmail(@RequestParam(name = "email") String email) {
         User user = userService.findByEmail(email).orElse(null);
         if (user == null) {
             return ResponseEntity.ok(new BaseResponse<>(false, "User not found", null));
