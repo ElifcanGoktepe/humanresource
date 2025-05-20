@@ -454,3 +454,6 @@ const UserSettingsPage = () => {
 
 export default UserSettingsPage; 
 
+//TODO: Backend ile entegre edilecek
+
+
