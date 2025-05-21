@@ -19,4 +19,5 @@ public class RestApis {
     public static final String LOGIN = "/login";
     public static final String LOGOUT = "/logout";
     public static final String ADDSHIFT = "/add-shift";
+    public static final String REQUESTLEAVE = "/request-login";
 }
