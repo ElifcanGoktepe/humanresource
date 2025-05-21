@@ -12,7 +12,7 @@ function ManagerPage() {
 
     const [chartData, setChartData] = useState({ total: 0, used: 0, remaining: 0 });
 
-    const handleChartInfo = (info) => {
+    const handleChartInfo = (info:any) => {
         setChartData(info);
     };
 
