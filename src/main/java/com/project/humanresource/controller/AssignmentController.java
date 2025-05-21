@@ -25,7 +25,7 @@ public class AssignmentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BaseResponse<Assignment>> getAssignmentById(@PathVariable Long id) {
+    public ResponseEntity<BaseResponse<Assignment>> getAssignmentById(@PathVariable(name = "id") Long id) {
         Assignment assignment = assignmentService.findById(id).orElse(null);
         if (assignment == null) {
             return ResponseEntity.ok(new BaseResponse<>(false, "Assignment not found", null));
