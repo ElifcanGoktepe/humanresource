@@ -2,7 +2,7 @@ package com.project.humanresource.controller;
 
 import com.project.humanresource.config.JwtTokenFilter;
 import com.project.humanresource.dto.request.AddEmployeeRequestDto;
-import com.project.humanresource.dto.request.AssignTitleToEmployeeRequestDto;
+
 import com.project.humanresource.dto.request.SetPersonelFileRequestDto;
 import com.project.humanresource.dto.response.BaseResponseShort;
 import com.project.humanresource.entity.Company;
@@ -27,50 +27,50 @@ import static com.project.humanresource.config.RestApis.*;
 @SecurityRequirement(name = "bearerAuth")
 public class EmployeeController {
 
-    private final EmployeeService employeeService;
-    private final JwtTokenFilter jwtTokenFilter;
-    private final UserRepository userRepository;
-    private final CompanyRepository companyRepository;
-
-    @PreAuthorize("hasAuthority('COMPANY_ADMIN')")
-    @PostMapping("/add")
-    public ResponseEntity<BaseResponseShort<Boolean>> addEmployee (@RequestBody @Valid AddEmployeeRequestDto dto){
-
-        // Login olan kullanıcının email bilgisi JWT'den alınır (SecurityContext üzerinden)
-        String currentEmail= SecurityContextHolder.getContext().getAuthentication().getName();
-
-        User user=userRepository.findByEmail(currentEmail).orElseThrow(()->new RuntimeException("Kullanıcı bulunamadı"));
-
-        Company company=companyRepository.findByUserId(user.getId()).orElseThrow(()-> new RuntimeException("Şirket bulunamadı"));
-
-        employeeService.addEmployee(dto,company.getId());
-        return ResponseEntity.ok(BaseResponseShort.<Boolean>builder()
-                .code(200)
-                .data(true)
-                .message("Çalışan başarıyla eklendi.")
-                .build());
-    }
-    //@PreAuthorize("hasAuthority('EMPLOYEE')")
-    @PostMapping("/personel-file")
-    public ResponseEntity<BaseResponseShort<Boolean>> setPersonelFile(@RequestBody @Valid SetPersonelFileRequestDto dto){
-        employeeService.setPersonelFile(dto);
-        return ResponseEntity.ok(BaseResponseShort.<Boolean>builder()
-                .code(200)
-                .message("Özlük bilgileri başarıyla kaydedildi")
-                .data(true)
-                .build());
-    }
-
-//    //@PreAuthorize("hasAuthority('COMPANY_ADMIN')")
-//    @PostMapping("/assign-title")
-//    public ResponseEntity<BaseResponseShort<Boolean>> assignTitleToemployee(@RequestBody AssignTitleToEmployeeRequestDto dto){
-//        employeeService.assignTitleToEmployee(dto);
+//    private final EmployeeService employeeService;
+//    private final JwtTokenFilter jwtTokenFilter;
+//    private final UserRepository userRepository;
+//    private final CompanyRepository companyRepository;
 //
+//    @PreAuthorize("hasAuthority('COMPANY_ADMIN')")
+//    @PostMapping("/add")
+//    public ResponseEntity<BaseResponseShort<Boolean>> addEmployee (@RequestBody @Valid AddEmployeeRequestDto dto){
+//
+//        // Login olan kullanıcının email bilgisi JWT'den alınır (SecurityContext üzerinden)
+//        String currentEmail= SecurityContextHolder.getContext().getAuthentication().getName();
+//
+//        User user=userRepository.findByEmail(currentEmail).orElseThrow(()->new RuntimeException("Kullanıcı bulunamadı"));
+//
+//        Company company=companyRepository.findByUserId(user.getId()).orElseThrow(()-> new RuntimeException("Şirket bulunamadı"));
+//
+//        employeeService.addEmployee(dto,company.getId());
 //        return ResponseEntity.ok(BaseResponseShort.<Boolean>builder()
 //                .code(200)
 //                .data(true)
-//                .message("Unvan çalışana başarıyla atandı")
+//                .message("Çalışan başarıyla eklendi.")
 //                .build());
 //    }
+//    //@PreAuthorize("hasAuthority('EMPLOYEE')")
+//    @PostMapping("/personel-file")
+//    public ResponseEntity<BaseResponseShort<Boolean>> setPersonelFile(@RequestBody @Valid SetPersonelFileRequestDto dto){
+//        employeeService.setPersonelFile(dto);
+//        return ResponseEntity.ok(BaseResponseShort.<Boolean>builder()
+//                .code(200)
+//                .message("Özlük bilgileri başarıyla kaydedildi")
+//                .data(true)
+//                .build());
+//    }
+//
+////    //@PreAuthorize("hasAuthority('COMPANY_ADMIN')")
+////    @PostMapping("/assign-title")
+////    public ResponseEntity<BaseResponseShort<Boolean>> assignTitleToemployee(@RequestBody AssignTitleToEmployeeRequestDto dto){
+////        employeeService.assignTitleToEmployee(dto);
+////
+////        return ResponseEntity.ok(BaseResponseShort.<Boolean>builder()
+////                .code(200)
+////                .data(true)
+////                .message("Unvan çalışana başarıyla atandı")
+////                .build());
+////    }
 
 }
