@@ -23,4 +23,6 @@ public class Employee extends User {
     Long titleId;
     Long personalFiledId;
     Long userId;
+    boolean isApproved = false; // Site admin onayı
+    boolean isActivated = false; // Email doğrulaması
 }
