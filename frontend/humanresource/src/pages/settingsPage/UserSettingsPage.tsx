@@ -376,16 +376,15 @@ const UserSettingsPage = () => {
                   disabled={isLoading}
                   sx={{
                     backgroundColor: '#00796B',
-                    '&:hover': { backgroundColor: '#00695C' },
                     px: 4,
                     py: 1.5,
                     borderRadius: 2,
                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
                     transition: 'all 0.3s ease',
                     '&:hover': {
+                      backgroundColor: '#00695C',
                       transform: 'translateY(-2px)',
-                      boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)',
-                      backgroundColor: '#00695C'
+                      boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)'
                     }
                   }}
                 >
@@ -456,16 +455,15 @@ const UserSettingsPage = () => {
                   disabled={isLoading}
                   sx={{
                     backgroundColor: '#00796B',
-                    '&:hover': { backgroundColor: '#00695C' },
                     px: 4,
                     py: 1.5,
                     borderRadius: 2,
                     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
                     transition: 'all 0.3s ease',
                     '&:hover': {
+                      backgroundColor: '#00695C',
                       transform: 'translateY(-2px)',
-                      boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)',
-                      backgroundColor: '#00695C'
+                      boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)'
                     }
                   }}
                 >

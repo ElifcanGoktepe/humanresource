@@ -19,6 +19,8 @@ public class Employee extends User {
     String lastName;
     String emailWork;
     String phoneWork;
+    String companyName;
+    String titleName;
     Long companyId;
     Long titleId;
     Long personalFiledId;

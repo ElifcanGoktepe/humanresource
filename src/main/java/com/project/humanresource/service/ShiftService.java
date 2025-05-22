@@ -10,6 +10,7 @@ import com.project.humanresource.exception.HumanResourceException;
 import com.project.humanresource.repository.EmployeeRepository;
 import com.project.humanresource.repository.ShiftBreakRepository;
 import com.project.humanresource.repository.ShiftRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,15 +24,16 @@ import java.util.Optional;
 public class ShiftService {
 
     public final ShiftRepository shiftRepository;
-    private final EmployeeRepository employeeRepository;
     private final ShiftBreakRepository shiftBreakRepository;
+    private final HttpServletRequest request;
 
     public Shift addShift(AddShiftRequestDto dto) {
 
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        JwtUserDetails userDetails = (JwtUserDetails) auth.getPrincipal();
-        Long employeeId = userDetails.getEmployeeId();
+        // ✅ JwtTokenFilter tarafından set edilen userId burada alınır
+        Long userId = (Long) request.getAttribute("userId");
+        if (userId == null) {
+            throw new IllegalStateException("User ID not found in request.");
+        }
 
         List<ShiftBreak> savedBreaks = dto.shiftBreaks().stream()
                 .map(b -> shiftBreakRepository.save(ShiftBreak.builder()
@@ -45,7 +47,7 @@ public class ShiftService {
                 .startTime(dto.startTime())
                 .endTime(dto.endTime())
                 .description(dto.description())
-                .employeeIds(List.of(employeeId))
+                .employeeIds(List.of(userId))
                 .shiftBreakIds(savedBreaks.stream().map(ShiftBreak::getId).toList())
                 .build();
 

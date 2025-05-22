@@ -15,11 +15,22 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
 public class EmployeeService {
+
+    private final EmployeeRepository employeeRepository;
+
+    public Optional<Employee> findById(Long employeeId) {
+        return employeeRepository.findById(employeeId);
+    }
+
+    public void save(Employee employee) {
+        employeeRepository.save(employee);
+    }
 
 //    private final EmployeeRepository employeeRepository;
 //
