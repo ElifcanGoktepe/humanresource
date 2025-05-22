@@ -79,7 +79,7 @@ public class EmailVerificationService {
                 message.setFrom(new InternetAddress(fromEmail));
                 message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
                 message.setSubject("Email Verification");
-                message.setText("Click the link to verify your email: " +
+                message.setText("Click the link below to verify your email: " +
                         "http://localhost:9090/api/verify?token=" + token);
 
                 Transport.send(message);
@@ -130,9 +130,9 @@ public class EmailVerificationService {
     }
 
     public void sendApprovalRequestToAdmin(Employee manager) {
-        String subject = "New Company Manager Applicaiton";
+        String subject = "New Company Manager Application";
         String approvalLink = "http://localhost:9090/approve/" + manager.getId();
-        String body = "There is a new company applicaiton:\n\n" +
+        String body = "There is a new company application:\n\n" +
                 "Name: " + manager.getFirstName() + " " + manager.getLastName() + "\n" +
                 "Email: " + manager.getEmailWork() + "\n\n" +
                 "Click to approve:\n" + approvalLink;
@@ -165,7 +165,7 @@ public class EmailVerificationService {
 
     //Şifre oluşturma bağlantısı gönder
     public void sendSetPasswordEmail(String toEmail, String token) {
-        System.out.println("✅ Şifre oluşturma maili gönderiliyor: " + toEmail);
+        System.out.println("A mail for setting password has sent: " + toEmail);
         String link = "http://localhost:5173/create-password?token=" + token;
 
         Properties props = new Properties();
@@ -185,7 +185,7 @@ public class EmailVerificationService {
             message.setFrom(new InternetAddress(fromEmail));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
             message.setSubject("Parola Oluştur");
-            message.setText("Şifrenizi oluşturmak için aşağıdaki bağlantıya tıklayın:\n\n" + link);
+            message.setText("Click the link below to set your password:\n\n" + link);
             Transport.send(message);
         } catch (MessagingException e) {
             e.printStackTrace();
