@@ -22,7 +22,10 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth->auth
-                        .requestMatchers("/dev/v1/shift","/dev/v1/employee","/dev/v1/user",
+                        .requestMatchers("/approve/**").permitAll()
+                        .requestMatchers("/api/verify").permitAll()
+                        .requestMatchers("/api/set-password").permitAll()
+                        .requestMatchers("/dev/v1/shift","/dev/v1/employee","/dev/v1/user","/assign-manager",
                                 "/api/users/create_user", "/api/users/login", "/api/users/by-email", "/api/user-roles", "/api/user-roles/by-email",
                                 "/api/assignments", "/api/assignments/**",
                                 "/swagger-ui/**","/v3/api-docs/**",

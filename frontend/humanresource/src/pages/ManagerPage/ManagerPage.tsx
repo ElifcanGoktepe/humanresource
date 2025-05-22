@@ -137,7 +137,24 @@ function ManagerPage() {
                         </div>
                     </div>
                     <div className="col-3 box-dashboard">
-
+                        <div className="box2-dashboard row p-1">
+                            <h3>Manage Employee</h3>
+                            <hr/>
+                            <div className="fontstyle-shiftnames">
+                                <p>FirstName LastName 1</p>
+                                <p>FirstName LastName 2</p>
+                                <p>FirstName LastName 3</p>
+                                <p>FirstName LastName 4</p>
+                                <p>FirstName LastName 5</p>
+                                <p>FirstName LastName 6</p>
+                            </div>
+                            <hr/>
+                            <div className="request-button-container">
+                                <button className="add-employee">
+                                    Add Employee →
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

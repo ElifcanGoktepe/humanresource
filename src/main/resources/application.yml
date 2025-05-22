@@ -1,17 +1,19 @@
 server:
   port: 9090
 
-
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/humanresource
     username: postgres
     password: root
     driver-class-name: org.postgresql.Driver
+
+
   security:
     user:
       name: ADMINISTRATOR
       password: ADMINISTRATOR
+
   jpa:
     hibernate:
       ddl-auto: create
@@ -19,7 +21,10 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
   mail:
+    host: smtp.gmail.com
+    port: 587
     username: elifcangoktepe@gmail.com
     password: jynohncfzxegpmrz
     properties:
@@ -29,8 +34,9 @@ spring:
           starttls:
             enable: true
 
-
-
+# ✅ JWT Secret Key Eklendi
+my-jwt:
+  secret-key: mySuperSecretKey1234567890
 
 springdoc:
   swagger-ui:
@@ -44,5 +50,3 @@ logging:
       max-file-size: 10MB
   level:
     root: info
-
-
