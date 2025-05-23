@@ -10,6 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^7.1.0",
+    "@mui/material": "^7.1.0",
+    "@mui/styled-engine-sc": "^7.1.0",
     "axios": "^1.9.0",
     "bootstrap": "^5.3.6",
     "chart.js": "^4.4.9",
@@ -18,7 +23,9 @@
     "react-dom": "^19.1.0",
     "react-router": "^7.6.0",
     "react-router-dom": "^7.6.0",
-    "sweetalert2": "^11.21.0"
+    "styled-components": "^6.1.18",
+    "sweetalert2": "^11.21.0",
+    "webkit": "^0.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

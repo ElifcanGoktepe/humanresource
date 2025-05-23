@@ -94,7 +94,7 @@ function ManagerPage() {
             </div>
             <div className="col-10">
                 <div className="manager-page-header">
-                    <h2>Hello Manager!</h2>
+                    <h2>Hello </h2>
                     <h3>Today's Date: {dateString}, {dayName}</h3>
                     <hr/>
                 </div>
