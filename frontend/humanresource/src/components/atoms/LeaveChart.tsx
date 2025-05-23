@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import {useEffect, useRef} from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -18,10 +18,13 @@ const LeaveChart = ({ onDataReady }: LeaveChartProps) => {
     const used = 12;
     const remaining = total - used;
 
+    const hasSentData = useRef(false);
+
     // Parent’a veriyi gönder
     useEffect(() => {
-        if (onDataReady) {
+        if (onDataReady && !hasSentData.current) {
             onDataReady({ total, used, remaining });
+            hasSentData.current = true;
         }
     }, [onDataReady]);
 

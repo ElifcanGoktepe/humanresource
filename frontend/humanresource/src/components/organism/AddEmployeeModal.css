@@ -1,0 +1,75 @@
+.overlay-employee {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-board1 {
+    background: white;
+    width: 650px;
+    height: 300px;
+    padding: 20px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+}
+
+.modal-board1 h3 {
+    margin-bottom: 10px;
+}
+
+.modal-board1 label {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.modal-board1 input,
+.modal-board1 select,
+.modal-board1 textarea {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    width: 100%;
+    font-size: 14px;
+    font-family: "Roboto", sans-serif;
+}
+
+.submit-btn {
+    font-family: "Roboto Thin";
+    background-color: #00796B;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 8px;
+}
+
+.submit-btn:hover {
+    background-color: #00796B;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+.close-btn {
+    font-family: "Roboto Thin";
+    background-color: transparent;
+    color: #cc1717;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid grey;
+}
+
+.close-btn:hover {
+    font-weight: bold;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.4);
+}

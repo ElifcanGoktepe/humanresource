@@ -79,7 +79,7 @@ public class EmailVerificationService {
                 message.setFrom(new InternetAddress(fromEmail));
                 message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
                 message.setSubject("Email Verification");
-                message.setText("Click the link below to verify your email: " +
+                message.setText("Click the link below to verify your email:\n\n" +
                         "http://localhost:9090/api/verify?token=" + token);
 
                 Transport.send(message);

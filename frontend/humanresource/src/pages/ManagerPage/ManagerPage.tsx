@@ -1,7 +1,10 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './ManagerPage.css';
 import LeaveChart from "../../components/atoms/LeaveChart.tsx";
+
 import { useState } from "react";
+import axios from "axios";
+import AddEmployeeModal from "../../components/organism/AddEmployeeModal.tsx";
 
 function ManagerPage() {
     const today = new Date();
@@ -15,8 +18,35 @@ function ManagerPage() {
     const handleChartInfo = (info:any) => {
         setChartData(info);
     };
+    const handleAddEmployee = async (employeeData: {
+        firstName: string;
+        lastName: string;
+        emailWork: string;
+        phoneWork: string;
+        companyName: string;
+        titleName: string;
+    }) => {
+        const token = localStorage.getItem("token");
+        console.log("Token:", token);
+        try {
+            const response = await axios.post("http://localhost:9090/add-employee", employeeData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
+
+            alert(response.data.message);
+        } catch (error) {
+            console.error("Error adding employee:", error);
+            alert("Failed to add employee.");
+        }
+    };
+
+    const [showModal, setShowModal] = useState(false);
 
     return (
+        <>
         <div className="row">
             <div className="col-2 fixed-side-bar">
                 <div className="fixed-bar-image">
@@ -150,7 +180,7 @@ function ManagerPage() {
                             </div>
                             <hr/>
                             <div className="request-button-container">
-                                <button className="add-employee">
+                                <button className="add-employee" onClick={() => setShowModal(true)}>
                                     Add Employee →
                                 </button>
                             </div>
@@ -159,6 +189,17 @@ function ManagerPage() {
                 </div>
             </div>
         </div>
+            {showModal && (
+                <AddEmployeeModal
+                    onClose={() => setShowModal(false)}
+                    onSubmit={(formData) => {
+                        handleAddEmployee(formData);
+                        setShowModal(false);
+                    }}
+                />
+            )}
+
+        </>
     );
 }
 

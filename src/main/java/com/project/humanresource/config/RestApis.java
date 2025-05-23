@@ -22,4 +22,5 @@ public class RestApis {
     public static final String REQUESTLEAVE = "/request-login";
     public static final String REQUESTSHIFT = "/request-shift";
     public static final String ASSIGN_MANAGER = "/assign-manager";
+    public static final String ADD_EMPLOYEE = "/add-employee";
 }
