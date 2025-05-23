@@ -1,33 +1,11 @@
-import {useEffect, useRef} from 'react';
-import { Doughnut } from 'react-chartjs-2';
-import {
-    Chart as ChartJS,
-    ArcElement,
-    Tooltip,
-    Legend
-} from 'chart.js';
-
-ChartJS.register(ArcElement, Tooltip, Legend);
+import {Doughnut} from "react-chartjs-2";
 
 type LeaveChartProps = {
-    onDataReady?: (data: { total: number; used: number; remaining: number }) => void;
+    used: number;
+    remaining: number;
 };
 
-const LeaveChart = ({ onDataReady }: LeaveChartProps) => {
-    const total = 20;
-    const used = 12;
-    const remaining = total - used;
-
-    const hasSentData = useRef(false);
-
-    // Parent’a veriyi gönder
-    useEffect(() => {
-        if (onDataReady && !hasSentData.current) {
-            onDataReady({ total, used, remaining });
-            hasSentData.current = true;
-        }
-    }, [onDataReady]);
-
+const LeaveChart = ({ used, remaining }: LeaveChartProps) => {
     const data = {
         labels: ['Kullanılan', 'Kalan'],
         datasets: [

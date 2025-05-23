@@ -1,10 +1,17 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './EmployeePage.css';
 import LeaveRequestModal from "../../components/organism/LeaveRequestModal.tsx";
-import LeaveChart from "../../components/atoms/LeaveChart.tsx";
-import { useState } from "react";
+import {
+    Chart as ChartJS,
+    ArcElement,
+    Tooltip,
+    Legend
+} from 'chart.js';
+import {useEffect, useState} from "react";
 import ShiftRequestModal from "../../components/organism/ShiftRequestModal.tsx";
-
+import axios from "axios";
+import {Doughnut} from "react-chartjs-2";
+ChartJS.register(ArcElement, Tooltip, Legend);
 function EmployeePage() {
     const today = new Date();
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -13,12 +20,59 @@ function EmployeePage() {
     const dateString = today.toLocaleDateString("en-US");
 
     const [chartData, setChartData] = useState({ total: 0, used: 0, remaining: 0 });
-
-    const handleChartInfo = (info:any) => {
-        setChartData(info);
-    };
     const [showModal, setShowModal] = useState(false);
     const [showShiftModal, setShowShiftModal] = useState(false);
+
+    type LeaveChartProps = {
+        used: number;
+        remaining: number;
+    };
+
+    const LeaveChart = ({ used, remaining }: LeaveChartProps) => {
+        const data = {
+            labels: ['Kullanılan', 'Kalan'],
+            datasets: [
+                {
+                    data: [used, remaining],
+                    backgroundColor: ['#00796B', '#00FFF0'],
+                },
+            ],
+        };
+
+        return (
+            <div style={{ width: '100%', height: '100%' }}>
+                <Doughnut data={data} />
+            </div>
+        );
+    };
+    useEffect(() => {
+        const fetchApprovedLeaves = async () => {
+            const token = localStorage.getItem("token");
+            try {
+                const response = await axios.get("http://localhost:9090/leaves/approved", {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const approvedLeaves = response.data.data;
+
+                const used = approvedLeaves.reduce((acc: number, leave: any) => {
+                    const start = new Date(leave.startDate);
+                    const end = new Date(leave.endDate);
+                    const days = (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24);
+                    return acc + days;
+                }, 0);
+
+                const total = 20;
+                const remaining = total - used;
+
+                setChartData({ total, used, remaining });
+
+            } catch (error) {
+                console.error("Failed to fetch approved leaves:", error);
+            }
+        };
+
+        fetchApprovedLeaves();
+    }, []);
 
     return (
         <>
@@ -105,7 +159,7 @@ function EmployeePage() {
                         <div className="box1-dashboard">
                             <div className="leave-settings-body">
                                 <div>
-                                    <LeaveChart onDataReady={handleChartInfo} />
+                                    <LeaveChart used={chartData.used} remaining={chartData.remaining} />
                                     <p> Total : {chartData.total} </p>
                                     <p> Used :  {chartData.used} </p>
                                     <p> Remaining : {chartData.remaining}</p>

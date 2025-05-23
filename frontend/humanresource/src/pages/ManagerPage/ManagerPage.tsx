@@ -1,8 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './ManagerPage.css';
-import LeaveChart from "../../components/atoms/LeaveChart.tsx";
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import AddEmployeeModal from "../../components/organism/AddEmployeeModal.tsx";
 
@@ -13,11 +11,6 @@ function ManagerPage() {
     const dayName = days[dayIndex];
     const dateString = today.toLocaleDateString("en-US");
 
-    const [chartData, setChartData] = useState({ total: 0, used: 0, remaining: 0 });
-
-    const handleChartInfo = (info:any) => {
-        setChartData(info);
-    };
     const handleAddEmployee = async (employeeData: {
         firstName: string;
         lastName: string;
@@ -44,6 +37,60 @@ function ManagerPage() {
     };
 
     const [showModal, setShowModal] = useState(false);
+
+    type Leave = {
+        id: number;
+        startDate: string;
+        endDate: string;
+        description: string;
+        leaveType: string;
+        state: string;
+        employeeId: number;
+    };
+
+    const [pendingLeaves, setPendingLeaves] = useState<Leave[]>([]);
+
+    useEffect(() => {
+        const fetchPendingLeaves = async () => {
+            const token = localStorage.getItem("token");
+            try {
+                const response = await axios.get("http://localhost:9090/leaves/pending", {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                setPendingLeaves(response.data.data);
+            } catch (error) {
+                console.error("Failed to fetch pending leaves:", error);
+            }
+        };
+
+        fetchPendingLeaves();
+    }, []);
+    const handleApprove = async (id: number) => {
+        const token = localStorage.getItem("token");
+        try {
+            await axios.put(`http://localhost:9090/leaves/${id}/approve`, {}, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            // Sayfayı güncelle
+            setPendingLeaves(prev => prev.filter(leave => leave.id !== id));
+        } catch (error) {
+            alert("Failed to approve leave.");
+        }
+    };
+
+    const handleReject = async (id: number) => {
+        const token = localStorage.getItem("token");
+        try {
+            await axios.put(`http://localhost:9090/leaves/${id}/reject`, {}, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setPendingLeaves(prev => prev.filter(leave => leave.id !== id));
+        } catch (error) {
+            alert("Failed to reject leave.");
+        }
+    };
 
     return (
         <>
@@ -127,21 +174,17 @@ function ManagerPage() {
                         </div>
                     </div>
                     <div className="col-3 box-dashboard">
-                        <div className="box1-dashboard">
-                            <div className="leave-settings-body">
-                                <div>
-                                    <LeaveChart onDataReady={handleChartInfo} />
-                                    <p> Total : {chartData.total} </p>
-                                    <p> Used :  {chartData.used} </p>
-                                    <p> Remaining : {chartData.remaining}</p>
-                                </div>
-                                <hr/>
-                                <div className="request-button-container">
-                                    <button className="accountbutton">
-                                        Request →
-                                    </button>
-                                </div>
-                            </div>
+                        <div className="pending-leaves-panel">
+                            <h3>Pending Leave Requests</h3>
+                            <ul>
+                                {pendingLeaves.map(leave => (
+                                    <li key={leave.id}>
+                                        <strong>{leave.leaveType}</strong> | {leave.startDate} → {leave.endDate} <br />
+                                        {leave.description}
+                                        <hr />
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
                     </div>
                     <div className="col-3 box-dashboard">
@@ -198,7 +241,27 @@ function ManagerPage() {
                     }}
                 />
             )}
-
+            {pendingLeaves.map(leave => (
+                <li key={leave.id}>
+                    <strong>{leave.leaveType}</strong> | {leave.startDate} → {leave.endDate} <br />
+                    {leave.description}
+                    <div style={{ marginTop: "5px" }}>
+                        <button
+                            className="btn btn-success btn-sm me-2"
+                            onClick={() => handleApprove(leave.id)}
+                        >
+                            Approve
+                        </button>
+                        <button
+                            className="btn btn-danger btn-sm"
+                            onClick={() => handleReject(leave.id)}
+                        >
+                            Reject
+                        </button>
+                    </div>
+                    <hr />
+                </li>
+            ))}
         </>
     );
 }
