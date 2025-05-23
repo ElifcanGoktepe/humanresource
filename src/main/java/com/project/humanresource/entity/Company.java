@@ -1,13 +1,13 @@
 package com.project.humanresource.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @Data
@@ -18,15 +18,19 @@ public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    @NotNull @NotEmpty @NotBlank
+    @NotNull @NotBlank
     String companyName;
-    @NotNull @NotEmpty @NotBlank
+    @NotNull @NotBlank
     String companyAddress;
-    @NotNull @NotEmpty @NotBlank
+    @NotNull  @NotBlank
     String companyPhoneNumber;
-    @NotNull @NotEmpty @NotBlank
+    @NotNull @NotBlank
     String companyEmail;
-    Long employerId;
+
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true )
+    private List<CompanyBranch> branches = new ArrayList<>();
+
+
 
 
 }

@@ -37,7 +37,9 @@ public class SecurityConfig {
                                 "/api/assignments", "/api/assignments/**",
                                 "/swagger-ui/**","/v3/api-docs/**",
                                 "/api/auth/**","/api/public/**",
-                                "/admin/dev/v1/addcompany","/dev/v1/listallcompany","/dev/v1/findcompanybyphonenumber","/dev/v1/findcompanybyname","/dev/v1/findcompanybyemailaddress","/dev/v1/deletecompanybyid/{id}"
+                                "/admin/dev/v1/addcompany","/dev/v1/listallcompany","/dev/v1/findcompanybyphonenumber","/dev/v1/findcompanybyname","/dev/v1/findcompanybyemailaddress","/dev/v1/deletecompanybyid/{id}",
+                                "/dev/v1/addcompanybranch","/dev/v1/listofallbranchesofcompany","/dev/v1/findcompanybranchbyphonenumber","/dev/v1/findcompanybranchbyemailaddress",
+                                "/dev/v1/findcompanybranchbyaddress","/dev/v1/deletecompanybranchbyid/{id}","/dev/v1/deletecompanybranchbycompanybranchcode/companyBranchCode"
                         ).permitAll()
                         .requestMatchers("/admin/**").hasAuthority("Admin")
                         .requestMatchers("/add-employee").hasAuthority("Manager")
