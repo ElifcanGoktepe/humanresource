@@ -23,7 +23,9 @@ public class Leave {
     LocalDateTime startDate;
     LocalDateTime endDate;
     String description;
+    @Enumerated(EnumType.STRING)
     LeaveTypes leaveType;
+    @Enumerated(EnumType.STRING)
     StateTypes state;
     Long employeeId;
 }
