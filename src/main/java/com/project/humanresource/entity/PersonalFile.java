@@ -1,5 +1,6 @@
 package com.project.humanresource.entity;
 
+import com.project.humanresource.utility.BloodType;
 import com.project.humanresource.utility.EducationLevel;
 import com.project.humanresource.utility.Gender;
 import com.project.humanresource.utility.MaritalStatus;
@@ -17,7 +18,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Entity
 @Table(name = "tblpersonelfile")
-public class PersonelFile {
+public class PersonalFile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -32,6 +33,7 @@ public class PersonelFile {
 
     EducationLevel educationLevel;
     MaritalStatus maritalStatus;
+    BloodType bloodType;
     Byte numberOfChildren;
     String address;
     String city;

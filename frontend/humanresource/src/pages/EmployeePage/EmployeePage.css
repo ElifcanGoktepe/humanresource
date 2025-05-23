@@ -55,7 +55,7 @@
     flex-direction: column;
     margin-bottom: 40px;
 }
-.manager-page-header{
+.employee-page-header{
     margin-right: 20px;
     margin-top: 10px;
     height: 100px;
@@ -125,6 +125,7 @@
     justify-content: space-between; /* grafik + buton arası denge */
 }
 .fontstyle-shiftnames{
+
     font-size: 14px;
     color: #6e6e6e;
 }
@@ -137,34 +138,4 @@
     display: flex;
     align-content: end;
     justify-content: end;
-}
-.box2-dashboard {
-    background-color: transparent;
-    padding: 10px;
-    margin-top: 10px;
-    margin-right: 20px;
-    margin-left: 5px;
-    border-color: rgba(239, 239, 239, 0.53);
-    border-width: 5px;
-    border-style: solid;
-}
-.add-employee{
-    width: 140px;
-    height: 25px;
-    margin-bottom: 10px;
-    border: none;
-    font-family: "Roboto Thin";
-    background-color: transparent;
-    cursor: pointer;
-    color: rgb(0, 121, 107);
-    font-weight: normal;
-}
-.add-employee:hover{
-    border: transparent;
-    color:#00796B;
-    font-weight: bolder;
-    transform: scale(1.03);
-}
-.manage-employee{
-
 }

@@ -1,9 +1,11 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './ManagerPage.css';
+import './EmployeePage.css';
+import LeaveRequestModal from "../../components/organism/LeaveRequestModal.tsx";
 import LeaveChart from "../../components/atoms/LeaveChart.tsx";
 import { useState } from "react";
+import ShiftRequestModal from "../../components/organism/ShiftRequestModal.tsx";
 
-function ManagerPage() {
+function EmployeePage() {
     const today = new Date();
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const dayIndex = today.getDay();
@@ -15,8 +17,11 @@ function ManagerPage() {
     const handleChartInfo = (info:any) => {
         setChartData(info);
     };
+    const [showModal, setShowModal] = useState(false);
+    const [showShiftModal, setShowShiftModal] = useState(false);
 
     return (
+        <>
         <div className="row">
             <div className="col-2 fixed-side-bar">
                 <div className="fixed-bar-image">
@@ -63,8 +68,8 @@ function ManagerPage() {
                 </div>
             </div>
             <div className="col-10">
-                <div className="manager-page-header">
-                    <h2>Hello </h2>
+                <div className="employee-page-header">
+                    <h2>Hello Employee!</h2>
                     <h3>Today's Date: {dateString}, {dayName}</h3>
                     <hr/>
                 </div>
@@ -73,7 +78,7 @@ function ManagerPage() {
                         <div className="box1-dashboard">
                             <div className="profile-settings-header">
                                 <div className="col-8 profile-settings-header-name">
-                                    <h3>Manager Name</h3>
+                                    <h3>Employee Name</h3>
                                 </div>
                                 <div className="col-4 profile-settings-header-icon">
                                     <img className="small-image-fixed-bar2" src="/img/profileicon.png" />
@@ -107,7 +112,7 @@ function ManagerPage() {
                                 </div>
                                 <hr/>
                                 <div className="request-button-container">
-                                    <button className="accountbutton">
+                                    <button className="accountbutton" onClick={() => setShowModal(true)}>
                                         Request →
                                     </button>
                                 </div>
@@ -115,51 +120,63 @@ function ManagerPage() {
                         </div>
                     </div>
                     <div className="col-3 box-dashboard">
-                        <div className="box1-dashboard row p-1">
-                            <h3>Today's Shift List</h3>
+                        <div className="box1-dashboard row p-2">
+                            <h3>Weekly Shift List</h3>
                             <hr/>
-                            <div className="col-7 fontstyle-shiftnames">
-                                FirstName LastName1
-                                FirstName LastName2
-                                FirstName LastName3
-                                FirstName LastName4
-                                FirstName LastName5
-                                FirstName LastName6
+                            <div className="col-7 fontstyle-shiftnames mb-2">
+                                <p>Monday</p>
+                                <p>Tuesday</p>
+                                <p>Wednesday</p>
+                                <p>Thursday</p>
+                                <p>Friday</p>
+                                <p>Saturday</p>
+                                <p>Sunday</p>
                             </div>
-                            <div className="col-5 fontstyle-shifthours">
-                                08:00-12:00
-                                08:00-12:00
-                                13:00-17:00
-                                13:00-17:00
-                                18:00-22:00
-                                18:00-22:00
+                            <div className="col-5 fontstyle-shifthours mb-2">
+                                <p>08:00-12:00</p>
+                                <p>08:00-12:00</p>
+                                <p>13:00-17:00</p>
+                                <p>13:00-17:00</p>
+                                <p>18:00-22:00</p>
+                                <p>18:00-22:00</p>
+                                <p>---</p>
                             </div>
-                        </div>
-                    </div>
-                    <div className="col-3 box-dashboard">
-                        <div className="box2-dashboard row p-1">
-                            <h3>Manage Employee</h3>
+
                             <hr/>
-                            <div className="fontstyle-shiftnames">
-                                <p>FirstName LastName 1</p>
-                                <p>FirstName LastName 2</p>
-                                <p>FirstName LastName 3</p>
-                                <p>FirstName LastName 4</p>
-                                <p>FirstName LastName 5</p>
-                                <p>FirstName LastName 6</p>
-                            </div>
-                            <hr/>
-                            <div className="request-button-container">
-                                <button className="add-employee">
-                                    Add Employee →
+                            <div className="request-button-container mb-2">
+                                <button className="accountbutton" onClick={() => setShowShiftModal(true)}>
+                                    Request →
                                 </button>
                             </div>
                         </div>
                     </div>
+                    <div className="col-3 box-dashboard">
+
+                    </div>
                 </div>
             </div>
         </div>
+            {showModal && (
+                <LeaveRequestModal
+                    onClose={() => setShowModal(false)}
+                    onSubmit={(data: any) => {
+                        console.log("Leave Request Data:", data);
+                        // API isteği gönderilebilir
+                    }}
+                />
+            )}
+            {showShiftModal && (
+                <ShiftRequestModal
+                    onClose={() => setShowShiftModal(false)}
+                    onSubmit={(data) => {
+                        console.log("Shift request submitted:", data);
+                        // Burada fetch ile backend'e gönderebilirsin
+                        setShowShiftModal(false);
+                    }}
+                />
+            )}
+        </>
     );
 }
 
-export default ManagerPage;
+export default EmployeePage;

@@ -19,5 +19,6 @@ public class EmailVerification {
     private Long id;
     private String email;
     private String token;
+    private Long employeeId;
     private LocalDateTime expiryDate;
 }
