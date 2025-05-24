@@ -9,7 +9,7 @@ import jakarta.validation.constraints.*;
 import java.util.Date;
 
 
-public record SetPersonelFileRequestDto(
+public record SetPersonalFileRequestDto(
         @NotNull Gender gender,
         @Past Date birthdate,
         @Pattern(regexp = "^\\d{11}$") String personalPhone,

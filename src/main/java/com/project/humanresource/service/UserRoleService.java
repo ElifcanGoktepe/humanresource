@@ -33,4 +33,8 @@ public class UserRoleService {
                 .build();
         return userRoleRepository.save(userRole);
     }
+
+    public boolean hasRole(Long userId,UserStatus userStatus) {
+        return userRoleRepository.existsByUserIdAndUserStatus(userId, userStatus);
+    }
 }

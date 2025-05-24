@@ -6,7 +6,6 @@ type LeaveRequest = {
     endDate: string;
     description: string;
     leaveType: string;
-    state: string;
 };
 
 type Props = {
@@ -19,7 +18,6 @@ function LeaveRequestModal({ onClose, onSubmit }: Props) {
     const [endDate, setEndDate] = useState("");
     const [description, setDescription] = useState("");
     const [leaveType, setLeaveType] = useState("Annual_Leave");
-    const state = "Pending"; // Default
 
     const handleSubmit = async () => {
         if (new Date(startDate) > new Date(endDate)) {
@@ -27,23 +25,23 @@ function LeaveRequestModal({ onClose, onSubmit }: Props) {
             return;
         }
 
-        const leaveRequest = {
+        const leaveRequest: LeaveRequest = {
             startDate,
             endDate,
             description,
             leaveType,
-            state
         };
 
         try {
+            const token = localStorage.getItem("token");
+
             const response = await fetch("http://localhost:9090/request-leave", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    // Eğer JWT kullanıyorsan buraya token da ekle:
-                    // "Authorization": "Bearer " + localStorage.getItem("token")
+                    Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify(leaveRequest)
+                body: JSON.stringify(leaveRequest),
             });
 
             if (!response.ok) {
@@ -53,7 +51,6 @@ function LeaveRequestModal({ onClose, onSubmit }: Props) {
             const data = await response.json();
             console.log("Leave created:", data);
 
-            // Başarılı olduğunda modal kapanır
             onSubmit(data);
             onClose();
         } catch (error) {
@@ -78,20 +75,20 @@ function LeaveRequestModal({ onClose, onSubmit }: Props) {
 
                 <label>Leave Type:</label>
                 <select value={leaveType} onChange={e => setLeaveType(e.target.value)}>
-                    <option>Annual Leave</option>
-                    <option>Maternity Leave</option>
-                    <option>Paid Leave</option>
-                    <option>Unpaid Leave</option>
-                    <option>Sick Leave</option>
-                    <option>Study Leave</option>
-                    <option>Compassionate Leave</option>
-                    <option>Wedding Leave</option>
-                    <option>Paternity Leave</option>
-                    <option>Parental Leave</option>
-                    <option>Military Leave</option>
-                    <option>Excused Leave</option>
-                    <option>Travel Leave</option>
-                    <option>Job Search Leave</option>
+                    <option value="Annual_Leave">Annual Leave</option>
+                    <option value="Maternity_Leave">Maternity Leave</option>
+                    <option value="Paid_Leave">Paid Leave</option>
+                    <option value="Unpaid_Leave">Unpaid Leave</option>
+                    <option value="Sick_Leave">Sick Leave</option>
+                    <option value="Study_Leave">Study Leave</option>
+                    <option value="Compassionate_Leave">Compassionate Leave</option>
+                    <option value="Wedding_Leave">Wedding Leave</option>
+                    <option value="Paternity_Leave">Paternity Leave</option>
+                    <option value="Parental_Leave">Parental Leave</option>
+                    <option value="Military_Leave">Military Leave</option>
+                    <option value="Excused_Leave">Excused Leave</option>
+                    <option value="Travel_Leave">Travel Leave</option>
+                    <option value="Job_Search_Leave">Job Search Leave</option>
                 </select>
 
                 <label>Description:</label>
