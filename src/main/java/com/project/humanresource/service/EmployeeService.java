@@ -56,37 +56,6 @@ public class EmployeeService {
 
     }
 
-    public void  addEmployee(AddEmployeeRequestDto dto,Long companyId) {
-        // 1. Login email sistemde var mı?
-        if (userRepository.existsByEmail(dto.email())) {
-            throw new HumanResourceException(ErrorType.USER_ALREADY_EXISTS);
-        }
-
-
-// 2. Login User oluşturulmaz (User abstract) → doğrudan Employee oluşturulacak
-        Employee employee   =Employee.builder()
-                .firstName(dto.name())
-                .lastName(dto.surname())
-                .email(dto.email())
-                .phoneWork(dto.phoneNumber())
-                .companyId(companyId)
-                .isActive(false)
-                .password(null)
-                .titleId(dto.titleId())
-                .build();
-        // 3. Kullanıcı rolü ata
-        UserRole userRole=UserRole.builder()
-                .userId(employee.getId())
-                .userStatus(UserStatus.Employee)
-                .build();
-
-        employeeRepository.save(employee);
-        userRoleRepository.save(userRole);
-
-        // 4. Aktivasyon maili gönder (şifre oluşturma bağlantısı dahil)
-        emailVerificationService.sendVerificationEmail(dto.email());
-    }
-
     public void setEmployeeActiveStatus (Long employeeId, boolean isActive) {
         String email=SecurityContextHolder.getContext().getAuthentication().getName();
         User user=userRepository.findByEmail(email)
