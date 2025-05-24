@@ -706,9 +706,9 @@ const UserSettingsPage = () => {
                         disabled={isLoading}
                         error={!!errors.gender}
                       >
-                        {GenderLabels.map((gender) => (
-                          <MenuItem key={gender.value} value={gender.value}>
-                            {gender.label}
+                        {Object.entries(GenderLabels).map(([key, label]) => (
+                          <MenuItem key={key} value={key}>
+                            {label}
                           </MenuItem>
                         ))}
                       </Select>
@@ -786,9 +786,9 @@ const UserSettingsPage = () => {
                         disabled={isLoading}
                         error={!!errors.educationLevel}
                       >
-                        {EducationLevelLabels.map((level) => (
-                          <MenuItem key={level.value} value={level.value}>
-                            {level.label}
+                        {Object.entries(EducationLevelLabels).map(([key, label]) => (
+                          <MenuItem key={key} value={key}>
+                            {label}
                           </MenuItem>
                         ))}
                       </Select>
@@ -813,9 +813,9 @@ const UserSettingsPage = () => {
                         disabled={isLoading}
                         error={!!errors.maritalStatus}
                       >
-                        {MaritalStatusLabels.map((status) => (
-                          <MenuItem key={status.value} value={status.value}>
-                            {status.label}
+                        {Object.entries(MaritalStatusLabels).map(([key, label]) => (
+                          <MenuItem key={key} value={key}>
+                            {label}
                           </MenuItem>
                         ))}
                       </Select>
@@ -834,9 +834,9 @@ const UserSettingsPage = () => {
                         disabled={isLoading}
                         error={!!errors.bloodType}
                       >
-                        {BloodTypeLabels.map((type) => (
-                          <MenuItem key={type.value} value={type.value}>
-                            {type.label}
+                        {Object.entries(BloodTypeLabels).map(([key, label]) => (
+                          <MenuItem key={key} value={key}>
+                            {label}
                           </MenuItem>
                         ))}
                       </Select>
