@@ -20,14 +20,9 @@ import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import './UserSettingsPage.css';
 import * as React from "react";
 
-// Backend'den çekilecek user datası için örnek type
-// Gerçek projede context veya props ile alınabilir
-const mockUser = {
-  firstName: 'Test',
-  lastName: 'User',
-  email: 'test@example.com',
-  phone: '+905551234567',
-};
+// API Configuration - Correct port 9090
+const API_BASE_URL = 'http://localhost:9090/api/users';
+const CURRENT_USER_ID = 1; // This should come from authentication context
 
 type UserData = {
   firstName: string;
@@ -53,9 +48,13 @@ type FormErrors = {
 };
 
 const UserSettingsPage = () => {
-  // Gerçek projede context veya API'den alınmalı
-  const [user, setUser] = useState<UserData>(mockUser);
   const navigate = useNavigate();
+  const [user, setUser] = useState<UserData>({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: ''
+  });
   const [formData, setFormData] = useState<UserData>(user);
   const [passwordData, setPasswordData] = useState<PasswordData>({
     currentPassword: '',
@@ -69,9 +68,39 @@ const UserSettingsPage = () => {
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
+  // Load user profile on component mount
+  useEffect(() => {
+    fetchUserProfile();
+  }, []);
+
   useEffect(() => {
     setFormData(user);
   }, [user]);
+
+  // API call to fetch user profile
+  const fetchUserProfile = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/${CURRENT_USER_ID}/profile`);
+      const result = await response.json();
+      
+      if (result.success && result.data) {
+        const userData = {
+          firstName: result.data.firstName || '',
+          lastName: result.data.lastName || '',
+          email: result.data.email || '',
+          phone: result.data.phone || ''
+        };
+        setUser(userData);
+      } else {
+        setMessage({ text: 'Failed to load profile data', type: 'error' });
+      }
+    } catch (error) {
+      setMessage({ text: 'Error loading profile data', type: 'error' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
@@ -81,7 +110,7 @@ const UserSettingsPage = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     
-    // Form hatasını temizle
+    // Clear form error
     setErrors(prev => ({ ...prev, [name]: undefined }));
     
     if (name === 'firstName' || name === 'lastName') {
@@ -162,12 +191,35 @@ const UserSettingsPage = () => {
     
     setIsLoading(true);
     setMessage(null);
-    // API çağrısı burada yapılacak
-    setTimeout(() => {
-      setUser(formData);
-      setMessage({ text: 'Your profile information has been updated successfully!', type: 'success' });
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/${CURRENT_USER_ID}/profile`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      
+      const result = await response.json();
+      
+      if (result.success && result.data) {
+        const userData = {
+          firstName: result.data.firstName || '',
+          lastName: result.data.lastName || '',
+          email: result.data.email || '',
+          phone: result.data.phone || ''
+        };
+        setUser(userData);
+        setMessage({ text: 'Your profile information has been updated successfully!', type: 'success' });
+      } else {
+        setMessage({ text: result.message || 'Failed to update profile', type: 'error' });
+      }
+    } catch (error) {
+      setMessage({ text: 'Error updating profile', type: 'error' });
+    } finally {
       setIsLoading(false);
-    }, 1200);
+    }
   };
   
   const handlePasswordSubmit = async (e: React.FormEvent) => {
@@ -177,16 +229,33 @@ const UserSettingsPage = () => {
     
     setIsLoading(true);
     setMessage(null);
-    // API çağrısı burada yapılacak
-    setTimeout(() => {
-      setPasswordData({
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: ''
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/${CURRENT_USER_ID}/password`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(passwordData),
       });
-      setMessage({ text: 'Your password has been changed successfully!', type: 'success' });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        setPasswordData({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        });
+        setMessage({ text: 'Your password has been changed successfully!', type: 'success' });
+      } else {
+        setMessage({ text: result.message || 'Failed to change password', type: 'error' });
+      }
+    } catch (error) {
+      setMessage({ text: 'Error changing password', type: 'error' });
+    } finally {
       setIsLoading(false);
-    }, 1200);
+    }
   };
 
   if (isLoading) {
@@ -199,7 +268,7 @@ const UserSettingsPage = () => {
 
   return (
     <div className="settings-background">
-      {/* Şirket Logosu */}
+      {/* Company Logo */}
       <Box 
         component="img"
         src="/img/logo1.png" 
@@ -219,7 +288,7 @@ const UserSettingsPage = () => {
         }}
         onClick={() => navigate('/')}
       />
-      {/* Ana Sayfa Butonu */}
+      {/* Home Button */}
       <Box sx={{ position: 'absolute', top: 20, right: 20, zIndex: 10 }}>
         <IconButton 
           onClick={() => navigate('/')}
@@ -291,197 +360,193 @@ const UserSettingsPage = () => {
             >
               <Tab icon={<PersonIcon />} label="Profile" />
               <Tab icon={<LockIcon />} label="Password" />
-          </Tabs>
-          {activeTab === 0 && (
-            <Box 
-              component="form" 
-              onSubmit={handleSubmit} 
-              className="settings-form" 
-              sx={{ width: '100%' }}
-            >
-              <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap' }}>
-                <Box sx={{ flex: '1 1 300px' }}>
+            </Tabs>
+            {activeTab === 0 && (
+              <Box 
+                component="form" 
+                onSubmit={handleSubmit} 
+                className="settings-form" 
+                sx={{ width: '100%' }}
+              >
+                <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap' }}>
+                  <Box sx={{ flex: '1 1 300px' }}>
+                    <TextField
+                      fullWidth
+                      label="First Name"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleChange}
+                      variant="outlined"
+                      required
+                      disabled={isLoading}
+                      error={!!errors.firstName}
+                      helperText={errors.firstName}
+                      inputProps={{
+                        pattern: '[A-Za-zğüşıöçĞÜŞİÖÇ\\s]*',
+                        title: 'Please enter only letters and spaces'
+                      }}
+                    />
+                  </Box>
+                  <Box sx={{ flex: '1 1 300px' }}>
+                    <TextField
+                      fullWidth
+                      label="Last Name"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleChange}
+                      variant="outlined"
+                      required
+                      disabled={isLoading}
+                      error={!!errors.lastName}
+                      helperText={errors.lastName}
+                      inputProps={{
+                        pattern: '[A-Za-zğüşıöçĞÜŞİÖÇ\\s]*',
+                        title: 'Please enter only letters and spaces'
+                      }}
+                    />
+                  </Box>
+                </Box>
+                <Box sx={{ mb: 3 }}>
                   <TextField
                     fullWidth
-                    label="First Name"
-                    name="firstName"
-                    value={formData.firstName}
+                    label="Email"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    variant="outlined"
+                    required
+                    disabled
+                  />
+                </Box>
+                <Box sx={{ mb: 4 }}>
+                  <TextField
+                    fullWidth
+                    label="Phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    variant="outlined"
+                    placeholder="+90 555 123 4567"
+                    disabled={isLoading}
+                    error={!!errors.phone}
+                    helperText={errors.phone}
+                    inputProps={{
+                      pattern: '[0-9+\\s]*',
+                      title: 'Please enter only numbers, plus sign and spaces'
+                    }}
+                  />
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    disabled={isLoading}
+                    sx={{
+                      backgroundColor: '#00796B',
+                      px: 4,
+                      py: 1.5,
+                      borderRadius: 2,
+                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        backgroundColor: '#00695C',
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)'
+                      }
+                    }}
+                  >
+                    Save Changes
+                  </Button>
+                </Box>
+              </Box>
+            )}
+            
+            {activeTab === 1 && (
+              <Box 
+                component="form" 
+                onSubmit={handlePasswordSubmit} 
+                className="settings-form" 
+                sx={{ width: '100%' }}
+              >
+                <Box sx={{ mb: 3 }}>
+                  <TextField
+                    fullWidth
+                    label="Current Password"
+                    name="currentPassword"
+                    type="password"
+                    value={passwordData.currentPassword}
                     onChange={handleChange}
                     variant="outlined"
                     required
                     disabled={isLoading}
-                    error={!!errors.firstName}
-                    helperText={errors.firstName}
-                    inputProps={{
-                      pattern: '[A-Za-zğüşıöçĞÜŞİÖÇ\\s]*',
-                      title: 'Please enter only letters and spaces'
-                    }}
+                    error={!!errors.currentPassword}
+                    helperText={errors.currentPassword}
                   />
                 </Box>
-                <Box sx={{ flex: '1 1 300px' }}>
+                <Box sx={{ mb: 3 }}>
                   <TextField
                     fullWidth
-                    label="Last Name"
-                    name="lastName"
-                    value={formData.lastName}
+                    label="New Password"
+                    name="newPassword"
+                    type="password"
+                    value={passwordData.newPassword}
                     onChange={handleChange}
                     variant="outlined"
                     required
                     disabled={isLoading}
-                    error={!!errors.lastName}
-                    helperText={errors.lastName}
-                    inputProps={{
-                      pattern: '[A-Za-zğüşıöçĞÜŞİÖÇ\\s]*',
-                      title: 'Please enter only letters and spaces'
-                    }}
+                    error={!!errors.newPassword}
+                    helperText={errors.newPassword}
                   />
                 </Box>
+                <Box sx={{ mb: 4 }}>
+                  <TextField
+                    fullWidth
+                    label="Confirm New Password"
+                    name="confirmPassword"
+                    type="password"
+                    value={passwordData.confirmPassword}
+                    onChange={handleChange}
+                    variant="outlined"
+                    required
+                    disabled={isLoading}
+                    error={!!errors.confirmPassword}
+                    helperText={errors.confirmPassword}
+                  />
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    disabled={isLoading}
+                    sx={{
+                      backgroundColor: '#00796B',
+                      px: 4,
+                      py: 1.5,
+                      borderRadius: 2,
+                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        backgroundColor: '#00695C',
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)'
+                      }
+                    }}
+                  >
+                    Change Password
+                  </Button>
+                </Box>
               </Box>
-              <Box sx={{ mb: 3 }}>
-                <TextField
-                  fullWidth
-                  label="Email"
-                  name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  variant="outlined"
-                  required
-                  disabled
-                />
-              </Box>
-              <Box sx={{ mb: 4 }}>
-                <TextField
-                  fullWidth
-                  label="Phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  variant="outlined"
-                  placeholder="+90 555 123 4567"
-                  disabled={isLoading}
-                  error={!!errors.phone}
-                  helperText={errors.phone}
-                  inputProps={{
-                    pattern: '[0-9+\\s]*',
-                    title: 'Please enter only numbers, plus sign and spaces'
-                  }}
-                />
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  disabled={isLoading}
-                  sx={{
-                    backgroundColor: '#00796B',
-                    px: 4,
-                    py: 1.5,
-                    borderRadius: 2,
-                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                    transition: 'all 0.3s ease',
-                    '&:hover': {
-                      backgroundColor: '#00695C',
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)'
-                    }
-                  }}
-                >
-                  Save Changes
-                </Button>
-              </Box>
-            </Box>
-          )}
-          
-          {activeTab === 1 && (
-            <Box 
-              component="form" 
-              onSubmit={handlePasswordSubmit} 
-              className="settings-form" 
-              sx={{ width: '100%' }}
-            >
-              <Box sx={{ mb: 3 }}>
-                <TextField
-                  fullWidth
-                  label="Current Password"
-                  name="currentPassword"
-                  type="password"
-                  value={passwordData.currentPassword}
-                  onChange={handleChange}
-                  variant="outlined"
-                  required
-                  disabled={isLoading}
-                  error={!!errors.currentPassword}
-                  helperText={errors.currentPassword}
-                />
-              </Box>
-              <Box sx={{ mb: 3 }}>
-                <TextField
-                  fullWidth
-                  label="New Password"
-                  name="newPassword"
-                  type="password"
-                  value={passwordData.newPassword}
-                  onChange={handleChange}
-                  variant="outlined"
-                  required
-                  disabled={isLoading}
-                  error={!!errors.newPassword}
-                  helperText={errors.newPassword}
-                />
-              </Box>
-              <Box sx={{ mb: 4 }}>
-                <TextField
-                  fullWidth
-                  label="Confirm New Password"
-                  name="confirmPassword"
-                  type="password"
-                  value={passwordData.confirmPassword}
-                  onChange={handleChange}
-                  variant="outlined"
-                  required
-                  disabled={isLoading}
-                  error={!!errors.confirmPassword}
-                  helperText={errors.confirmPassword}
-                />
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  disabled={isLoading}
-                  sx={{
-                    backgroundColor: '#00796B',
-                    px: 4,
-                    py: 1.5,
-                    borderRadius: 2,
-                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                    transition: 'all 0.3s ease',
-                    '&:hover': {
-                      backgroundColor: '#00695C',
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)'
-                    }
-                  }}
-                >
-                  Change Password
-                </Button>
-              </Box>
-            </Box>
-          )}
-        </Box>
-      </Container>
+            )}
+          </Box>
+        </Container>
+      </div>
     </div>
-  </div>
-);
+  );
 };
 
 export default UserSettingsPage; 
-
-//TODO: Backend ile entegre edilecek
-
-
