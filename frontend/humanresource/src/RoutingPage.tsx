@@ -18,7 +18,7 @@ function RoutingPage() {
                 <Route path='/admin' element={<AdminPage />}/>
                 <Route path='/login' element={<LoginPage />}/>
                 <Route path='/register' element={<RegisterPage />}/>
-                <Route path='/createpassword' element={<CreatePasswordPage />}/>
+                <Route path='/create-password' element={<CreatePasswordPage />}/>
                 <Route path='/manager' element={<ManagerPage />}/>
                 <Route path='/settings' element={<UserSettingsPage />}/>
                 <Route path='/employee' element={<EmployeePage />}/>

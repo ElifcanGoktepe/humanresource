@@ -17,10 +17,12 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static com.project.humanresource.config.RestApis.ASSIGN_MANAGER;
+
+import static com.project.humanresource.config.RestApis.REGISTER;
+
 
 @RestController
-@CrossOrigin("/company-manager/")
+@CrossOrigin
 @RequiredArgsConstructor
 @RequestMapping
 @SecurityRequirement(name = "bearerAuth")
@@ -31,7 +33,7 @@ public class CompanyManagerController {
     private final EmployeeService employeeService;
 
     // başvuruyu employee tablosuna manager olarak kaydeder, isActivated = false, isApproved = false
-    @PostMapping(ASSIGN_MANAGER)
+    @PostMapping(REGISTER)
     public ResponseEntity<BaseResponseShort<Boolean>> appliedCompanyManager(@RequestBody AddCompanyManagerDto dto) {
         companyManagerService.appliedCompanyManager(dto);
         return ResponseEntity.ok(BaseResponseShort.<Boolean>builder()
