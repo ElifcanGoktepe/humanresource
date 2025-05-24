@@ -8,6 +8,7 @@ import com.project.humanresource.exception.ErrorType;
 import com.project.humanresource.exception.HumanResourceException;
 import com.project.humanresource.repository.*;
 import com.project.humanresource.utility.UserStatus;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,7 +33,13 @@ public class EmployeeService {
         employeeRepository.save(employee);
     }
 
-    public void addEmployeeForManager(AddEmployeeForRoleRequirementDto dto) { //manager tarafından eklenen employee
+    public void addEmployeeForManager(AddEmployeeForRoleRequirementDto dto, HttpServletRequest request) { //manager tarafından eklenen employee
+
+        Long managerId = (Long) request.getAttribute("userId");
+
+        if (managerId == null) {
+            throw new IllegalStateException("Manager ID not found in request.");
+        }
         Employee employee = Employee.builder()
                 .firstName(dto.firstName())
                 .lastName(dto.lastName())
@@ -41,6 +48,7 @@ public class EmployeeService {
                 .companyName(dto.companyName())
                 .titleName(dto.titleName())
                 .isApproved(true)
+                .managerId(managerId)
                 .build();
         employeeRepository.save(employee);
 
