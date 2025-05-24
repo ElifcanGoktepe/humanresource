@@ -7,7 +7,7 @@ type LeaveChartProps = {
 
 const LeaveChart = ({ used, remaining }: LeaveChartProps) => {
     const data = {
-        labels: ['Kullanılan', 'Kalan'],
+        labels: ['Used', 'Remaining'],
         datasets: [
             {
                 data: [used, remaining],

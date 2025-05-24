@@ -181,12 +181,27 @@ function ManagerPage() {
                                     <li key={leave.id}>
                                         <strong>{leave.leaveType}</strong> | {leave.startDate} → {leave.endDate} <br />
                                         {leave.description}
+                                        <div className="action-buttons">
+                                            <button
+                                                className="approve-button"
+                                                onClick={() => handleApprove(leave.id)}
+                                            >
+                                                Approve
+                                            </button>
+                                            <button
+                                                className="reject-button"
+                                                onClick={() => handleReject(leave.id)}
+                                            >
+                                                Reject
+                                            </button>
+                                        </div>
                                         <hr />
                                     </li>
                                 ))}
                             </ul>
                         </div>
                     </div>
+
                     <div className="col-3 box-dashboard">
                         <div className="box1-dashboard row p-1">
                             <h3>Today's Shift List</h3>
@@ -241,27 +256,7 @@ function ManagerPage() {
                     }}
                 />
             )}
-            {pendingLeaves.map(leave => (
-                <li key={leave.id}>
-                    <strong>{leave.leaveType}</strong> | {leave.startDate} → {leave.endDate} <br />
-                    {leave.description}
-                    <div style={{ marginTop: "5px" }}>
-                        <button
-                            className="btn btn-success btn-sm me-2"
-                            onClick={() => handleApprove(leave.id)}
-                        >
-                            Approve
-                        </button>
-                        <button
-                            className="btn btn-danger btn-sm"
-                            onClick={() => handleReject(leave.id)}
-                        >
-                            Reject
-                        </button>
-                    </div>
-                    <hr />
-                </li>
-            ))}
+
         </>
     );
 }
