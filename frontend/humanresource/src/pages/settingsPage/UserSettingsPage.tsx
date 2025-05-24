@@ -10,7 +10,11 @@ import {
   CircularProgress,
   Tabs,
   Tab,
-  Divider
+  Divider,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
@@ -20,6 +24,16 @@ import WorkIcon from '@mui/icons-material/Work';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import './UserSettingsPage.css';
 import * as React from "react";
+import { 
+  Gender, 
+  BloodType, 
+  EducationLevel, 
+  MaritalStatus,
+  GenderLabels,
+  BloodTypeLabels,
+  EducationLevelLabels,
+  MaritalStatusLabels 
+} from '../../constants/enums';
 
 // API Configuration - Correct port 9090
 const API_BASE_URL = 'http://localhost:9090/api/users';
@@ -205,13 +219,23 @@ const UserSettingsPage = () => {
       }
     } else if (name === 'currentPassword' || name === 'newPassword' || name === 'confirmPassword') {
       setPasswordData(prev => ({ ...prev, [name]: value }));
-    } else if (name === 'gender' || name === 'birthdate' || name === 'personalPhone' || name === 'personalEmail' || 
-               name === 'nationalId' || name === 'educationLevel' || name === 'maritalStatus' || name === 'bloodType' ||
-               name === 'numberOfChildren' || name === 'address' || name === 'city' || name === 'iban' || 
-               name === 'bankName' || name === 'bankAccountNumber' || name === 'bankAccountType') {
+    } else if (name === 'personalPhone' || name === 'personalEmail' || 
+               name === 'nationalId' || name === 'numberOfChildren' || name === 'address' || name === 'city' || 
+               name === 'iban' || name === 'bankName' || name === 'bankAccountNumber' || name === 'bankAccountType') {
       setPersonalFileData(prev => ({ ...prev, [name]: value }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
+    }
+  };
+
+  const handleSelectChange = (e: any) => {
+    const { name, value } = e.target;
+    
+    // Clear form error
+    setErrors(prev => ({ ...prev, [name]: undefined }));
+    
+    if (name === 'gender' || name === 'birthdate' || name === 'educationLevel' || name === 'maritalStatus' || name === 'bloodType') {
+      setPersonalFileData(prev => ({ ...prev, [name]: value }));
     }
   };
 
@@ -670,17 +694,25 @@ const UserSettingsPage = () => {
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap' }}>
                   <Box sx={{ flex: '1 1 300px' }}>
-                    <TextField
-                      fullWidth
-                      label="Gender"
-                      name="gender"
-                      value={personalFileData.gender}
-                      onChange={handleChange}
-                      variant="outlined"
-                      disabled={isLoading}
-                      error={!!errors.gender}
-                      helperText={errors.gender}
-                    />
+                    <FormControl fullWidth>
+                      <InputLabel id="gender-label">Gender</InputLabel>
+                      <Select
+                        labelId="gender-label"
+                        id="gender"
+                        name="gender"
+                        value={personalFileData.gender}
+                        onChange={handleSelectChange}
+                        label="Gender"
+                        disabled={isLoading}
+                        error={!!errors.gender}
+                      >
+                        {GenderLabels.map((gender) => (
+                          <MenuItem key={gender.value} value={gender.value}>
+                            {gender.label}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   </Box>
                   <Box sx={{ flex: '1 1 300px' }}>
                     <TextField
@@ -689,7 +721,7 @@ const UserSettingsPage = () => {
                       name="birthdate"
                       type="date"
                       value={personalFileData.birthdate}
-                      onChange={handleChange}
+                      onChange={handleSelectChange}
                       variant="outlined"
                       disabled={isLoading}
                       error={!!errors.birthdate}
@@ -705,7 +737,7 @@ const UserSettingsPage = () => {
                       label="Personal Phone"
                       name="personalPhone"
                       value={personalFileData.personalPhone}
-                      onChange={handleChange}
+                      onChange={handleSelectChange}
                       variant="outlined"
                       disabled={isLoading}
                       error={!!errors.personalPhone}
@@ -719,7 +751,7 @@ const UserSettingsPage = () => {
                       name="personalEmail"
                       type="email"
                       value={personalFileData.personalEmail}
-                      onChange={handleChange}
+                      onChange={handleSelectChange}
                       variant="outlined"
                       disabled={isLoading}
                       error={!!errors.personalEmail}
@@ -734,7 +766,7 @@ const UserSettingsPage = () => {
                       label="National ID"
                       name="nationalId"
                       value={personalFileData.nationalId}
-                      onChange={handleChange}
+                      onChange={handleSelectChange}
                       variant="outlined"
                       disabled={isLoading}
                       error={!!errors.nationalId}
@@ -742,17 +774,25 @@ const UserSettingsPage = () => {
                     />
                   </Box>
                   <Box sx={{ flex: '1 1 300px' }}>
-                    <TextField
-                      fullWidth
-                      label="Education Level"
-                      name="educationLevel"
-                      value={personalFileData.educationLevel}
-                      onChange={handleChange}
-                      variant="outlined"
-                      disabled={isLoading}
-                      error={!!errors.educationLevel}
-                      helperText={errors.educationLevel}
-                    />
+                    <FormControl fullWidth>
+                      <InputLabel id="educationLevel-label">Education Level</InputLabel>
+                      <Select
+                        labelId="educationLevel-label"
+                        id="educationLevel"
+                        name="educationLevel"
+                        value={personalFileData.educationLevel}
+                        onChange={handleSelectChange}
+                        label="Education Level"
+                        disabled={isLoading}
+                        error={!!errors.educationLevel}
+                      >
+                        {EducationLevelLabels.map((level) => (
+                          <MenuItem key={level.value} value={level.value}>
+                            {level.label}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   </Box>
                 </Box>
                 
@@ -761,30 +801,46 @@ const UserSettingsPage = () => {
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap' }}>
                   <Box sx={{ flex: '1 1 300px' }}>
-                    <TextField
-                      fullWidth
-                      label="Marital Status"
-                      name="maritalStatus"
-                      value={personalFileData.maritalStatus}
-                      onChange={handleChange}
-                      variant="outlined"
-                      disabled={isLoading}
-                      error={!!errors.maritalStatus}
-                      helperText={errors.maritalStatus}
-                    />
+                    <FormControl fullWidth>
+                      <InputLabel id="maritalStatus-label">Marital Status</InputLabel>
+                      <Select
+                        labelId="maritalStatus-label"
+                        id="maritalStatus"
+                        name="maritalStatus"
+                        value={personalFileData.maritalStatus}
+                        onChange={handleSelectChange}
+                        label="Marital Status"
+                        disabled={isLoading}
+                        error={!!errors.maritalStatus}
+                      >
+                        {MaritalStatusLabels.map((status) => (
+                          <MenuItem key={status.value} value={status.value}>
+                            {status.label}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   </Box>
                   <Box sx={{ flex: '1 1 300px' }}>
-                    <TextField
-                      fullWidth
-                      label="Blood Type"
-                      name="bloodType"
-                      value={personalFileData.bloodType}
-                      onChange={handleChange}
-                      variant="outlined"
-                      disabled={isLoading}
-                      error={!!errors.bloodType}
-                      helperText={errors.bloodType}
-                    />
+                    <FormControl fullWidth>
+                      <InputLabel id="bloodType-label">Blood Type</InputLabel>
+                      <Select
+                        labelId="bloodType-label"
+                        id="bloodType"
+                        name="bloodType"
+                        value={personalFileData.bloodType}
+                        onChange={handleSelectChange}
+                        label="Blood Type"
+                        disabled={isLoading}
+                        error={!!errors.bloodType}
+                      >
+                        {BloodTypeLabels.map((type) => (
+                          <MenuItem key={type.value} value={type.value}>
+                            {type.label}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   </Box>
                 </Box>
                 <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap' }}>
@@ -795,7 +851,7 @@ const UserSettingsPage = () => {
                       name="numberOfChildren"
                       type="number"
                       value={personalFileData.numberOfChildren}
-                      onChange={handleChange}
+                      onChange={handleSelectChange}
                       variant="outlined"
                       disabled={isLoading}
                     />
@@ -806,7 +862,7 @@ const UserSettingsPage = () => {
                       label="City"
                       name="city"
                       value={personalFileData.city}
-                      onChange={handleChange}
+                      onChange={handleSelectChange}
                       variant="outlined"
                       disabled={isLoading}
                       error={!!errors.city}
@@ -820,7 +876,7 @@ const UserSettingsPage = () => {
                     label="Address"
                     name="address"
                     value={personalFileData.address}
-                    onChange={handleChange}
+                    onChange={handleSelectChange}
                     variant="outlined"
                     disabled={isLoading}
                     error={!!errors.address}
@@ -840,7 +896,7 @@ const UserSettingsPage = () => {
                       label="IBAN"
                       name="iban"
                       value={personalFileData.iban}
-                      onChange={handleChange}
+                      onChange={handleSelectChange}
                       variant="outlined"
                       disabled={isLoading}
                       error={!!errors.iban}
@@ -853,7 +909,7 @@ const UserSettingsPage = () => {
                       label="Bank Name"
                       name="bankName"
                       value={personalFileData.bankName}
-                      onChange={handleChange}
+                      onChange={handleSelectChange}
                       variant="outlined"
                       disabled={isLoading}
                     />
@@ -866,7 +922,7 @@ const UserSettingsPage = () => {
                       label="Bank Account Number"
                       name="bankAccountNumber"
                       value={personalFileData.bankAccountNumber}
-                      onChange={handleChange}
+                      onChange={handleSelectChange}
                       variant="outlined"
                       disabled={isLoading}
                     />
@@ -877,7 +933,7 @@ const UserSettingsPage = () => {
                       label="Bank Account Type"
                       name="bankAccountType"
                       value={personalFileData.bankAccountType}
-                      onChange={handleChange}
+                      onChange={handleSelectChange}
                       variant="outlined"
                       disabled={isLoading}
                     />
