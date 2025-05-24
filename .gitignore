@@ -37,3 +37,4 @@ out/
 .vscode/
 humanresource.log
 *.gz
+*.tmp
