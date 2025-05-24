@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 
-
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
 
@@ -28,19 +27,25 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         final String requestHeaderAuthorization = request.getHeader("Authorization");
-        System.out.println("header....: "+ requestHeaderAuthorization);
+        System.out.println("header....: " + requestHeaderAuthorization);
 
-        if(Objects.nonNull(requestHeaderAuthorization) && requestHeaderAuthorization.startsWith("Bearer ")){
+        if (Objects.nonNull(requestHeaderAuthorization) && requestHeaderAuthorization.startsWith("Bearer ")) {
             String token = requestHeaderAuthorization.substring(7);
-            Optional<Long> userId =  jwtManager.validateToken(token);
-            if(userId.isPresent()){
+            Optional<Long> userId = jwtManager.validateToken(token);
+
+            if (userId.isPresent()) {
                 request.setAttribute("userId", userId.get());
                 UserDetails userDetails = jwtUserDetails.loadUserById(userId.get());
-                UsernamePasswordAuthenticationToken springToken = new
-                        UsernamePasswordAuthenticationToken(userDetails,null, userDetails.getAuthorities());
+
+                // 🔍 Buraya log ekledik
+                System.out.println("✅ userDetails.getAuthorities(): " + userDetails.getAuthorities());
+
+                UsernamePasswordAuthenticationToken springToken =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(springToken);
             }
         }
-        filterChain.doFilter(request,response);
+
+        filterChain.doFilter(request, response);
     }
 }

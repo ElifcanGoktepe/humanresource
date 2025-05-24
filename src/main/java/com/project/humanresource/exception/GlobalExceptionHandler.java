@@ -17,13 +17,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorMessage> exceptionHandler(RuntimeException exception){
-        System.out.println("Exception Beklenmeyen hata....:  " + exception);
+        System.out.println("Exception Unexpected error....:  " + exception);
         return createErrorMessage(exception,ErrorType.INTERNAL_SERVER,HttpStatus.INTERNAL_SERVER_ERROR,null);
     }
 
     @ExceptionHandler(HumanResourceException.class)
     @ResponseBody
-    public ResponseEntity<ErrorMessage> eTicaretException(HumanResourceException exception){
+    public ResponseEntity<ErrorMessage> HumanResourceException(HumanResourceException exception){
         return createErrorMessage(exception,exception.getErrorType(),exception.getErrorType().getHttpStatus(),null);
     }
 

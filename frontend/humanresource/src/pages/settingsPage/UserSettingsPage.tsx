@@ -18,6 +18,7 @@ import LockIcon from '@mui/icons-material/Lock';
 import PersonIcon from '@mui/icons-material/Person';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import './UserSettingsPage.css';
+import * as React from "react";
 
 // Backend'den çekilecek user datası için örnek type
 // Gerçek projede context veya props ile alınabilir

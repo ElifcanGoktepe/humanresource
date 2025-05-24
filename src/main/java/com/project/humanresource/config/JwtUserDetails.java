@@ -1,7 +1,9 @@
 package com.project.humanresource.config;
 
+import com.project.humanresource.entity.Employee;
 import com.project.humanresource.entity.User;
 import com.project.humanresource.entity.UserRole;
+import com.project.humanresource.service.EmployeeService;
 import com.project.humanresource.service.UserRoleService;
 import com.project.humanresource.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -22,17 +24,17 @@ public class JwtUserDetails implements UserDetailsService {
 
     private final UserService userService;
     private final UserRoleService userRoleService;
-
+    private final EmployeeService employeeService;
 
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
+        throw new UnsupportedOperationException("Username login is not supported. Use loadUserById instead.");
     }
 
     public UserDetails loadUserById(Long userId) {
-        Optional<User> user = userService.findById(userId);
-        if (user.isPresent()) {
+        Optional<Employee> user = employeeService.findById(userId);
+        if (user.isEmpty()) {
             throw new UsernameNotFoundException("User not found with ID: " + userId); // bakılacak
             //return null;
         }
@@ -44,7 +46,7 @@ public class JwtUserDetails implements UserDetailsService {
         });
 
         return org.springframework.security.core.userdetails.User.builder()
-                .username(user.get().getEmail())
+                .username(user.get().getEmailWork())
                 .password(user.get().getPassword())
                 .accountLocked(false)
                 .accountExpired(false)

@@ -17,6 +17,7 @@ public class UserRole {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Enumerated(EnumType.STRING)
     private UserStatus userStatus;
     private Long userId; // employee, company manager, site admin
 

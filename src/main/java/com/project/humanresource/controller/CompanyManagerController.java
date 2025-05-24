@@ -20,7 +20,7 @@ import java.util.Optional;
 import static com.project.humanresource.config.RestApis.ASSIGN_MANAGER;
 
 @RestController
-@CrossOrigin("*")
+@CrossOrigin("/company-manager/")
 @RequiredArgsConstructor
 @RequestMapping
 @SecurityRequirement(name = "bearerAuth")
@@ -55,36 +55,7 @@ public class CompanyManagerController {
     public ResponseEntity<String> verifyEmail(@RequestParam String token) {
         boolean result = emailVerificationService.verifyToken(token);
         return result ?
-                ResponseEntity.ok("✅ Email doğrulandı.") :
-                ResponseEntity.status(HttpStatus.BAD_REQUEST).body("❌ Geçersiz veya süresi dolmuş token.");
+                ResponseEntity.ok("✅ Email activated.") :
+                ResponseEntity.status(HttpStatus.BAD_REQUEST).body("❌ Invalid or expired token.");
     }
-
-    // şifre oluşturmak için kullanılan metot
-    @PostMapping("/api/set-password")
-    public ResponseEntity<String> setPassword(@RequestParam String token, @RequestBody String newPassword) {
-        Optional<EmailVerification> optional = emailVerificationService.findByToken(token);
-        if (optional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("❌ Token geçersiz.");
-        }
-
-        EmailVerification verification = optional.get();
-
-        if (verification.getExpiryDate().isBefore(LocalDateTime.now())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("❌ Token süresi dolmuş.");
-        }
-
-        Optional<Employee> optionalEmployee = employeeService.findById(verification.getEmployeeId());
-        if (optionalEmployee.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("❌ Kullanıcı bulunamadı.");
-        }
-
-        Employee employee = optionalEmployee.get();
-
-        // Encoder YOK — şifre direkt yazılıyor (dikkat!)
-        employee.setPassword(newPassword);
-        employeeService.save(employee);
-
-        return ResponseEntity.ok("✅ Şifre başarıyla oluşturuldu (encoder kullanılmadan).");
-    }
-
 }

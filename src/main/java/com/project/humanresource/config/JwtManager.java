@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -19,23 +20,24 @@ public class JwtManager {
     private String secretKey;
     private String issuer = "MuhammetHOCA";
     private Long expirationDate = 1000L * 60 * 60 * 5;
-    public String createToken(Long userId){
-        String token="";
-        Long now = System.currentTimeMillis(); // şuan ki zamanını long olarak değerini verir
-        Date issuerAt = new Date(now);
+    public String createToken(Long userId, List<String> roles) {
+        Long now = System.currentTimeMillis();
+        Date issuedAt = new Date(now);
         Date expiration = new Date(now + expirationDate);
-        Algorithm algorithm = Algorithm.HMAC512(secretKey); // şifreleme algoritması.
-        token = JWT.create()
+        Algorithm algorithm = Algorithm.HMAC512(secretKey);
+
+        return JWT.create()
                 .withAudience()
                 .withIssuer(issuer)
-                .withIssuedAt(issuerAt)
+                .withIssuedAt(issuedAt)
                 .withExpiresAt(expiration)
                 .withClaim("userId", userId)
-                .withClaim("humanresource", "humanresource project")
-                .withClaim("log", "date and hour "+ (new Date()))
+                .withClaim("roles", roles) // ✅ burada roles kullanılabilir çünkü parametrede var
+                .withClaim("ETicaret", "Yeni bir uygulama yazdık")
+                .withClaim("log", "date and hour " + new Date())
                 .sign(algorithm);
-        return token;
     }
+
 
 
     public Optional<Long> validateToken(String token){
