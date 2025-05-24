@@ -5,7 +5,7 @@ public class RestApis {
     private static final String DEV = "/dev";
     private static final String BASE_URL = DEV + VERSION;
 
-
+    public static final String ADMIN = "/admin";
     public static final String ADDCOMPANY = BASE_URL + "/addcompany";
     public static final String FINDCOMPANYBYNAME = BASE_URL + "/findcompanybyname";
     public static final String FINDCOMPANYBYEMAILADDRESS = BASE_URL + "/findcompanybyemailaddress";
@@ -39,6 +39,6 @@ public class RestApis {
     public static final String ADDSHIFT = "/add-shift";
     public static final String REQUESTLEAVE = "/request-login";
     public static final String REQUESTSHIFT = "/request-shift";
-    public static final String ASSIGN_MANAGER = "/assign-manager";
+    public static final String REGISTER = "/register";
     public static final String ADD_EMPLOYEE = "/add-employee";
 }

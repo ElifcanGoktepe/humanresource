@@ -7,28 +7,28 @@
     justify-content: center;
     align-items: center;
     align-content: center;
-    height: 50%;
-    width: 10%;
-    margin-top: 7%;
-    margin-left: 40%;
-
-    background: #ffffff ;
-
+    align-self: center;
+    height: 65vh;
+    width: 40vw;
 
 }
 
-.container{
+.container-registerpage{
 
     display: flex;
     flex-direction: column;
-    justify-content: start;
+    justify-content: center;
     align-items: center;
     height: 100%;
-    border: 2px solid #555555;
+    width: 40%;
+    border: 10px solid lavenderblush;
     border-radius: 50px;
-    width: 320px;
-    height: 720px;
-    background-color: #76cec2;
+    background-color: #00C4B3;
+    background-image: url("/img/logo4.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+
+
 
 
 
@@ -40,6 +40,7 @@ label.Label{
     flex-direction: column;
     font-family: "Roboto";
     font-size: 0.8rem;
+    margin-bottom: 3px;
 
 
 
@@ -48,26 +49,44 @@ label.Label{
 
 }
 
-input.E-mail.Input{
+input.Email.Input{
     border-radius: 10px;
     border: none;
+    padding: 5px;
 
 }
 
-input.Password.Input{
+input.CompanyName.Input{
+    border-radius: 10px;
+    border: none;
+    padding: 5px;
+
+}
+
+input.TitleName.Input{
+    border-radius: 10px;
+    border: none;
+    padding: 5px;
+
+}
+
+input.PhoneNumber.Input{
 
     border-radius: 10px;
     border: none;
+    padding: 5px;
 }
 
 input.Name.Input{
     border-radius: 10px;
     border: none;
+    padding: 5px;
 }
 
 input.SurName.Input{
      border-radius: 10px;
      border: none;
+    padding: 5px;
  }
 
 .input-area{
@@ -75,6 +94,7 @@ input.SurName.Input{
     flex-direction: column;
     justify-content: start;
     align-items: center;
+
 
 
 
@@ -113,6 +133,7 @@ input.SurName.Input{
     display: flex;
     flex-direction: column;
     width: 100%;
+    margin-bottom: 12px;
 
 
 }
@@ -122,6 +143,7 @@ input.SurName.Input{
     display: flex;
     flex-direction: column;
     width: 100%;
+    margin-bottom: 12px;
 
 
 }
@@ -130,15 +152,38 @@ input.SurName.Input{
     display: flex;
     flex-direction: column;
     width: 100%;
+    margin-bottom: 12px;
 
 
 }
 
-.Password-group{
+.PhoneNumber-group{
 
     display: flex;
     flex-direction: column;
     width: 100%;
+    margin-bottom: 12px;
+
+
+
+}
+
+.CompanyName-group{
+
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 12px;
+
+
+
+}
+.TitleName-group{
+
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 12px;
 
 
 
@@ -148,7 +193,7 @@ input.SurName.Input{
 .Label{
     display: flex;
     flex-direction: column;
-    padding: 5px;
+    padding: 3px;
 
 
 }
