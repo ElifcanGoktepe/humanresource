@@ -16,12 +16,14 @@ import { useNavigate } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 import LockIcon from '@mui/icons-material/Lock';
 import PersonIcon from '@mui/icons-material/Person';
+import WorkIcon from '@mui/icons-material/Work';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import './UserSettingsPage.css';
 import * as React from "react";
 
 // API Configuration - Correct port 9090
 const API_BASE_URL = 'http://localhost:9090/api/users';
+const PERSONAL_FILE_API = 'http://localhost:9090/api/personel-file';
 const CURRENT_USER_ID = 1; // This should come from authentication context
 
 type UserData = {
@@ -45,6 +47,36 @@ type FormErrors = {
   currentPassword?: string;
   newPassword?: string;
   confirmPassword?: string;
+  // Personal File errors
+  gender?: string;
+  birthdate?: string;
+  personalPhone?: string;
+  personalEmail?: string;
+  nationalId?: string;
+  educationLevel?: string;
+  maritalStatus?: string;
+  bloodType?: string;
+  address?: string;
+  city?: string;
+  iban?: string;
+};
+
+type PersonalFileData = {
+  gender: string;
+  birthdate: string;
+  personalPhone: string;
+  personalEmail: string;
+  nationalId: string;
+  educationLevel: string;
+  maritalStatus: string;
+  bloodType: string;
+  numberOfChildren: string;
+  address: string;
+  city: string;
+  iban: string;
+  bankName: string;
+  bankAccountNumber: string;
+  bankAccountType: string;
 };
 
 const UserSettingsPage = () => {
@@ -61,6 +93,23 @@ const UserSettingsPage = () => {
     newPassword: '',
     confirmPassword: ''
   });
+  const [personalFileData, setPersonalFileData] = useState<PersonalFileData>({
+    gender: '',
+    birthdate: '',
+    personalPhone: '',
+    personalEmail: '',
+    nationalId: '',
+    educationLevel: '',
+    maritalStatus: '',
+    bloodType: '',
+    numberOfChildren: '',
+    address: '',
+    city: '',
+    iban: '',
+    bankName: '',
+    bankAccountNumber: '',
+    bankAccountType: ''
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<{text: string; type: 'success' | 'error'} | null>(null);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -71,6 +120,7 @@ const UserSettingsPage = () => {
   // Load user profile on component mount
   useEffect(() => {
     fetchUserProfile();
+    fetchPersonalFile();
   }, []);
 
   useEffect(() => {
@@ -102,6 +152,36 @@ const UserSettingsPage = () => {
     }
   };
 
+  // API call to fetch personal file
+  const fetchPersonalFile = async () => {
+    try {
+      const response = await fetch(`${PERSONAL_FILE_API}/me`);
+      const result = await response.json();
+      
+      if (result.code === 200 && result.data) {
+        setPersonalFileData({
+          gender: result.data.gender || '',
+          birthdate: result.data.birthdate || '',
+          personalPhone: result.data.personalPhone || '',
+          personalEmail: result.data.personalEmail || '',
+          nationalId: result.data.nationalId || '',
+          educationLevel: result.data.educationLevel || '',
+          maritalStatus: result.data.maritalStatus || '',
+          bloodType: result.data.bloodType || '',
+          numberOfChildren: result.data.numberOfChildren || '',
+          address: result.data.address || '',
+          city: result.data.city || '',
+          iban: result.data.iban || '',
+          bankName: result.data.bankName || '',
+          bankAccountNumber: result.data.bankAccountNumber || '',
+          bankAccountType: result.data.bankAccountType || ''
+        });
+      }
+    } catch (error) {
+      console.error('Error loading personal file:', error);
+    }
+  };
+
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
     setMessage(null);
@@ -125,6 +205,11 @@ const UserSettingsPage = () => {
       }
     } else if (name === 'currentPassword' || name === 'newPassword' || name === 'confirmPassword') {
       setPasswordData(prev => ({ ...prev, [name]: value }));
+    } else if (name === 'gender' || name === 'birthdate' || name === 'personalPhone' || name === 'personalEmail' || 
+               name === 'nationalId' || name === 'educationLevel' || name === 'maritalStatus' || name === 'bloodType' ||
+               name === 'numberOfChildren' || name === 'address' || name === 'city' || name === 'iban' || 
+               name === 'bankName' || name === 'bankAccountNumber' || name === 'bankAccountType') {
+      setPersonalFileData(prev => ({ ...prev, [name]: value }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
@@ -258,6 +343,35 @@ const UserSettingsPage = () => {
     }
   };
 
+  const handlePersonalFileSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    setIsLoading(true);
+    setMessage(null);
+    
+    try {
+      const response = await fetch(`${PERSONAL_FILE_API}/save`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(personalFileData),
+      });
+      
+      const result = await response.json();
+      
+      if (result.code === 200) {
+        setMessage({ text: 'Personal file updated successfully!', type: 'success' });
+      } else {
+        setMessage({ text: result.message || 'Failed to update personal file', type: 'error' });
+      }
+    } catch (error) {
+      setMessage({ text: 'Error updating personal file', type: 'error' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -360,6 +474,7 @@ const UserSettingsPage = () => {
             >
               <Tab icon={<PersonIcon />} label="Profile" />
               <Tab icon={<LockIcon />} label="Password" />
+              <Tab icon={<WorkIcon />} label="Personal File" />
             </Tabs>
             {activeTab === 0 && (
               <Box 
@@ -538,6 +653,259 @@ const UserSettingsPage = () => {
                     }}
                   >
                     Change Password
+                  </Button>
+                </Box>
+              </Box>
+            )}
+            
+            {activeTab === 2 && (
+              <Box 
+                component="form" 
+                onSubmit={handlePersonalFileSubmit} 
+                className="settings-form" 
+                sx={{ width: '100%' }}
+              >
+                <Typography variant="h6" sx={{ mb: 3, color: '#00796B' }}>
+                  Personal Information
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap' }}>
+                  <Box sx={{ flex: '1 1 300px' }}>
+                    <TextField
+                      fullWidth
+                      label="Gender"
+                      name="gender"
+                      value={personalFileData.gender}
+                      onChange={handleChange}
+                      variant="outlined"
+                      disabled={isLoading}
+                      error={!!errors.gender}
+                      helperText={errors.gender}
+                    />
+                  </Box>
+                  <Box sx={{ flex: '1 1 300px' }}>
+                    <TextField
+                      fullWidth
+                      label="Birth Date"
+                      name="birthdate"
+                      type="date"
+                      value={personalFileData.birthdate}
+                      onChange={handleChange}
+                      variant="outlined"
+                      disabled={isLoading}
+                      error={!!errors.birthdate}
+                      helperText={errors.birthdate}
+                      InputLabelProps={{ shrink: true }}
+                    />
+                  </Box>
+                </Box>
+                <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap' }}>
+                  <Box sx={{ flex: '1 1 300px' }}>
+                    <TextField
+                      fullWidth
+                      label="Personal Phone"
+                      name="personalPhone"
+                      value={personalFileData.personalPhone}
+                      onChange={handleChange}
+                      variant="outlined"
+                      disabled={isLoading}
+                      error={!!errors.personalPhone}
+                      helperText={errors.personalPhone}
+                    />
+                  </Box>
+                  <Box sx={{ flex: '1 1 300px' }}>
+                    <TextField
+                      fullWidth
+                      label="Personal Email"
+                      name="personalEmail"
+                      type="email"
+                      value={personalFileData.personalEmail}
+                      onChange={handleChange}
+                      variant="outlined"
+                      disabled={isLoading}
+                      error={!!errors.personalEmail}
+                      helperText={errors.personalEmail}
+                    />
+                  </Box>
+                </Box>
+                <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap' }}>
+                  <Box sx={{ flex: '1 1 300px' }}>
+                    <TextField
+                      fullWidth
+                      label="National ID"
+                      name="nationalId"
+                      value={personalFileData.nationalId}
+                      onChange={handleChange}
+                      variant="outlined"
+                      disabled={isLoading}
+                      error={!!errors.nationalId}
+                      helperText={errors.nationalId}
+                    />
+                  </Box>
+                  <Box sx={{ flex: '1 1 300px' }}>
+                    <TextField
+                      fullWidth
+                      label="Education Level"
+                      name="educationLevel"
+                      value={personalFileData.educationLevel}
+                      onChange={handleChange}
+                      variant="outlined"
+                      disabled={isLoading}
+                      error={!!errors.educationLevel}
+                      helperText={errors.educationLevel}
+                    />
+                  </Box>
+                </Box>
+                
+                <Typography variant="h6" sx={{ mb: 3, color: '#00796B' }}>
+                  Family & Health Information
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap' }}>
+                  <Box sx={{ flex: '1 1 300px' }}>
+                    <TextField
+                      fullWidth
+                      label="Marital Status"
+                      name="maritalStatus"
+                      value={personalFileData.maritalStatus}
+                      onChange={handleChange}
+                      variant="outlined"
+                      disabled={isLoading}
+                      error={!!errors.maritalStatus}
+                      helperText={errors.maritalStatus}
+                    />
+                  </Box>
+                  <Box sx={{ flex: '1 1 300px' }}>
+                    <TextField
+                      fullWidth
+                      label="Blood Type"
+                      name="bloodType"
+                      value={personalFileData.bloodType}
+                      onChange={handleChange}
+                      variant="outlined"
+                      disabled={isLoading}
+                      error={!!errors.bloodType}
+                      helperText={errors.bloodType}
+                    />
+                  </Box>
+                </Box>
+                <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap' }}>
+                  <Box sx={{ flex: '1 1 300px' }}>
+                    <TextField
+                      fullWidth
+                      label="Number of Children"
+                      name="numberOfChildren"
+                      type="number"
+                      value={personalFileData.numberOfChildren}
+                      onChange={handleChange}
+                      variant="outlined"
+                      disabled={isLoading}
+                    />
+                  </Box>
+                  <Box sx={{ flex: '1 1 300px' }}>
+                    <TextField
+                      fullWidth
+                      label="City"
+                      name="city"
+                      value={personalFileData.city}
+                      onChange={handleChange}
+                      variant="outlined"
+                      disabled={isLoading}
+                      error={!!errors.city}
+                      helperText={errors.city}
+                    />
+                  </Box>
+                </Box>
+                <Box sx={{ mb: 3 }}>
+                  <TextField
+                    fullWidth
+                    label="Address"
+                    name="address"
+                    value={personalFileData.address}
+                    onChange={handleChange}
+                    variant="outlined"
+                    disabled={isLoading}
+                    error={!!errors.address}
+                    helperText={errors.address}
+                    multiline
+                    rows={3}
+                  />
+                </Box>
+                
+                <Typography variant="h6" sx={{ mb: 3, color: '#00796B' }}>
+                  Banking Information
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap' }}>
+                  <Box sx={{ flex: '1 1 300px' }}>
+                    <TextField
+                      fullWidth
+                      label="IBAN"
+                      name="iban"
+                      value={personalFileData.iban}
+                      onChange={handleChange}
+                      variant="outlined"
+                      disabled={isLoading}
+                      error={!!errors.iban}
+                      helperText={errors.iban}
+                    />
+                  </Box>
+                  <Box sx={{ flex: '1 1 300px' }}>
+                    <TextField
+                      fullWidth
+                      label="Bank Name"
+                      name="bankName"
+                      value={personalFileData.bankName}
+                      onChange={handleChange}
+                      variant="outlined"
+                      disabled={isLoading}
+                    />
+                  </Box>
+                </Box>
+                <Box sx={{ display: 'flex', gap: 3, mb: 4, flexWrap: 'wrap' }}>
+                  <Box sx={{ flex: '1 1 300px' }}>
+                    <TextField
+                      fullWidth
+                      label="Bank Account Number"
+                      name="bankAccountNumber"
+                      value={personalFileData.bankAccountNumber}
+                      onChange={handleChange}
+                      variant="outlined"
+                      disabled={isLoading}
+                    />
+                  </Box>
+                  <Box sx={{ flex: '1 1 300px' }}>
+                    <TextField
+                      fullWidth
+                      label="Bank Account Type"
+                      name="bankAccountType"
+                      value={personalFileData.bankAccountType}
+                      onChange={handleChange}
+                      variant="outlined"
+                      disabled={isLoading}
+                    />
+                  </Box>
+                </Box>
+                
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    disabled={isLoading}
+                    sx={{
+                      backgroundColor: '#00796B',
+                      px: 4,
+                      py: 1.5,
+                      borderRadius: 2,
+                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        backgroundColor: '#00695C',
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)'
+                      }
+                    }}
+                  >
+                    Save Personal File
                   </Button>
                 </Box>
               </Box>

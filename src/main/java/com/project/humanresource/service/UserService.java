@@ -34,7 +34,7 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-    public User createUser(@Valid AddUserRequestDto dto) {
+    public Employee createUser(@Valid AddUserRequestDto dto) {
 
         Long managerId = (Long) request.getAttribute("userId");
 
@@ -50,7 +50,7 @@ public class UserService {
                 .managerId(managerId)
                 .build();
 
-        return userRepository.save(employee);
+        return employeeRepository.save(employee);
     }
 
     public Optional<User> findByEmailWorkPassword(@Valid LoginRequestDto dto) {
@@ -100,6 +100,9 @@ public class UserService {
         Employee employee = employeeRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Employee not found with id: " + userId));
         
+        // TODO: CRITICAL SECURITY ISSUE - Passwords should be hashed with BCrypt or similar
+        // Current implementation stores passwords in plain text which is a major security vulnerability
+        
         // Validate current password
         if (!employee.getPassword().equals(dto.currentPassword())) {
             throw new RuntimeException("Current password is incorrect");
@@ -110,6 +113,7 @@ public class UserService {
             throw new RuntimeException("New password and confirmation do not match");
         }
         
+        // TODO: Hash the new password before saving
         employee.setPassword(dto.newPassword());
         employeeRepository.save(employee);
         
