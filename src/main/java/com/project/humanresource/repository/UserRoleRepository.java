@@ -1,5 +1,6 @@
 package com.project.humanresource.repository;
 
+import com.project.humanresource.entity.User;
 import com.project.humanresource.entity.UserRole;
 import com.project.humanresource.utility.UserStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,4 +14,8 @@ public interface UserRoleRepository extends JpaRepository<UserRole, Long> {
 
     List<UserRole> findByUserId(Long userId);
 
-} 
+    boolean existsByUserIdAndUserStatus(Long userId, UserStatus userStatus);
+
+
+    void deleteByUserId(Long id);
+}
