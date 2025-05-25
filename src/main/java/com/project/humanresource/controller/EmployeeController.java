@@ -28,24 +28,7 @@ public class EmployeeController {
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
 
-//    @PreAuthorize("hasAuthority('Manager')")
-    @PostMapping("/add")
-    public ResponseEntity<BaseResponseShort<Boolean>> addEmployee (@RequestBody @Valid AddEmployeeRequestDto dto){
 
-        // Login olan kullanıcının email bilgisi JWT'den alınır (SecurityContext üzerinden)
-        String currentEmail= SecurityContextHolder.getContext().getAuthentication().getName();
-
-        User user=userRepository.findByEmail(currentEmail).orElseThrow(()->new RuntimeException("Kullanıcı bulunamadı"));
-
-        Company company=companyRepository.findByEmployerId(user.getId()).orElseThrow(()-> new RuntimeException("Şirket bulunamadı"));
-
-        employeeService.addEmployee(dto,company.getId());
-        return ResponseEntity.ok(BaseResponseShort.<Boolean>builder()
-                .code(200)
-                .data(true)
-                .message("Employee added successfully.")
-                .build());
-    }
     @PutMapping("/activate/{employeeId}")
     public ResponseEntity<BaseResponseShort<Boolean>> activateEmployee(@PathVariable Long employeeId){
         employeeService.setEmployeeActiveStatus(employeeId,true);
