@@ -29,34 +29,34 @@ public class EmployeeController {
     private final CompanyRepository companyRepository;
 
 
-    @PutMapping("/activate/{employeeId}")
-    public ResponseEntity<BaseResponseShort<Boolean>> activateEmployee(@PathVariable Long employeeId){
-        employeeService.setEmployeeActiveStatus(employeeId,true);
-        return ResponseEntity.ok(BaseResponseShort.<Boolean>builder()
-                        .code(200)
-                        .message("Employee is activated.")
-                        .data(true)
-                .build());
-    }
-    @PutMapping("/deactive/{employeeId}")
-    public ResponseEntity<BaseResponseShort<Boolean>> deactivaEmployee(@PathVariable Long employeeId){
-        employeeService.setEmployeeActiveStatus(employeeId,false);
-        return ResponseEntity.ok(BaseResponseShort.<Boolean>builder()
-                        .code(200)
-                        .message("Employee is deactivated.")
-                        .data(true)
-                .build());
-    }
+//    @PutMapping("/activate/{employeeId}")
+//    public ResponseEntity<BaseResponseShort<Boolean>> activateEmployee(@PathVariable Long employeeId){
+//        employeeService.setEmployeeActiveStatus(employeeId,true);
+//        return ResponseEntity.ok(BaseResponseShort.<Boolean>builder()
+//                        .code(200)
+//                        .message("Employee is activated.")
+//                        .data(true)
+//                .build());
+//    }
+//    @PutMapping("/deactive/{employeeId}")
+//    public ResponseEntity<BaseResponseShort<Boolean>> deactivaEmployee(@PathVariable Long employeeId){
+//        employeeService.setEmployeeActiveStatus(employeeId,false);
+//        return ResponseEntity.ok(BaseResponseShort.<Boolean>builder()
+//                        .code(200)
+//                        .message("Employee is deactivated.")
+//                        .data(true)
+//                .build());
+//    }
 
-    @DeleteMapping("/{employeeId}/delete")
-    public ResponseEntity<BaseResponseShort<Boolean>> deleteEmployee(@PathVariable Long employeeId){
-        employeeService.deleteEmployeeCompletely(employeeId);
-        return ResponseEntity.ok(BaseResponseShort.<Boolean>builder()
-                        .code(200)
-                        .message("Employee deleted successfully.")
-                        .data(true)
-                .build());
-    }
+//    @DeleteMapping("/{employeeId}/delete")
+//    public ResponseEntity<BaseResponseShort<Boolean>> deleteEmployee(@PathVariable Long employeeId){
+//        employeeService.deleteEmployeeCompletely(employeeId);
+//        return ResponseEntity.ok(BaseResponseShort.<Boolean>builder()
+//                        .code(200)
+//                        .message("Employee deleted successfully.")
+//                        .data(true)
+//                .build());
+//    }
 
 
 

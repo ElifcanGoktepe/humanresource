@@ -29,5 +29,5 @@ public interface CompanyRepository extends JpaRepository <Company , Long> {
 
     boolean existsByCompanyPhoneNumber(String companyPhoneNumber);
 
-    Optional<Company> findByEmployerId(Long id);
+//    Optional<Company> findByEmployerId(Long id);
 }
