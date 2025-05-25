@@ -10,10 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static com.project.humanresource.config.RestApis.ADDDEPARTMENT;
+import static com.project.humanresource.config.RestApis.ADMIN;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping()
+@RequestMapping(ADMIN)
 @CrossOrigin("*")
 public class DepartmentController {
 

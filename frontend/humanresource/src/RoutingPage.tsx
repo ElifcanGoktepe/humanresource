@@ -6,8 +6,8 @@ import ManagerPage from "./pages/ManagerPage/ManagerPage.tsx";
 import AdminPage from "./pages/AdminPage/AdninPage.tsx";
 import UserSettingsPage from "./pages/settingsPage/UserSettingsPage";
 import EmployeePage from "./pages/EmployeePage/EmployeePage.tsx";
-import CreatePassword from "./components/atoms/CreatePassword.tsx";
-import ManagerLoginPage from "./pages/loginPage/ManagerLoginPage.tsx";
+import CreatePasswordPage from "./pages/CreatePasswordPage/CreatePasswordPage.tsx";
+
 
 
 function RoutingPage() {
@@ -15,14 +15,15 @@ function RoutingPage() {
         <BrowserRouter>
             <Routes>
                 <Route path='/' element={<HomePage />}/>
+                <Route path='/admin' element={<AdminPage />}/>
                 <Route path='/login' element={<LoginPage />}/>
                 <Route path='/register' element={<RegisterPage />}/>
+                <Route path='/create-password' element={<CreatePasswordPage />}/>
                 <Route path='/manager' element={<ManagerPage />}/>
-                <Route path='/admin' element={<AdminPage />}/>
                 <Route path='/settings' element={<UserSettingsPage />}/>
                 <Route path='/employee' element={<EmployeePage />}/>
-                <Route path="/create-password" element={<CreatePassword />} />
-                <Route path="/manager-login" element={<ManagerLoginPage />} />
+                <Route path="/create-password" element={<CreatePasswordPage />} />
+                <Route path="/manager-login" element={<LoginPage />} />
             </Routes>
         </BrowserRouter>
     )

@@ -17,7 +17,7 @@ import static com.project.humanresource.config.RestApis.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping()
+@RequestMapping(ADMIN)
 @CrossOrigin("*")
 public class CompanyBranchController {
     private final CompanyBranchService companyBranchService;
