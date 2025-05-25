@@ -62,90 +62,44 @@ public class EmployeeService {
 
     }
 
-//    public void setEmployeeActiveStatus (Long employeeId, boolean isActive) {
-//        String email=SecurityContextHolder.getContext().getAuthentication().getName();
-//        User user=userRepository.findByEmail(email)
-//                .orElseThrow(()->new HumanResourceException(ErrorType.USER_NOT_FOUND));
-//
-//        if (!userRoleService.hasRole(user.getId(),UserStatus.Manager)) {
-//            throw new HumanResourceException(ErrorType.UNAUTHORIZED);
-//        }
-//
-//
-//
-//        Company company=companyRepository.findByEmployerId(user.getId())
-//                .orElseThrow(()->new HumanResourceException(ErrorType.COMPANY_NOT_FOUND));
-//
-//        Employee employee=employeeRepository.findById(employeeId)
-//                .orElseThrow(()->new HumanResourceException(ErrorType.EMPLOYEE_NOT_FOUND));
-//
-//        if(!employee.getCompanyId().equals(company.getId())){
-//            throw new HumanResourceException(ErrorType.UNAUTHORIZED);
-//        }
-//        employee.setActive(isActive);
-//        employeeRepository.save(employee);
-//    }
-//
-//    public void deleteEmployeeCompletely(Long employeeId) {
-//        String email=SecurityContextHolder.getContext().getAuthentication().getName();
-//
-//        User user=userRepository.findByEmail(email)
-//                .orElseThrow(()->new HumanResourceException(ErrorType.USER_NOT_FOUND));
-//        if (!userRoleService.hasRole(user.getId(),UserStatus.Manager)) {
-//            throw new HumanResourceException(ErrorType.UNAUTHORIZED);
-//        }
-//        Company company=companyRepository.findByEmployerId(user.getId())
-//                .orElseThrow(()->new HumanResourceException(ErrorType.COMPANY_NOT_FOUND));
-//
-//        Employee employee=employeeRepository.findById(employeeId)
-//                .orElseThrow(()->new HumanResourceException(ErrorType.EMPLOYEE_NOT_FOUND));
-//
-//        if(!employee.getCompanyId().equals(company.getId())){
-//            throw new HumanResourceException(ErrorType.UNAUTHORIZED);
-//        }
-//
-//        // 1. personelin özlük dosyasını sil
-//        Optional.ofNullable(employee.getPersonalFiledId())
-//                .flatMap(personelFileRepository::findById)
-//                .ifPresent(personelFileRepository::delete);
-//
-//        userRoleRepository.deleteByUserId(employee.getId());
-//
-//        userRepository.deleteById(user.getId());
-//
-//        employeeRepository.deleteById(employeeId);
-//
-//
-//    }
+    public void setEmployeeActiveStatus (Long employeeId, boolean isActive) {
+        Employee employee=employeeRepository.findById(employeeId)
+                .orElseThrow(()->new HumanResourceException(ErrorType.EMPLOYEE_NOT_FOUND));
 
-//    public void deleteEmployee (Long employeeId) {
-//        String email=SecurityContextHolder.getContext().getAuthentication().getName();
-//        User user=userRepository.findByEmail(email)
-//                .orElseThrow(()->new HumanResourceException(ErrorType.USER_NOT_FOUND));
-//        UserRole userRole= (UserRole) userRoleService.findAllRole(user.getId());
+
+        employee.setActive(isActive);
+        employeeRepository.save(employee);
+    }
 //
-//        if (!userRole.getUserStatus().equals(UserStatus.Manager)){
-//            throw new HumanResourceException(ErrorType.UNAUTHORIZED);
-//        }
-//        Company company=companyRepository.findByEmployerId(user.getId())
-//                .orElseThrow(()->new HumanResourceException(ErrorType.COMPANY_NOT_FOUND));
+    public void deleteEmployeeCompletely(Long employeeId) {
+        String email=SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user=userRepository.findByEmail(email)
+                .orElseThrow(()->new HumanResourceException(ErrorType.USER_NOT_FOUND));
+
+
+
+        Employee employee=employeeRepository.findById(employeeId)
+                .orElseThrow(()->new HumanResourceException(ErrorType.EMPLOYEE_NOT_FOUND));
+
+
+
+        // 1. personelin özlük dosyasını sil
+        Optional.ofNullable(employee.getPersonalFiledId())
+                .flatMap(personelFileRepository::findById)
+                .ifPresent(personelFileRepository::delete);
+
+        userRoleRepository.deleteByUserId(employee.getId());
+
+        userRepository.findById(employee.getId())
+                .ifPresent(us -> userRepository.deleteById(user.getId()));
+
+        employeeRepository.deleteById(employeeId);
+
+
+    }
+
 //
-//        Employee employee=employeeRepository.findById(employeeId)
-//                .orElseThrow(()->new HumanResourceException(ErrorType.EMPLOYEE_NOT_FOUND));
-//
-//        if(!employee.getCompanyId().equals(company.getId())){
-//            throw new HumanResourceException(ErrorType.UNAUTHORIZED);
-//        }
-//
-//        if (employee.getPersonalFiledId()!=null){
-//            personelFileRepository.findById(employee.getPersonalFiledId())
-//                    .ifPresent(personelFileRepository::delete);
-//        }
-//
-//        if (employee.){
-//            employeeRepository.
-//        }
-//    }
 
 
 

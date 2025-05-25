@@ -1,4 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 #root{
+
+
     display: block;
 
     height: 100vh;
