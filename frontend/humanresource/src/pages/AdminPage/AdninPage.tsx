@@ -4,7 +4,7 @@ import BranchArea from "../../components/molecules/BranchArea.tsx";
 import DepartmentArea   from "../../components/molecules/DepartmentArea..tsx";
 import './AdminPage.css';
 import { useState } from 'react';
-import ManagerArea from "../../components/molecules/ManagerArea.tsx";
+import Applications from "../../components/molecules/Applications.tsx";
 
 
 function AdminPage() {
@@ -17,8 +17,8 @@ function AdminPage() {
 
     const renderContent = () => {
         switch (selectedContent) {
-            case 'ManagerApproval':
-                return  <ManagerArea/>
+            case 'Applications':
+                return  <Applications/>
             case 'CompanyArea':
                 return <CompanyArea />;
             case 'BranchArea':
@@ -32,31 +32,31 @@ function AdminPage() {
 
     return (
         <div className="row">
-            <div className="col-2 fixed-side-bar">
+            <div className="col-2 adminpage fixed-side-bar ">
                 <div className="fixed-bar-image">
                     <img className="logo-left-menu" src="/img/logo1.png" alt="logo" />
                 </div>
                 <hr/>
                 <div className="fixed-bar-button-container">
-                    <button className="fixed-bar-buttons" onClick={() => setSelectedContent('ManagerArea')}>
+                    <button className="fixed-bar-buttons" onClick={() => setSelectedContent('Applications')}>
                         <img className="small-image-fixed-bar" src="/img/list-task.svg" />
-                        Register Manager
+                        Applications
                     </button>
                     <button className="fixed-bar-buttons" onClick={() => setSelectedContent('CompanyArea')}>
                         <img className="small-image-fixed-bar" src="/img/list-task.svg" />
-                        Company Area
+                        Companies
                     </button>
                     <button className="fixed-bar-buttons" onClick={() => setSelectedContent('BranchArea')}>
                         <img className="small-image-fixed-bar" src="/img/list-task.svg" />
-                        Branch Area
+                        Branches
                     </button>
                     <button className="fixed-bar-buttons" onClick={() => setSelectedContent('DepartmentArea')}>
                         <img className="small-image-fixed-bar" src="/img/list-task.svg" />
-                        Department Area
+                        Departments
                     </button>
                 </div>
 
-                <div className="bottom-bar">
+                <div className="bottombar-adminpage-fixedsidebar">
                     <hr />
                     <button className="fixed-bar-buttons">
                         <img className="small-image-fixed-bar" src="/img/profileicon.png" />
@@ -73,14 +73,14 @@ function AdminPage() {
                 </div>
             </div>
 
-            <div className="col-10">
-                <div className="manager-page-header">
-                    <h2>Hello!</h2>
-                    <h3>Today's Date: {dateString}, {dayName}</h3>
+            <div className="col-10 adminpage fixed-body-area">
+                <div className="adminpage-pageheader">
+                    <h3>Hello!</h3>
+                    <h4>Today's Date: {dateString}, {dayName}</h4>
                     <hr/>
                 </div>
 
-                <div className="admin-page-content">
+                <div className="adminpage-content fixed-body-area">
                     {renderContent()}
                 </div>
             </div>

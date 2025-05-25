@@ -1,8 +1,8 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './ManagerArea.css'
+import './Applications.css'
 
 
-function ManagerArea(){
+function Applications(){
     return(
         <div>
 
@@ -10,4 +10,4 @@ function ManagerArea(){
 
     )
 }
-export default ManagerArea;
+export default Applications;
