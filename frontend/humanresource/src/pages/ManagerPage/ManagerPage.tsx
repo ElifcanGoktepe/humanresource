@@ -23,7 +23,7 @@ function ManagerPage() {
     const dayName = days[dayIndex];
     const dateString = today.toLocaleDateString("en-US");
 
-    const [showModal, setShowModal] = useState(false);
+
     const [employeeList, setEmployeeList] = useState<string[]>([]);
     const [managerFirstName, setManagerFirstName] = useState("");
     const [managerLastName, setManagerLastName] = useState("");
