@@ -2,8 +2,11 @@ package com.project.humanresource.controller;
 
 import com.project.humanresource.config.JwtManager;
 import com.project.humanresource.dto.request.AddUserRequestDto;
+import com.project.humanresource.dto.request.ChangePasswordRequestDto;
 import com.project.humanresource.dto.request.LoginRequestDto;
+import com.project.humanresource.dto.request.UpdateUserProfileRequestDto;
 import com.project.humanresource.dto.response.BaseResponseShort;
+import com.project.humanresource.dto.response.UserProfileResponseDto;
 import com.project.humanresource.entity.User;
 import com.project.humanresource.entity.UserRole;
 import com.project.humanresource.exception.ErrorType;
@@ -42,6 +45,7 @@ public class UserController {
                         .message("User created successfully.")
                 .build());
     }
+
     @PostMapping(LOGIN)
     public ResponseEntity<BaseResponseShort<String>> login(@RequestBody @Valid LoginRequestDto dto){
         Optional<User> optionalUser = userService.findByEmailWorkPassword(dto);
@@ -72,5 +76,45 @@ public class UserController {
             return ResponseEntity.ok(new BaseResponse<>(false, "User not found", null));
         }
         return ResponseEntity.ok(new BaseResponse<>(true, "User found", user));
+    }
+
+    // ========== USER SETTINGS ENDPOINTS ==========
+
+    @GetMapping("/{userId}/profile")
+    public ResponseEntity<BaseResponse<UserProfileResponseDto>> getUserProfile(@PathVariable Long userId) {
+        try {
+            UserProfileResponseDto profile = userService.getUserProfile(userId);
+            return ResponseEntity.ok(new BaseResponse<>(true, "Profile retrieved successfully", profile));
+        } catch (RuntimeException e) {
+            return ResponseEntity.ok(new BaseResponse<>(false, e.getMessage(), null));
+        }
+    }
+
+    @PutMapping("/{userId}/profile")
+    public ResponseEntity<BaseResponse<UserProfileResponseDto>> updateUserProfile(
+            @PathVariable Long userId, 
+            @Valid @RequestBody UpdateUserProfileRequestDto dto) {
+        try {
+            UserProfileResponseDto updatedProfile = userService.updateUserProfile(userId, dto);
+            return ResponseEntity.ok(new BaseResponse<>(true, "Profile updated successfully", updatedProfile));
+        } catch (RuntimeException e) {
+            return ResponseEntity.ok(new BaseResponse<>(false, e.getMessage(), null));
+        }
+    }
+
+    @PutMapping("/{userId}/password")
+    public ResponseEntity<BaseResponse<String>> changePassword(
+            @PathVariable Long userId, 
+            @Valid @RequestBody ChangePasswordRequestDto dto) {
+        try {
+            boolean success = userService.changePassword(userId, dto);
+            if (success) {
+                return ResponseEntity.ok(new BaseResponse<>(true, "Password changed successfully", null));
+            } else {
+                return ResponseEntity.ok(new BaseResponse<>(false, "Failed to change password", null));
+            }
+        } catch (RuntimeException e) {
+            return ResponseEntity.ok(new BaseResponse<>(false, e.getMessage(), null));
+        }
     }
 } 

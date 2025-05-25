@@ -33,11 +33,25 @@ public class SecurityConfig {
                         .requestMatchers("/assign-manager").permitAll()
                         .requestMatchers("/api/users/login").permitAll()
                         .requestMatchers("/dev/v1/shift","/dev/v1/employee","/dev/v1/user",
-                                "/api/users/create_user", "/api/users/login", "/api/users/by-email", "/api/user-roles", "/api/user-roles/by-email",
-                                "/api/assignments", "/api/assignments/**",
-                                "/swagger-ui/**","/v3/api-docs/**",
-                                "/api/auth/**","/api/public/**",
-                                "/admin/dev/v1/addcompany","/dev/v1/listallcompany","/dev/v1/findcompanybyphonenumber","/dev/v1/findcompanybyname","/dev/v1/findcompanybyemailaddress","/dev/v1/deletecompanybyid/{id}"
+                                "/api/users/create_user", 
+                                "/api/users/login", 
+                                "/api/users/by-email", 
+                                "/api/user-roles", 
+                                "/api/user-roles/by-email",
+                                "/api/users/*/profile", 
+                                "/api/users/*/password",
+                                "/api/assignments", 
+                                "/api/assignments/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/api/auth/**",
+                                "/api/public/**",
+                                "/admin/dev/v1/addcompany",
+                                "/dev/v1/listallcompany",
+                                "/dev/v1/findcompanybyphonenumber",
+                                "/dev/v1/findcompanybyname",
+                                "/dev/v1/findcompanybyemailaddress",
+                                "/dev/v1/deletecompanybyid/{id}"
                         ).permitAll()
                         .requestMatchers("/admin/**").hasAuthority("Admin")
                         .requestMatchers("/add-employee").hasAuthority("Manager")
@@ -49,18 +63,18 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .userDetailsService(jwtUserDetails)
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class).build();
-
     }
+    
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:5173"); // frontend portu
+        configuration.addAllowedOrigin("http://localhost:5173");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
-        configuration.setAllowCredentials(true); // Token vb. için
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-}
+} 
