@@ -54,4 +54,15 @@ public class JwtManager {
         }
     }
 
+    public Optional<DecodedJWT> decodeToken(String token) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC512(secretKey);
+            JWTVerifier verifier = JWT.require(algorithm).build();
+            return Optional.of(verifier.verify(token));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+
 }

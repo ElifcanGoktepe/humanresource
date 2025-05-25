@@ -1,5 +1,6 @@
 package com.project.humanresource.entity;
 
+import com.project.humanresource.utility.UserStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,8 @@ public class Employee extends User {
     Long titleId;
     Long personalFiledId;
     Long managerId;
+
     boolean isApproved = false; // Site admin onayı
     boolean isActivated = false; // Email doğrulaması
+
 }

@@ -34,7 +34,7 @@ public class UserRoleService {
         return userRoleRepository.save(userRole);
     }
 
-    public boolean hasRole(Long userId,UserStatus userStatus) {
-        return userRoleRepository.existsByUserIdAndUserStatus(userId, userStatus);
+    public void save(UserStatus userStatus, Long id) {
+
     }
 }

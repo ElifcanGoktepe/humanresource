@@ -49,7 +49,7 @@ function CreatePasswordPage(){
 
 
         return (
-        <div className="loginPage" >
+        <div className="loginPage-createpassword" >
 
 
             <div className="container-createpasswordpage" >

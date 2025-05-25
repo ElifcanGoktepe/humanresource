@@ -1,11 +1,9 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './LoginPage.css'
-import {useState} from "react";
-import {useNavigate} from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-
-
-function LoginPage(){
+function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
@@ -30,14 +28,19 @@ function LoginPage(){
 
             localStorage.setItem("token", token);
 
-            // 🎯 TOKEN'dan payload çıkar ve yönlendir
+            // 🎯 TOKEN'dan payload çıkar ve roles güvenli şekilde kontrol et
             const payload = JSON.parse(atob(token.split('.')[1]));
+            let roles = payload.roles || [];
 
-            if (payload.roles.includes("Manager")) {
+            if (typeof roles === "string") {
+                roles = [roles];
+            }
+
+            if (roles.includes("Manager")) {
                 navigate("/manager");
-            } else if (payload.roles.includes("Employee")) {
+            } else if (roles.includes("Employee")) {
                 navigate("/employee");
-            } else if (payload.roles.includes("Admin")) {
+            } else if (roles.includes("Admin")) {
                 navigate("/admin");
             } else {
                 alert("Yetkisiz rol.");
@@ -49,14 +52,13 @@ function LoginPage(){
     };
 
     return (
-        <div className="loginPage">
-            <div className="container-loginpage">
-                <div className="input-area">
-                    <form className="login-form" onSubmit={handleLogin}>
-                        <div className="logol">
-                            <img src="/img/logo.png" alt="logo" width="200px" />
-                        </div>
-                        <div className="E-mail-group">
+        <div className="loginPage-loginpage">
+            <div className="container-loginpage-loginpage">
+                <div className="inputarea-loginpage">
+                    <form className="loginform-loginpage" onSubmit={handleLogin}>
+
+
+
                             <label className="Label">E-mail</label>
                             <input
                                 type="email"
@@ -67,8 +69,7 @@ function LoginPage(){
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
                             />
-                        </div>
-                        <div className="Password-group">
+
                             <label className="Label">Password</label>
                             <input
                                 type="password"
@@ -79,12 +80,12 @@ function LoginPage(){
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                             />
+
+                        <div className="button-login-loginpage">
+                            <button type="submit" className="login-btn-loginpage">LOG IN</button>
                         </div>
-                        <div className="button-loginm">
-                            <button type="submit" className="login-btnm">LOG IN</button>
-                        </div>
-                        <div className='to-login'>
-                            <a id="al" href="/register">create new account</a>
+                        <div className='gotoregisterpage-loginpage'>
+                            <a id="registerlinkwords-loginpage" href="/register">create new account</a>
                         </div>
                     </form>
                 </div>
@@ -92,4 +93,5 @@ function LoginPage(){
         </div>
     );
 }
+
 export default LoginPage;

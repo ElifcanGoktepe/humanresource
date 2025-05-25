@@ -1,14 +1,16 @@
 
-.loginPage {
+.loginPage-loginpage {
 
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     align-content: center;
-    align-self: center;
-    height: 65vh;
-    width: 40vw;
+    height: 100vh;
+    width: 100vw;
+
+
+
 
 
 
@@ -16,41 +18,111 @@
 
 }
 
-.container-loginpage{
+.loginPage-loginpage::before {
+
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("/img/logo4.png");
+    background-size: cover;
+    background-position: center;
+    opacity: 0.3; /* Burada opaklığı ayarlarsın */
+    z-index: -1;
+
+}
+
+.container-loginpage-loginpage{
 
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100%;
-    width: 40%;
-    border: 10px solid lavenderblush;
-    border-radius: 50px;
-    background-color: #00C4B3;
-    background-image: url("/img/logo4.png");
-    background-size: cover;
-    background-repeat: no-repeat;
+    align-content: center;
+
+
+    height: 100vh;
+    width: 100vh;
+
+}
+
+.inputarea-loginpage{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+}
+
+
+.loginform-loginpage{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+}
+
+
+.logocontainer-loginpage{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    height: 100vh;
+    width: 100vw;
 
 
 
 }
 
 
+.logoimg-loginpage{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-image: url("/img/logo.png");
+    background-blend-mode: multiply;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
 
 label.Label{
 
     display: flex;
     flex-direction: column;
-    font-family: "Roboto";
     font-size: 0.8rem;
     margin-bottom: 3px;
 
+}
 
+.Emailgroup-loginpage{
 
-
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 12px;
 
 
 }
+
+.Passwordgroup-loginpage{
+
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 12px;
+
+
+}
+
+.Label{
+    display: flex;
+    flex-direction: column;
+    padding: 3%;}
 
 input.E-mail.Input{
     border-radius: 10px;
@@ -66,70 +138,16 @@ input.Password.Input{
     padding: 5px;
 }
 
-
-
-
-.input-area{
+.button-login-loginpage{
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-
-    font-family: "Roboto Thin";
-
-
-
-}
-
-
-.logol{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-}
-
-.E-mail-group{
-
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    margin-bottom: 12px;
-
-
-}
-
-.Password-group{
-
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    margin-bottom: 12px;
-
-
-}
-
-
-.Label{
-    display: flex;
-    flex-direction: column;
-    padding: 3%;
-
-
-}
-
-.button-loginm{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
     margin-top: 25%;
 
 }
 
-.login-btnm {
+.login-btn-loginpage {
     background-color: transparent;
     color: white;
     border: 2px solid white;
@@ -137,29 +155,10 @@ input.Password.Input{
     padding: 5px;
     font-size: 1.3rem;
     font-weight: 600;
-    font-family: "Roboto Thin";
     cursor: pointer;
     transition: all 0.3s ease;
     width: 180px;
     height: 50px;
 }
 
-.to-login{
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-#al{
-
-    color: white  ;
-    font-weight: 300;
-    font-family: "Roboto Thin";
-    font-size: 20px;
-    margin-top: 20%;
-
-
-}
 
