@@ -28,6 +28,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth->auth
                         .requestMatchers("/approve/**").permitAll()
+                        .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/api/verify").permitAll()
                         .requestMatchers("/api/set-password").permitAll()
                         .requestMatchers("/assign-manager").permitAll()
@@ -37,7 +38,7 @@ public class SecurityConfig {
                                 "/api/assignments", "/api/assignments/**",
                                 "/swagger-ui/**","/v3/api-docs/**",
                                 "/api/auth/**","/api/public/**",
-                                "/admin/**",("/register")
+                                ("/register")
                         ).permitAll()
                         .requestMatchers("/admin/**").hasAuthority("Admin")
 

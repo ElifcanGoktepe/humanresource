@@ -1,5 +1,6 @@
 package com.project.humanresource.entity;
 
+import com.project.humanresource.utility.UserStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,9 +16,11 @@ import lombok.experimental.SuperBuilder;
 public abstract class User {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
-    private Long id;
-    private String email;
-    private String password;
-    private boolean isActive = false;
+     Long id;
+    String email;
+     String password;
+     boolean isActive = false;
+    @Enumerated(EnumType.STRING)
+     UserStatus userRole;
 
 }

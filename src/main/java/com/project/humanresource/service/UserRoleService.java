@@ -33,4 +33,8 @@ public class UserRoleService {
                 .build();
         return userRoleRepository.save(userRole);
     }
+
+    public void save(UserStatus userStatus, Long id) {
+
+    }
 }
