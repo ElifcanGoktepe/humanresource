@@ -5,11 +5,43 @@ import axios from "axios";
 import AddEmployeeModal from "../../components/organism/AddEmployeeModal.tsx";
 
 function ManagerPage() {
+    function parseJwt(token: string) {
+        try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        } catch (e) {
+            return null;
+        }
+    }
     const today = new Date();
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const dayIndex = today.getDay();
     const dayName = days[dayIndex];
     const dateString = today.toLocaleDateString("en-US");
+
+    const [showModal, setShowModal] = useState(false);
+    const [employeeList, setEmployeeList] = useState<string[]>([]);
+    const [managerFirstName, setManagerFirstName] = useState("");
+    const [managerLastName, setManagerLastName] = useState("");
+    const [titleName, setTitleName] = useState("");
+    const [companyName, setCompanyName] = useState("");
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            const payload = parseJwt(token);
+            if (payload) {
+                setManagerFirstName(payload.firstName || "");
+                setManagerLastName(payload.lastName || "");
+                setTitleName(payload.titleName || "");
+                setCompanyName(payload.companyName || "");
+            }
+        }
+    }, []);
 
     const handleAddEmployee = async (employeeData: {
         firstName: string;
@@ -20,7 +52,6 @@ function ManagerPage() {
         titleName: string;
     }) => {
         const token = localStorage.getItem("token");
-        console.log("Token:", token);
         try {
             const response = await axios.post("http://localhost:9090/add-employee", employeeData, {
                 headers: {
@@ -28,15 +59,14 @@ function ManagerPage() {
                     "Content-Type": "application/json",
                 },
             });
-
             alert(response.data.message);
+            // Yeni eklenen çalışanı listeye ekle
+            setEmployeeList(prev => [...prev, `${employeeData.firstName} ${employeeData.lastName}`]);
         } catch (error) {
             console.error("Error adding employee:", error);
             alert("Failed to add employee.");
         }
     };
-
-    const [showModal, setShowModal] = useState(false);
 
     type Leave = {
         id: number;
@@ -141,7 +171,7 @@ function ManagerPage() {
             </div>
             <div className="col-10">
                 <div className="manager-page-header">
-                    <h2>Hello Manager!</h2>
+                    <h2>Hello {managerFirstName}!</h2>
                     <h3>Today's Date: {dateString}, {dayName}</h3>
                     <hr/>
                 </div>
@@ -150,7 +180,7 @@ function ManagerPage() {
                         <div className="box1-dashboard">
                             <div className="profile-settings-header">
                                 <div className="col-8 profile-settings-header-name">
-                                    <h3>Manager Name</h3>
+                                    <h3>{managerFirstName} {managerLastName}</h3>
                                 </div>
                                 <div className="col-4 profile-settings-header-icon">
                                     <img className="small-image-fixed-bar2" src="/img/profileicon.png" />
@@ -158,8 +188,8 @@ function ManagerPage() {
                             </div>
                             <div className="profile-settings-body">
                                 <div>
-                                    <h4>Title</h4>
-                                    <h6>Company</h6>
+                                    <h4>{titleName}</h4>
+                                    <h6>{companyName}</h6>
                                 </div>
                                 <hr/>
                                 <div className="account-button-container">
@@ -170,36 +200,42 @@ function ManagerPage() {
                             </div>
                         </div>
                         <div className="box1-dashboard p-3">
-                            <p> Employee Number : 20 </p>
+                            <p> Employee Number : {employeeList.length} </p>
                         </div>
                     </div>
                     <div className="col-3 box-dashboard">
-                        <div className="pending-leaves-panel">
+                        <div className="pending-leaves-panel row p-1">
                             <h3>Pending Leave Requests</h3>
-                            <ul>
-                                {pendingLeaves.map(leave => (
-                                    <li key={leave.id}>
-                                        <strong>{leave.leaveType}</strong> | {leave.startDate} → {leave.endDate} <br />
-                                        {leave.description}
-                                        <div className="action-buttons">
-                                            <button
-                                                className="approve-button"
-                                                onClick={() => handleApprove(leave.id)}
-                                            >
-                                                Approve
-                                            </button>
-                                            <button
-                                                className="reject-button"
-                                                onClick={() => handleReject(leave.id)}
-                                            >
-                                                Reject
-                                            </button>
-                                        </div>
-                                        <hr />
-                                    </li>
-                                ))}
-                            </ul>
+                            <hr/>
+                            {pendingLeaves.length === 0 ? (
+                                <p>No leave requests yet.</p>
+                            ) : (
+                                <ul>
+                                    {pendingLeaves.map(leave => (
+                                        <li key={leave.id}>
+                                            <strong>{leave.leaveType}</strong> | {leave.startDate} → {leave.endDate} <br />
+                                            {leave.description}
+                                            <div className="action-buttons">
+                                                <button
+                                                    className="approve-button"
+                                                    onClick={() => handleApprove(leave.id)}
+                                                >
+                                                    Approve
+                                                </button>
+                                                <button
+                                                    className="reject-button"
+                                                    onClick={() => handleReject(leave.id)}
+                                                >
+                                                    Reject
+                                                </button>
+                                            </div>
+                                            <hr />
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
                         </div>
+
                     </div>
 
                     <div className="col-3 box-dashboard">
@@ -229,12 +265,13 @@ function ManagerPage() {
                             <h3>Manage Employee</h3>
                             <hr/>
                             <div className="fontstyle-shiftnames">
-                                <p>FirstName LastName 1</p>
-                                <p>FirstName LastName 2</p>
-                                <p>FirstName LastName 3</p>
-                                <p>FirstName LastName 4</p>
-                                <p>FirstName LastName 5</p>
-                                <p>FirstName LastName 6</p>
+                                <div className="fontstyle-shiftnames">
+                                    {employeeList.length === 0 ? (
+                                        <p>No employees yet.</p>
+                                    ) : (
+                                        employeeList.map((name, index) => <p key={index}>{name}</p>)
+                                    )}
+                                </div>
                             </div>
                             <hr/>
                             <div className="request-button-container">

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
+import './CreatePassword.css';
 
 const CreatePassword = () => {
     const [params] = useSearchParams();
@@ -15,7 +16,7 @@ const CreatePassword = () => {
         e.preventDefault();
 
         if (password !== rePassword) {
-            setError("❌ Şifreler uyuşmuyor.");
+            setError("❌ Passwords unmatch.");
             return;
         }
 
@@ -33,17 +34,17 @@ const CreatePassword = () => {
             setError("");
         } catch (err: any) {
             setMessage("");
-            setError(err.response?.data || "❌ Şifre oluşturulamadı.");
+            setError(err.response?.data || "❌ Password has not created.");
         }
     };
 
     return (
-        <div style={{ maxWidth: 400, margin: "100px auto", textAlign: "center" }}>
-            <h2>🔐 Şifre Oluştur</h2>
+        <div className="create-password-container">
+            <h2>🔐 Create Password</h2>
             <form onSubmit={handleSubmit}>
                 <input
                     type="password"
-                    placeholder="Yeni şifre"
+                    placeholder="New Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -51,14 +52,14 @@ const CreatePassword = () => {
                 />
                 <input
                     type="password"
-                    placeholder="Şifreyi tekrar girin"
+                    placeholder="Repeate Password"
                     value={rePassword}
                     onChange={(e) => setRePassword(e.target.value)}
                     required
                     style={{ width: "100%", padding: 10, marginBottom: 12 }}
                 />
                 <button type="submit" style={{ width: "100%", padding: 10 }}>
-                    Oluştur
+                    Create
                 </button>
             </form>
             {error && <p style={{ color: "red", marginTop: 16 }}>{error}</p>}
