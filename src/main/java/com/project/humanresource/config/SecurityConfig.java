@@ -33,14 +33,26 @@ public class SecurityConfig {
                         .requestMatchers("/assign-manager").permitAll()
                         .requestMatchers("/api/users/login").permitAll()
                         .requestMatchers("/dev/v1/shift","/dev/v1/employee","/dev/v1/user",
-                                "/api/users/create_user", 
-                                "/api/users/login", 
-                                "/api/users/by-email", 
-                                "/api/user-roles", 
+                                "/api/users/create_user", "/api/users/login",
+                                "/api/users/by-email", "/api/user-roles", "/api/user-roles/by-email",
+                                "/api/assignments", "/api/assignments/**",
+                                "/swagger-ui/**","/v3/api-docs/**",
+                                "/api/auth/**","/api/public/**",
+                                "/admin/dev/v1/addcompany","/dev/v1/listallcompany",
+                                "/dev/v1/findcompanybyphonenumber","/dev/v1/findcompanybyname",
+                                "/dev/v1/findcompanybyemailaddress","/dev/v1/deletecompanybyid/{id}",
+                                "/dev/v1/addcompanybranch","/dev/v1/listofallbranchesofcompany",
+                                "/dev/v1/findcompanybranchbyphonenumber","/dev/v1/findcompanybranchbyemailaddress",
+                                "/dev/v1/findcompanybranchbyaddress","/dev/v1/deletecompanybranchbyid/{id}",
+                                "/dev/v1/deletecompanybranchbycompanybranchcode/companyBranchCode",
+                                "/api/users/create_user",
+                                "/api/users/login",
+                                "/api/users/by-email",
+                                "/api/user-roles",
                                 "/api/user-roles/by-email",
-                                "/api/users/*/profile", 
+                                "/api/users/*/profile",
                                 "/api/users/*/password",
-                                "/api/assignments", 
+                                "/api/assignments",
                                 "/api/assignments/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
@@ -55,7 +67,6 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers("/admin/**").hasAuthority("Admin")
                         .requestMatchers("/add-employee").hasAuthority("Manager")
-                        .requestMatchers("/leaves/approved").hasAuthority("Employee")
                         .requestMatchers("/company-manager/approve/{employeeId}").hasAuthority("Manager")
                         .requestMatchers("/employee/**").hasAuthority("Employee")
                         .anyRequest().authenticated()
@@ -63,18 +74,18 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .userDetailsService(jwtUserDetails)
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class).build();
+
     }
-    
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:5173");
+        configuration.addAllowedOrigin("http://localhost:5173"); // frontend portu
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
-        configuration.setAllowCredentials(true);
+        configuration.setAllowCredentials(true); // Token vb. için
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-} 
+}
