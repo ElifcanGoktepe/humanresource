@@ -7,6 +7,7 @@ import com.project.humanresource.dto.request.LoginRequestDto;
 import com.project.humanresource.dto.request.UpdateUserProfileRequestDto;
 import com.project.humanresource.dto.response.BaseResponseShort;
 import com.project.humanresource.dto.response.UserProfileResponseDto;
+import com.project.humanresource.entity.Employee;
 import com.project.humanresource.entity.User;
 import com.project.humanresource.entity.UserRole;
 import com.project.humanresource.exception.ErrorType;
@@ -14,9 +15,11 @@ import com.project.humanresource.exception.HumanResourceException;
 import com.project.humanresource.service.UserRoleService;
 import com.project.humanresource.service.UserService;
 import com.project.humanresource.dto.response.BaseResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +32,7 @@ import static com.project.humanresource.config.RestApis.LOGIN;
 @RestController
 @RequestMapping("/api/users")
 @CrossOrigin(origins = "http://localhost:5173")
+@SecurityRequirement(name = "bearerAuth")
 public class UserController {
 
     private final UserService userService;
@@ -36,13 +40,13 @@ public class UserController {
     private final UserRoleService userRoleService;
 
     @PostMapping(CREATEUSER)
-    public ResponseEntity<BaseResponseShort<User>> createUser(@RequestBody @Valid AddUserRequestDto dto) {
+    public ResponseEntity<BaseResponseShort<Employee>> createUser(@RequestBody @Valid AddUserRequestDto dto) {
         if(!dto.password().equals(dto.rePassword()))
             throw new HumanResourceException(ErrorType.PASSWORD_MISMATCH);
-        return ResponseEntity.ok(BaseResponseShort.<User>builder()
+        return ResponseEntity.ok(BaseResponseShort.<Employee>builder()
                         .data(userService.createUser(dto))
                         .code(200)
-                        .message("User created successfully.")
+                        .message("Employee created successfully.")
                 .build());
     }
 
@@ -53,6 +57,28 @@ public class UserController {
             throw new HumanResourceException(ErrorType.EMAIL_PASSWORD_ERROR);
 
         User user = optionalUser.get();
+
+        // Employee aktif/pasif durumu kontrolü
+        if (user instanceof Employee) {
+            Employee employee = (Employee) user;
+            if (!employee.isActive()) {
+                throw new HumanResourceException(ErrorType.UNAUTHORIZED);
+            }
+            if (!employee.isActivated()) {
+                return ResponseEntity.ok(BaseResponseShort.<String>builder()
+                        .code(403)
+                        .data(null)
+                        .message("Your account is not activated. Please verify your email.")
+                        .build());
+            }
+            if (!employee.isApproved()) {
+                return ResponseEntity.ok(BaseResponseShort.<String>builder()
+                        .code(403)
+                        .data(null)
+                        .message("Your account is waiting for admin approval.")
+                        .build());
+            }
+        }
 
         // ⬇️ rollerini çek
         List<UserRole> userRoles = userRoleService.findAllRole(user.getId());
@@ -83,6 +109,12 @@ public class UserController {
     @GetMapping("/{userId}/profile")
     public ResponseEntity<BaseResponse<UserProfileResponseDto>> getUserProfile(@PathVariable Long userId) {
         try {
+            // Authentication check - kullanıcı sadece kendi profilini görebilir
+            String currentEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+            if (currentEmail == null || currentEmail.equals("anonymousUser")) {
+                return ResponseEntity.ok(new BaseResponse<>(false, "Authentication required", null));
+            }
+            
             UserProfileResponseDto profile = userService.getUserProfile(userId);
             return ResponseEntity.ok(new BaseResponse<>(true, "Profile retrieved successfully", profile));
         } catch (RuntimeException e) {
@@ -107,6 +139,12 @@ public class UserController {
             @PathVariable Long userId, 
             @Valid @RequestBody ChangePasswordRequestDto dto) {
         try {
+            // Authentication check - kullanıcı sadece kendi şifresini değiştirebilir
+            String currentEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+            if (currentEmail == null || currentEmail.equals("anonymousUser")) {
+                return ResponseEntity.ok(new BaseResponse<>(false, "Authentication required", null));
+            }
+            
             boolean success = userService.changePassword(userId, dto);
             if (success) {
                 return ResponseEntity.ok(new BaseResponse<>(true, "Password changed successfully", null));
