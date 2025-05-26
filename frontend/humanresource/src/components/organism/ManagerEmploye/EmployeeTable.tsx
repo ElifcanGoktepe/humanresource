@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {} from 'react';
 
-import EmployeeRow, {type Employee } from '../../molecules/EmployeeRow'; // interface buradan import ediliyor!
+import EmployeeRow, {type Employee } from '../../molecules/EmployeeRow';
+//import axios from "axios"; // interface buradan import ediliyor!
 
 interface EmployeeTableProps {
     employees: Employee[];
@@ -8,7 +9,26 @@ interface EmployeeTableProps {
     onDelete: (id:number)=>void;
 }
 
-const EmployeeTable: React.FC<EmployeeTableProps> = ({ employees, onToggleStatus ,onDelete}) => {
+const EmployeeTable: React.FC<EmployeeTableProps> = ({  employees,onToggleStatus ,onDelete}) => {
+    // const [employees, setEmployees] = useState<Employee[]>([]);
+    // useEffect(() => {
+    //     const fetchEmployees = async () => {
+    //         try {
+    //             const token = localStorage.getItem("token");
+    //             const response = await axios.get("http://localhost:9090/employee/get-all", {
+    //                 headers: {
+    //                     Authorization: `Bearer ${token}`
+    //                 }
+    //             });
+    //             setEmployees(response.data.data);
+    //         } catch (error) {
+    //             console.error("Failed to fetch employees", error);
+    //         }
+    //     };
+    //
+    //     fetchEmployees();
+    // }, []);
+
     return (
         <div className="overflow-x-auto">
             <table className="table table-hover shadow-sm rounded border bg-white">

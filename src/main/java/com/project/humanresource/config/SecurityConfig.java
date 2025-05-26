@@ -41,8 +41,9 @@ public class SecurityConfig {
                                 ("/register")
                         ).permitAll()
                         .requestMatchers("/admin/**").hasAuthority("Admin")
-
+                        .requestMatchers("/manager/**").hasAuthority("Manager")
                         .requestMatchers("/add-employee").hasAuthority("Manager")
+                        .requestMatchers("/employee/get-all").hasAuthority("Manager")
                         .requestMatchers("/company-manager/approve/{employeeId}").hasAuthority("Manager")
                         .requestMatchers("/employee/**").hasAuthority("Employee")
                         .anyRequest().authenticated()

@@ -51,6 +51,7 @@ const EmployeeListPanel: React.FC = () => {
         const fetchEmployees = async () => {
             try {
                 const token = localStorage.getItem("token");
+                console.log("JWT TOKEN:", token); // ➕ Bunu ekleyerek console'da görebilirsin
                 const response = await axios.get("http://localhost:9090/employee/get-all", {
                     headers: {
                         Authorization: `Bearer ${token}`

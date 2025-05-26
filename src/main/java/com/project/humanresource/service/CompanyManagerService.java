@@ -24,7 +24,7 @@ public class CompanyManagerService {
         Employee manager = Employee.builder()
                 .firstName(dto.firstName())
                 .lastName(dto.lastName())
-                .emailWork(dto.email())
+                .email(dto.email())
                 .phoneWork(dto.phoneNumber())
                 .companyName(dto.companyName())
                 .titleName(dto.titleName())

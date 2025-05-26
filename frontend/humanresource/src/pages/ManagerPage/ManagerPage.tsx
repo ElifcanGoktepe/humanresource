@@ -3,6 +3,7 @@ import './ManagerPage.css';
 import { useEffect, useState } from "react";
 import axios from "axios";
 import AddEmployeeModal from "../../components/organism/AddEmployeeModal.tsx";
+import {useNavigate} from "react-router-dom";
 
 function ManagerPage() {
     function parseJwt(token: string) {
@@ -22,6 +23,8 @@ function ManagerPage() {
     const dayIndex = today.getDay();
     const dayName = days[dayIndex];
     const dateString = today.toLocaleDateString("en-US");
+
+    const navigate=useNavigate();
 
 
     const [employeeList, setEmployeeList] = useState<string[]>([]);
@@ -140,7 +143,7 @@ function ManagerPage() {
                         <img className="small-image-fixed-bar" src="/img/adminpage.png" />
                         Company Page
                     </button>
-                    <button className="fixed-bar-buttons">
+                    <button onClick={() => navigate('/manager/employeelist')} className="fixed-bar-buttons">
                         <img className="small-image-fixed-bar" src="/img/employee.png" />
                         Employee
                     </button>

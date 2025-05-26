@@ -24,6 +24,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     implementation 'com.sun.mail:javax.mail:1.6.2'
     implementation 'com.sun.mail:jakarta.mail:2.0.1'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'

@@ -37,7 +37,7 @@ public class UserService {
 
         if (dto.role() == UserStatus.Admin) {
             Employee admin = Employee.builder()
-                    .emailWork(dto.emailWork()) // ya da email
+                    .email(dto.emailWork()) // ya da email
                     .password(dto.password()) // TODO: şifre hashle
                     .firstName(dto.firstName())
                     .lastName(dto.lastName())
@@ -53,7 +53,7 @@ public class UserService {
 
         } else if (dto.role() == UserStatus.Manager || dto.role() == UserStatus.Employee) {
             Employee employee = Employee.builder()
-                    .emailWork(dto.emailWork())
+                    . email(dto.emailWork())
                     .password(dto.password())
                     .isActive(true)
                     .isApproved(false)

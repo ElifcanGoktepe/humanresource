@@ -3,16 +3,20 @@ package com.project.humanresource.service;
 import com.project.humanresource.dto.request.AddEmployeeForRoleRequirementDto;
 import com.project.humanresource.dto.request.AddEmployeeRequestDto;
 import com.project.humanresource.dto.request.SetPersonalFileRequestDto;
+import com.project.humanresource.dto.response.EmployeeResponseDto;
 import com.project.humanresource.entity.*;
 import com.project.humanresource.exception.ErrorType;
 import com.project.humanresource.exception.HumanResourceException;
+import com.project.humanresource.mapper.EmployeeMapper;
 import com.project.humanresource.repository.*;
 import com.project.humanresource.utility.UserStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import com.project.humanresource.config.SecurityUtil;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,8 +28,10 @@ public class EmployeeService {
     private final EmailVerificationService emailVerificationService;
     private final PersonelFileRepository personelFileRepository;
     private final UserRepository userRepository;
-    private final UserRoleService userRoleService;
-    private final CompanyRepository companyRepository;
+
+
+    private final EmployeeMapper employeeMapper;
+
 
     public Optional<Employee> findById(Long employeeId) {
         return employeeRepository.findById(employeeId);
@@ -44,7 +50,7 @@ public class EmployeeService {
         Employee employee = Employee.builder()
                 .firstName(dto.firstName())
                 .lastName(dto.lastName())
-                .emailWork(dto.emailWork())
+                .email(dto.emailWork())
                 .phoneWork(dto.phoneWork())
                 .companyName(dto.companyName())
                 .titleName(dto.titleName())
@@ -58,7 +64,7 @@ public class EmployeeService {
                 .build();
         userRoleRepository.save(employeeRole);
 
-        emailVerificationService.sendVerificationEmail(employee.getEmailWork());
+        emailVerificationService.sendVerificationEmail(employee.getEmail());
 
     }
 
@@ -99,7 +105,22 @@ public class EmployeeService {
 
     }
 
+          public List<EmployeeResponseDto> getAllEmployeesForManager() {
+//        System.out.println("Email ile gelen kullanıcı :"+email);
+//        User manager = userRepository.findByEmail(email)
+//                .orElseThrow(() -> new HumanResourceException(ErrorType.USER_NOT_FOUND));
 //
+//        System.out.println("Maanger ID : "+manager.getId());
+              Long managerId= SecurityUtil.getCurrentUserId();
+
+
+        return employeeRepository.findAllByManagerId(managerId)
+                .stream()
+                .map(employeeMapper::toEmployeeResponseDto)
+                .toList();
+    }
+
+
 
 
 

@@ -4,6 +4,7 @@ import com.project.humanresource.config.JwtTokenFilter;
 import com.project.humanresource.dto.request.AddEmployeeRequestDto;
 
 import com.project.humanresource.dto.response.BaseResponseShort;
+import com.project.humanresource.dto.response.EmployeeResponseDto;
 import com.project.humanresource.entity.Company;
 import com.project.humanresource.entity.User;
 import com.project.humanresource.repository.CompanyRepository;
@@ -15,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -55,6 +58,20 @@ public class EmployeeController {
                         .code(200)
                         .message("Employee deleted successfully.")
                         .data(true)
+                .build());
+    }
+
+    @GetMapping("/employee/get-all")
+    public ResponseEntity<BaseResponseShort<List<EmployeeResponseDto>>> getAllEmployeesForManager() {
+//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+//        System.out.println("Emai,l : "+email);
+
+        List<EmployeeResponseDto> employees = employeeService.getAllEmployeesForManager();
+
+        return ResponseEntity.ok(BaseResponseShort.<List<EmployeeResponseDto>>builder()
+                .code(200)
+                .message("Employees listed")
+                .data(employees)
                 .build());
     }
 
