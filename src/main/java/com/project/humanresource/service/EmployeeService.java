@@ -3,15 +3,20 @@ package com.project.humanresource.service;
 import com.project.humanresource.dto.request.AddEmployeeForRoleRequirementDto;
 import com.project.humanresource.dto.request.AddEmployeeRequestDto;
 import com.project.humanresource.dto.request.SetPersonalFileRequestDto;
+import com.project.humanresource.dto.response.EmployeeResponseDto;
 import com.project.humanresource.entity.*;
 import com.project.humanresource.exception.ErrorType;
 import com.project.humanresource.exception.HumanResourceException;
+import com.project.humanresource.mapper.EmployeeMapper;
 import com.project.humanresource.repository.*;
 import com.project.humanresource.utility.UserStatus;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import com.project.humanresource.config.SecurityUtil;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,8 +28,10 @@ public class EmployeeService {
     private final EmailVerificationService emailVerificationService;
     private final PersonelFileRepository personelFileRepository;
     private final UserRepository userRepository;
-    private final UserRoleService userRoleService;
-    private final CompanyRepository companyRepository;
+
+
+    private final EmployeeMapper employeeMapper;
+
 
     public Optional<Employee> findById(Long employeeId) {
         return employeeRepository.findById(employeeId);
@@ -34,11 +41,16 @@ public class EmployeeService {
         employeeRepository.save(employee);
     }
 
-    public void addEmployeeForManager(AddEmployeeForRoleRequirementDto dto) { //manager tarafından eklenen employee
+    public void addEmployeeForManager(AddEmployeeForRoleRequirementDto dto,  HttpServletRequest request) { //manager tarafından eklenen employee
+        Long managerId = (Long) request.getAttribute("userId");
+
+        if (managerId == null) {
+            throw new IllegalStateException("Manager ID not found in request.");
+        }
         Employee employee = Employee.builder()
                 .firstName(dto.firstName())
                 .lastName(dto.lastName())
-                .emailWork(dto.emailWork())
+                .email(dto.emailWork())
                 .phoneWork(dto.phoneWork())
                 .companyName(dto.companyName())
                 .titleName(dto.titleName())
@@ -52,51 +64,31 @@ public class EmployeeService {
                 .build();
         userRoleRepository.save(employeeRole);
 
-        emailVerificationService.sendVerificationEmail(employee.getEmailWork());
+        emailVerificationService.sendVerificationEmail(employee.getEmail());
 
     }
 
     public void setEmployeeActiveStatus (Long employeeId, boolean isActive) {
-        String email=SecurityContextHolder.getContext().getAuthentication().getName();
-        User user=userRepository.findByEmail(email)
-                .orElseThrow(()->new HumanResourceException(ErrorType.USER_NOT_FOUND));
-
-        if (!userRoleService.hasRole(user.getId(),UserStatus.Manager)) {
-            throw new HumanResourceException(ErrorType.UNAUTHORIZED);
-        }
-
-
-
-        Company company=companyRepository.findByEmployerId(user.getId())
-                .orElseThrow(()->new HumanResourceException(ErrorType.COMPANY_NOT_FOUND));
-
         Employee employee=employeeRepository.findById(employeeId)
                 .orElseThrow(()->new HumanResourceException(ErrorType.EMPLOYEE_NOT_FOUND));
 
-        if(!employee.getCompanyId().equals(company.getId())){
-            throw new HumanResourceException(ErrorType.UNAUTHORIZED);
-        }
+
         employee.setActive(isActive);
         employeeRepository.save(employee);
     }
-
+//
     public void deleteEmployeeCompletely(Long employeeId) {
         String email=SecurityContextHolder.getContext().getAuthentication().getName();
 
         User user=userRepository.findByEmail(email)
                 .orElseThrow(()->new HumanResourceException(ErrorType.USER_NOT_FOUND));
-        if (!userRoleService.hasRole(user.getId(),UserStatus.Manager)) {
-            throw new HumanResourceException(ErrorType.UNAUTHORIZED);
-        }
-        Company company=companyRepository.findByEmployerId(user.getId())
-                .orElseThrow(()->new HumanResourceException(ErrorType.COMPANY_NOT_FOUND));
+
+
 
         Employee employee=employeeRepository.findById(employeeId)
                 .orElseThrow(()->new HumanResourceException(ErrorType.EMPLOYEE_NOT_FOUND));
 
-        if(!employee.getCompanyId().equals(company.getId())){
-            throw new HumanResourceException(ErrorType.UNAUTHORIZED);
-        }
+
 
         // 1. personelin özlük dosyasını sil
         Optional.ofNullable(employee.getPersonalFiledId())
@@ -105,41 +97,30 @@ public class EmployeeService {
 
         userRoleRepository.deleteByUserId(employee.getId());
 
-        userRepository.deleteById(user.getId());
+        userRepository.findById(employee.getId())
+                .ifPresent(us -> userRepository.deleteById(user.getId()));
 
         employeeRepository.deleteById(employeeId);
 
 
     }
 
-//    public void deleteEmployee (Long employeeId) {
-//        String email=SecurityContextHolder.getContext().getAuthentication().getName();
-//        User user=userRepository.findByEmail(email)
-//                .orElseThrow(()->new HumanResourceException(ErrorType.USER_NOT_FOUND));
-//        UserRole userRole= (UserRole) userRoleService.findAllRole(user.getId());
+          public List<EmployeeResponseDto> getAllEmployeesForManager() {
+//        System.out.println("Email ile gelen kullanıcı :"+email);
+//        User manager = userRepository.findByEmail(email)
+//                .orElseThrow(() -> new HumanResourceException(ErrorType.USER_NOT_FOUND));
 //
-//        if (!userRole.getUserStatus().equals(UserStatus.Manager)){
-//            throw new HumanResourceException(ErrorType.UNAUTHORIZED);
-//        }
-//        Company company=companyRepository.findByEmployerId(user.getId())
-//                .orElseThrow(()->new HumanResourceException(ErrorType.COMPANY_NOT_FOUND));
-//
-//        Employee employee=employeeRepository.findById(employeeId)
-//                .orElseThrow(()->new HumanResourceException(ErrorType.EMPLOYEE_NOT_FOUND));
-//
-//        if(!employee.getCompanyId().equals(company.getId())){
-//            throw new HumanResourceException(ErrorType.UNAUTHORIZED);
-//        }
-//
-//        if (employee.getPersonalFiledId()!=null){
-//            personelFileRepository.findById(employee.getPersonalFiledId())
-//                    .ifPresent(personelFileRepository::delete);
-//        }
-//
-//        if (employee.){
-//            employeeRepository.
-//        }
-//    }
+//        System.out.println("Maanger ID : "+manager.getId());
+              Long managerId= SecurityUtil.getCurrentUserId();
+
+
+        return employeeRepository.findAllByManagerId(managerId)
+                .stream()
+                .map(employeeMapper::toEmployeeResponseDto)
+                .toList();
+    }
+
+
 
 
 

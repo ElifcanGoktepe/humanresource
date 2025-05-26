@@ -4,6 +4,7 @@ import com.project.humanresource.config.JwtTokenFilter;
 import com.project.humanresource.dto.request.AddEmployeeRequestDto;
 
 import com.project.humanresource.dto.response.BaseResponseShort;
+import com.project.humanresource.dto.response.EmployeeResponseDto;
 import com.project.humanresource.entity.Company;
 import com.project.humanresource.entity.User;
 import com.project.humanresource.repository.CompanyRepository;
@@ -15,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,24 +31,7 @@ public class EmployeeController {
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
 
-//    @PreAuthorize("hasAuthority('Manager')")
-    @PostMapping("/add")
-    public ResponseEntity<BaseResponseShort<Boolean>> addEmployee (@RequestBody @Valid AddEmployeeRequestDto dto){
 
-        // Login olan kullanıcının email bilgisi JWT'den alınır (SecurityContext üzerinden)
-        String currentEmail= SecurityContextHolder.getContext().getAuthentication().getName();
-
-        User user=userRepository.findByEmail(currentEmail).orElseThrow(()->new RuntimeException("Kullanıcı bulunamadı"));
-
-        Company company=companyRepository.findByEmployerId(user.getId()).orElseThrow(()-> new RuntimeException("Şirket bulunamadı"));
-
-        employeeService.addEmployee(dto,company.getId());
-        return ResponseEntity.ok(BaseResponseShort.<Boolean>builder()
-                .code(200)
-                .data(true)
-                .message("Employee added successfully.")
-                .build());
-    }
     @PutMapping("/activate/{employeeId}")
     public ResponseEntity<BaseResponseShort<Boolean>> activateEmployee(@PathVariable Long employeeId){
         employeeService.setEmployeeActiveStatus(employeeId,true);
@@ -72,6 +58,20 @@ public class EmployeeController {
                         .code(200)
                         .message("Employee deleted successfully.")
                         .data(true)
+                .build());
+    }
+
+    @GetMapping("/employee/get-all")
+    public ResponseEntity<BaseResponseShort<List<EmployeeResponseDto>>> getAllEmployeesForManager() {
+//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+//        System.out.println("Emai,l : "+email);
+
+        List<EmployeeResponseDto> employees = employeeService.getAllEmployeesForManager();
+
+        return ResponseEntity.ok(BaseResponseShort.<List<EmployeeResponseDto>>builder()
+                .code(200)
+                .message("Employees listed")
+                .data(employees)
                 .build());
     }
 

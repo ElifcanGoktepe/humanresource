@@ -174,27 +174,32 @@ function EmployeePage() {
                         </div>
                     </div>
                     <div className="col-3 box-dashboard">
-                        <div className="box1-dashboard row p-2">
-                            <h3>Weekly Shift List</h3>
-                            <hr/>
-                            <div className="col-7 fontstyle-shiftnames mb-2">
-                                <p>Monday</p>
-                                <p>Tuesday</p>
-                                <p>Wednesday</p>
-                                <p>Thursday</p>
-                                <p>Friday</p>
-                                <p>Saturday</p>
-                                <p>Sunday</p>
+                        <div className="box1-dashboard p-2">
+                            <div>
+                                <h3>Weekly Shift List</h3>
+                                <hr/>
                             </div>
-                            <div className="col-5 fontstyle-shifthours mb-2">
-                                <p>08:00-12:00</p>
-                                <p>08:00-12:00</p>
-                                <p>13:00-17:00</p>
-                                <p>13:00-17:00</p>
-                                <p>18:00-22:00</p>
-                                <p>18:00-22:00</p>
-                                <p>---</p>
+                            <div className="row">
+                                <div className="col-7 fontstyle-shiftnames mb-2">
+                                    <p>Monday</p>
+                                    <p>Tuesday</p>
+                                    <p>Wednesday</p>
+                                    <p>Thursday</p>
+                                    <p>Friday</p>
+                                    <p>Saturday</p>
+                                    <p>Sunday</p>
+                                </div>
+                                <div className="col-5 fontstyle-shifthours mb-2">
+                                    <p>08:00-12:00</p>
+                                    <p>08:00-12:00</p>
+                                    <p>13:00-17:00</p>
+                                    <p>13:00-17:00</p>
+                                    <p>18:00-22:00</p>
+                                    <p>18:00-22:00</p>
+                                    <p>---</p>
+                                </div>
                             </div>
+
 
                             <hr/>
                             <div className="request-button-container mb-2">

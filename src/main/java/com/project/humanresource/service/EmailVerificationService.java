@@ -110,7 +110,7 @@ public class EmailVerificationService {
         employeeRepository.save(employee);
 
         // burada kullanıcıya parola oluşturma linki gönderilebilir
-        sendSetPasswordEmail(employee.getEmailWork(), token, employee);
+        sendSetPasswordEmail(employee.getEmail(), token, employee);
 
         return true;
     }
@@ -126,7 +126,7 @@ public class EmailVerificationService {
         employeeRepository.save(employee);
 
         // ✅ Şimdi doğrulama maili gönder
-        sendVerificationEmail(employee.getEmailWork());
+        sendVerificationEmail(employee.getEmail());
 
         return true;
     }
@@ -137,7 +137,7 @@ public class EmailVerificationService {
         String body = "Hello Admin,\n\n" +
                 "There is a new company application:\n\n" +
                 "Name: " + manager.getFirstName() + " " + manager.getLastName() + "\n" +
-                "Email: " + manager.getEmailWork() + "\n\n" +
+                "Email: " + manager.getEmail() + "\n\n" +
                 "Company: " + manager.getCompanyName() + "\n" +
                 "Title : CEO\n\n" +
                 "Click to approve:\n" + approvalLink + "\n\n" +
