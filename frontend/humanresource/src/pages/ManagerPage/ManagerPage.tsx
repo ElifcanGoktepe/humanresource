@@ -80,6 +80,8 @@ function ManagerPage() {
         leaveType: string;
         state: string;
         employeeId: number;
+        firstName: string;
+        lastName: string;
     };
 
     const [pendingLeaves, setPendingLeaves] = useState<Leave[]>([]);
@@ -218,6 +220,9 @@ function ManagerPage() {
                                     {pendingLeaves.map(leave => (
                                         <li key={leave.id}>
                                             <strong>{leave.leaveType}</strong> | {leave.startDate} → {leave.endDate} <br />
+                                            <em>
+                                                Requested by: {leave.firstName} {leave.lastName}
+                                            </em>
                                             {leave.description}
                                             <div className="action-buttons">
                                                 <button

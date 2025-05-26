@@ -20,7 +20,7 @@ public class JwtManager {
     private String secretKey;
     private String issuer = "MuhammetHOCA";
     private Long expirationDate = 1000L * 60 * 60 * 5;
-    public String createToken(Long userId, List<String> roles) {
+    public String createToken(Long userId, List<String> roles, String firstName, String lastName, String titleName, String companyName) {
         Long now = System.currentTimeMillis();
         Date issuedAt = new Date(now);
         Date expiration = new Date(now + expirationDate);
@@ -32,8 +32,12 @@ public class JwtManager {
                 .withIssuedAt(issuedAt)
                 .withExpiresAt(expiration)
                 .withClaim("userId", userId)
-                .withClaim("roles", roles) // ✅ burada roles kullanılabilir çünkü parametrede var
-                .withClaim("ETicaret", "Yeni bir uygulama yazdık")
+                .withClaim("roles", roles)
+                .withClaim("firstName", firstName)
+                .withClaim("lastName", lastName)
+                .withClaim("titleName", titleName)
+                .withClaim("companyName", companyName)
+                .withClaim("HumanResource", "Yeni bir uygulama yazdık")
                 .withClaim("log", "date and hour " + new Date())
                 .sign(algorithm);
     }

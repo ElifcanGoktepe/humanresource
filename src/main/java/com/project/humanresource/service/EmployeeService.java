@@ -48,6 +48,7 @@ public class EmployeeService {
                 .phoneWork(dto.phoneWork())
                 .companyName(dto.companyName())
                 .titleName(dto.titleName())
+                .managerId(managerId)
                 .isApproved(true)
                 .build();
         employeeRepository.save(employee);

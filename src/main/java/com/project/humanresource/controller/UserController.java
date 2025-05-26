@@ -10,6 +10,7 @@ import com.project.humanresource.entity.User;
 import com.project.humanresource.entity.UserRole;
 import com.project.humanresource.exception.ErrorType;
 import com.project.humanresource.exception.HumanResourceException;
+import com.project.humanresource.repository.EmployeeRepository;
 import com.project.humanresource.service.UserRoleService;
 import com.project.humanresource.service.UserService;
 import jakarta.validation.Valid;
@@ -32,6 +33,7 @@ public class UserController {
     private final UserService userService;
     private final JwtManager jwtManager;
     private final UserRoleService userRoleService;
+    private final EmployeeRepository employeeRepository;
 
     /**
      * Kullanıcı oluşturma
@@ -69,7 +71,23 @@ public class UserController {
                 .map(role -> role.getUserStatus().name())
                 .toList();
 
-        String token = jwtManager.createToken(user.getId(), roles);
+        Optional<Employee> optionalEmployee = employeeRepository.findByEmailWork(dto.email());
+
+        if (optionalEmployee.isEmpty()) {
+            throw new HumanResourceException(ErrorType.USER_NOT_FOUND); // ya da uygun hata
+        }
+
+        Employee employee = optionalEmployee.get();
+
+        // Token oluştur
+        String token = jwtManager.createToken(
+                employee.getId(),
+                roles,
+                employee.getFirstName(),
+                employee.getLastName(),
+                employee.getTitleName(),
+                employee.getCompanyName()
+        );
 
         return ResponseEntity.ok(BaseResponseShort.<String>builder()
                 .code(200)
