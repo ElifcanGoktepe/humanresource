@@ -68,7 +68,7 @@
     justify-content: center;
     align-content: end;
     flex-direction: column;
-    margin-left: 60px;
+    margin-left: 9%;
     transform: translateY(-50px);
     transition: all 0.6s ease-out;
 }
