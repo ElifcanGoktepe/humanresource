@@ -19,6 +19,7 @@ public class UserRole {
     private Long id;
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus;
+    @Column(name = "user_id")
     private Long userId; // employee, company manager, site admin
 
 } 

@@ -1,141 +1,69 @@
-.APfixed-side-bar{
+.fixed-side-bar{
     background: rgba(239, 239, 239, 0.53);
     height: 100vh;
-    width: 17%;
+    width: 15%;
 
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 
+
+
 }
 
-.APfixed-bar-image{
+
+.fixed-bar-image{
     display: flex ;
-    height: 10%;
+    justify-content: flex-start;
 
 
-    justify-content: space-between;
 }
 
-.APlogo-left-menu{
+.logo-left-menu{
     height: 100%;
-    width: 100%;
+
+
     filter: drop-shadow(0 0 6px rgba(110, 110, 110, 0.7));
 
     justify-content: space-between;
+
 }
 
-.APbottom-bar{
+
+
+
+.middle-bar{
+
     display: flex;
     flex-direction: column;
-    height: 13%;
 
 }
 
+.btn  {
+    margin: 10px;
+}
 
-
-.JobQueue{
+.bottom-bar {
     display: flex;
     flex-direction: column;
-    justify-content: normal;
-    height: 70%;
-    background-color: #cbe8e1;
-    padding-left: 3%;
-    padding-right: 3%;
-    border-radius: 15px;
-
-
+    height: 8%;
 
 
 }
 
-.JobQueueText{
-    font-weight: bold;
-}
-.Waiting-Approval{
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-
-    height: 43%;
-
-    overflow-y: auto;
-    background-color: #f7f7f7;
-font-family: Roboto;
-
-
-}
-
-.Accepted-Approval{
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-
-    height: 43%;
-
-    overflow-y: auto;
-    background-color: #f7f7f7;
-    font-family: Roboto;
-
-
-
-}
-
-.JobItem{
-    opacity: 0.5;
-
-}
-
-.h5{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: #6e6e6e;
-    margin-top: 2%;
-    margin-bottom: 1px;
-    font-family: Roboto;
-
-
-
-}
-
-
-.JobQueue::-webkit-scrollbar {
-    width: 8px;
-
-
-}
-.JobQueue::-webkit-scrollbar-thumb {
-    background-color: #888;
-
-}
-
-.JobQueue::-webkit-scrollbar-thumb:hover {
-    background-color: #555;
-}
-
-
-.h2JQ{
-
- display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    color: #6e6e6e;
-    font-family: Roboto;
-
-
-
-}
-
-.APmanager-page-header{
+.manager-page-header{
 
     margin-right: 20px;
     margin-top: 10px;
     height: 100px;
     color: #6e6e6e;
 
+}
+
+.row{
+    display: flex;
+    flex-direction: row;
+    flex-flow: row;
 }
 
 

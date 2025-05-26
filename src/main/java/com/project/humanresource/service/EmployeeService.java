@@ -8,6 +8,7 @@ import com.project.humanresource.exception.ErrorType;
 import com.project.humanresource.exception.HumanResourceException;
 import com.project.humanresource.repository.*;
 import com.project.humanresource.utility.UserStatus;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,12 @@ public class EmployeeService {
         employeeRepository.save(employee);
     }
 
-    public void addEmployeeForManager(AddEmployeeForRoleRequirementDto dto) { //manager tarafından eklenen employee
+    public void addEmployeeForManager(AddEmployeeForRoleRequirementDto dto,  HttpServletRequest request) { //manager tarafından eklenen employee
+        Long managerId = (Long) request.getAttribute("userId");
+
+        if (managerId == null) {
+            throw new IllegalStateException("Manager ID not found in request.");
+        }
         Employee employee = Employee.builder()
                 .firstName(dto.firstName())
                 .lastName(dto.lastName())
@@ -56,61 +62,61 @@ public class EmployeeService {
 
     }
 
-    public void setEmployeeActiveStatus (Long employeeId, boolean isActive) {
-        String email=SecurityContextHolder.getContext().getAuthentication().getName();
-        User user=userRepository.findByEmail(email)
-                .orElseThrow(()->new HumanResourceException(ErrorType.USER_NOT_FOUND));
-
-        if (!userRoleService.hasRole(user.getId(),UserStatus.Manager)) {
-            throw new HumanResourceException(ErrorType.UNAUTHORIZED);
-        }
-
-
-
-        Company company=companyRepository.findByEmployerId(user.getId())
-                .orElseThrow(()->new HumanResourceException(ErrorType.COMPANY_NOT_FOUND));
-
-        Employee employee=employeeRepository.findById(employeeId)
-                .orElseThrow(()->new HumanResourceException(ErrorType.EMPLOYEE_NOT_FOUND));
-
-        if(!employee.getCompanyId().equals(company.getId())){
-            throw new HumanResourceException(ErrorType.UNAUTHORIZED);
-        }
-        employee.setActive(isActive);
-        employeeRepository.save(employee);
-    }
-
-    public void deleteEmployeeCompletely(Long employeeId) {
-        String email=SecurityContextHolder.getContext().getAuthentication().getName();
-
-        User user=userRepository.findByEmail(email)
-                .orElseThrow(()->new HumanResourceException(ErrorType.USER_NOT_FOUND));
-        if (!userRoleService.hasRole(user.getId(),UserStatus.Manager)) {
-            throw new HumanResourceException(ErrorType.UNAUTHORIZED);
-        }
-        Company company=companyRepository.findByEmployerId(user.getId())
-                .orElseThrow(()->new HumanResourceException(ErrorType.COMPANY_NOT_FOUND));
-
-        Employee employee=employeeRepository.findById(employeeId)
-                .orElseThrow(()->new HumanResourceException(ErrorType.EMPLOYEE_NOT_FOUND));
-
-        if(!employee.getCompanyId().equals(company.getId())){
-            throw new HumanResourceException(ErrorType.UNAUTHORIZED);
-        }
-
-        // 1. personelin özlük dosyasını sil
-        Optional.ofNullable(employee.getPersonalFiledId())
-                .flatMap(personelFileRepository::findById)
-                .ifPresent(personelFileRepository::delete);
-
-        userRoleRepository.deleteByUserId(employee.getId());
-
-        userRepository.deleteById(user.getId());
-
-        employeeRepository.deleteById(employeeId);
-
-
-    }
+//    public void setEmployeeActiveStatus (Long employeeId, boolean isActive) {
+//        String email=SecurityContextHolder.getContext().getAuthentication().getName();
+//        User user=userRepository.findByEmail(email)
+//                .orElseThrow(()->new HumanResourceException(ErrorType.USER_NOT_FOUND));
+//
+//        if (!userRoleService.hasRole(user.getId(),UserStatus.Manager)) {
+//            throw new HumanResourceException(ErrorType.UNAUTHORIZED);
+//        }
+//
+//
+//
+//        Company company=companyRepository.findByEmployerId(user.getId())
+//                .orElseThrow(()->new HumanResourceException(ErrorType.COMPANY_NOT_FOUND));
+//
+//        Employee employee=employeeRepository.findById(employeeId)
+//                .orElseThrow(()->new HumanResourceException(ErrorType.EMPLOYEE_NOT_FOUND));
+//
+//        if(!employee.getCompanyId().equals(company.getId())){
+//            throw new HumanResourceException(ErrorType.UNAUTHORIZED);
+//        }
+//        employee.setActive(isActive);
+//        employeeRepository.save(employee);
+//    }
+//
+//    public void deleteEmployeeCompletely(Long employeeId) {
+//        String email=SecurityContextHolder.getContext().getAuthentication().getName();
+//
+//        User user=userRepository.findByEmail(email)
+//                .orElseThrow(()->new HumanResourceException(ErrorType.USER_NOT_FOUND));
+//        if (!userRoleService.hasRole(user.getId(),UserStatus.Manager)) {
+//            throw new HumanResourceException(ErrorType.UNAUTHORIZED);
+//        }
+//        Company company=companyRepository.findByEmployerId(user.getId())
+//                .orElseThrow(()->new HumanResourceException(ErrorType.COMPANY_NOT_FOUND));
+//
+//        Employee employee=employeeRepository.findById(employeeId)
+//                .orElseThrow(()->new HumanResourceException(ErrorType.EMPLOYEE_NOT_FOUND));
+//
+//        if(!employee.getCompanyId().equals(company.getId())){
+//            throw new HumanResourceException(ErrorType.UNAUTHORIZED);
+//        }
+//
+//        // 1. personelin özlük dosyasını sil
+//        Optional.ofNullable(employee.getPersonalFiledId())
+//                .flatMap(personelFileRepository::findById)
+//                .ifPresent(personelFileRepository::delete);
+//
+//        userRoleRepository.deleteByUserId(employee.getId());
+//
+//        userRepository.deleteById(user.getId());
+//
+//        employeeRepository.deleteById(employeeId);
+//
+//
+//    }
 
 //    public void deleteEmployee (Long employeeId) {
 //        String email=SecurityContextHolder.getContext().getAuthentication().getName();

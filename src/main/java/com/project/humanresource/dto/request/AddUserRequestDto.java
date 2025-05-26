@@ -1,5 +1,6 @@
 package com.project.humanresource.dto.request;
 
+import com.project.humanresource.utility.UserStatus;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -22,5 +23,7 @@ public record AddUserRequestDto(
         String phone,
         Long companyId,
         Long titleId,
-        Long personalFiledId
+        Long personalFiledId,
+
+         UserStatus role
 ) {}

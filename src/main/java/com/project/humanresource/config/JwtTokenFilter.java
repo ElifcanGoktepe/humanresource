@@ -1,48 +1,58 @@
 package com.project.humanresource.config;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Objects;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtManager jwtManager;
-    @Autowired
-    private JwtUserDetails jwtUserDetails;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
 
         final String requestHeaderAuthorization = request.getHeader("Authorization");
-        System.out.println("header....: " + requestHeaderAuthorization);
 
-        if (Objects.nonNull(requestHeaderAuthorization) && requestHeaderAuthorization.startsWith("Bearer ")) {
+        if (requestHeaderAuthorization != null && requestHeaderAuthorization.startsWith("Bearer ")) {
             String token = requestHeaderAuthorization.substring(7);
-            Optional<Long> userId = jwtManager.validateToken(token);
 
-            if (userId.isPresent()) {
-                request.setAttribute("userId", userId.get());
-                UserDetails userDetails = jwtUserDetails.loadUserById(userId.get());
+            Optional<DecodedJWT> decoded = jwtManager.decodeToken(token);
 
-                // 🔍 Buraya log ekledik
-                System.out.println("✅ userDetails.getAuthorities(): " + userDetails.getAuthorities());
+            if (decoded.isPresent()) {
+                DecodedJWT jwt = decoded.get();
+                Long userId = jwt.getClaim("userId").asLong();
+                List<String> roles = jwt.getClaim("roles").asList(String.class);
 
-                UsernamePasswordAuthenticationToken springToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(springToken);
+                List<GrantedAuthority> authorities = roles.stream()
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
+
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(userId, null, authorities);
+
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                // Opsiyonel: userId'yi request attribute olarak da ekleyebilirsin
+                request.setAttribute("userId", userId);
             }
         }
 
