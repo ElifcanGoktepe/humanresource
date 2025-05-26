@@ -49,28 +49,28 @@ function CreatePasswordPage(){
 
 
         return (
-        <div className="loginPage-createpassword" >
+        <div className="createpassword-createpasswordpage" >
 
 
-            <div className="container-createpasswordpage" >
+            <div className="container-createpasswordpage-createpasswordpage" >
 
-                <div className="input-area">
+                <div className="inputarea-createpasswordpage">
 
-                    <form className="login-form" >
-                        <div className="logol">
-                            <img src="/img/logo.png" alt="logo" width="200px" />
-                        </div>
-                        <div className="Password-group">
+                    <form className="createpasswordform-createpasswordpage" >
+
+
+                            <label className="label">Password</label>
+                            <input type="password" name="Password Area" placeholder="Create New Password" className="passwordinput-createpasswordpage" value={password} onChange={(e) => setPassword(e.target.value)} required />
+
+
                             <label className="Label">Password</label>
-                            <input type="password" name="Password Area" placeholder="Create New Password" className="Password Input" value={password} onChange={(e) => setPassword(e.target.value)} required />
-                        </div>
-                        <div className="Password-group">
-                            <label className="Label">Password</label>
-                            <input type="password" name="Password Area" placeholder="Re-Enter Password" className="Password Input" value={rePassword} onChange={(e) => setRePassword(e.target.value)} required />
-                        </div>
-                        <div className="button-loginm">
-                            <button type="submit" className="login-btnm" onClick={handleSubmit} >CREATE</button>
-                        </div>
+                            <input type="password" name="rePassword Area" placeholder="Re-Enter Password" className="repasswordinput-createpasswordpage" value={rePassword} onChange={(e) => setRePassword(e.target.value)} required />
+
+
+                            <button type="submit" className="createpassword-btn-createpasswordpage" onClick={handleSubmit} >CREATE</button>
+
+
+                        <a id="loginlinkwords-registerpage" href="/login">back to login</a>
 
                     </form>
                     {error && <p style={{ color: "red", marginTop: 16 }}>{error}</p>}
