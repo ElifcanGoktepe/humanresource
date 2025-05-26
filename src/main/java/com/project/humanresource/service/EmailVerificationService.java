@@ -45,10 +45,10 @@ public class EmailVerificationService {
             verification.setEmployeeId(employee.getId());
             repository.save(verification);
 
-            sendEmail(toEmail, token);
+            sendEmail(toEmail, token, employee);
         }
 
-        private void sendEmail(String toEmail, String token) {
+        private void sendEmail(String toEmail, String token, Employee employee) {
             // SMTP ayarlarının tanılanması:
             // Bu ayarlar, Gmail’in SMTP (Mail Gönderim) sunucusuna bağlanmak için gerekli.
             // TLS protokolü (güvenli bağlantı) ve kimlik doğrulama (auth) açılmış.
@@ -79,8 +79,10 @@ public class EmailVerificationService {
                 message.setFrom(new InternetAddress(fromEmail));
                 message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
                 message.setSubject("Email Verification");
-                message.setText("Click the link below to verify your email:\n\n" +
-                        "http://localhost:9090/api/verify?token=" + token);
+                message.setText("Hello " + employee.getFirstName() + ",\n\n" +
+                        "Click the link below to verify your email:\n\n" +
+                        "http://localhost:9090/api/verify?token=" + token + "\n\n" +
+                        "Best Regards,\nHumin Team");
 
                 Transport.send(message);
             } catch (MessagingException e) {
@@ -108,7 +110,7 @@ public class EmailVerificationService {
         employeeRepository.save(employee);
 
         // burada kullanıcıya parola oluşturma linki gönderilebilir
-        sendSetPasswordEmail(employee.getEmailWork(), token);
+        sendSetPasswordEmail(employee.getEmailWork(), token, employee);
 
         return true;
     }
@@ -132,10 +134,14 @@ public class EmailVerificationService {
     public void sendApprovalRequestToAdmin(Employee manager) {
         String subject = "New Company Manager Application";
         String approvalLink = "http://localhost:9090/approve/" + manager.getId();
-        String body = "There is a new company application:\n\n" +
+        String body = "Hello Admin,\n\n" +
+                "There is a new company application:\n\n" +
                 "Name: " + manager.getFirstName() + " " + manager.getLastName() + "\n" +
                 "Email: " + manager.getEmailWork() + "\n\n" +
-                "Click to approve:\n" + approvalLink;
+                "Company: " + manager.getCompanyName() + "\n" +
+                "Title : CEO\n\n" +
+                "Click to approve:\n" + approvalLink + "\n\n" +
+                "Best Regards,\nHumin Team";
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
@@ -164,7 +170,7 @@ public class EmailVerificationService {
     private String fromPassword;
 
     //Şifre oluşturma bağlantısı gönder
-    public void sendSetPasswordEmail(String toEmail, String token) {
+    public void sendSetPasswordEmail(String toEmail, String token, Employee employee) {
         System.out.println("A mail for setting password has sent: " + toEmail);
         String link = "http://localhost:5173/create-password?token=" + token;
 
@@ -184,8 +190,11 @@ public class EmailVerificationService {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(fromEmail));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-            message.setSubject("Parola Oluştur");
-            message.setText("Click the link below to set your password:\n\n" + link);
+            message.setSubject("Create Password");
+            message.setText("Hello " + employee.getFirstName() + ",\n\n" +
+                    "Click the link below to set your password:\n\n" +
+                    link + "\n\n" +
+                    "Best Regards,\nHumin Team");
             Transport.send(message);
         } catch (MessagingException e) {
             e.printStackTrace();

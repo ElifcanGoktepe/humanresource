@@ -6,6 +6,7 @@ import com.project.humanresource.dto.response.BaseResponseShort;
 import com.project.humanresource.entity.Employee;
 import com.project.humanresource.service.EmployeeService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +23,8 @@ public class AddEmployeeController {
     private final EmployeeService employeeService;
 
     @PostMapping(ADD_EMPLOYEE)
-    public ResponseEntity<BaseResponseShort<Boolean>> addEmployee(@RequestBody AddEmployeeForRoleRequirementDto dto) {
-        employeeService.addEmployeeForManager(dto);
+    public ResponseEntity<BaseResponseShort<Boolean>> addEmployee(@RequestBody AddEmployeeForRoleRequirementDto dto, HttpServletRequest request) {
+        employeeService.addEmployeeForManager(dto, request);
         return ResponseEntity.ok(BaseResponseShort.<Boolean>builder()
                         .data(true)
                         .code(200)

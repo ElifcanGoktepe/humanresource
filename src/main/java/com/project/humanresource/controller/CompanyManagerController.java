@@ -47,9 +47,9 @@ public class CompanyManagerController {
     public ResponseEntity<String> approveManager(@PathVariable Long employeeId) {
         boolean activated = emailVerificationService.approveCompanyManager(employeeId);
         if (activated) {
-            return ResponseEntity.ok("✅ Kullanıcı onaylandı ve tamamen aktif hale geldi.");
+            return ResponseEntity.ok("✅ The user has been approved and is now fully active.");
         } else {
-            return ResponseEntity.ok("🟡 Kullanıcı onaylandı ama mail doğrulaması bekleniyor.");
+            return ResponseEntity.ok("🟡 The user has been approved, but email verification is pending.");
         }
     }
     //isActivated = true
@@ -57,7 +57,7 @@ public class CompanyManagerController {
     public ResponseEntity<String> verifyEmail(@RequestParam String token) {
         boolean result = emailVerificationService.verifyToken(token);
         return result ?
-                ResponseEntity.ok("✅ Email activated.") :
+                ResponseEntity.ok("✅ Email activated. Please check your mailbox to create password.") :
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).body("❌ Invalid or expired token.");
     }
 }

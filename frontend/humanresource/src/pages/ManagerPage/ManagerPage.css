@@ -168,3 +168,49 @@
 .manage-employee{
 
 }
+.action-buttons {
+    margin-top: 8px;
+    display: flex;
+    gap: 10px;
+}
+
+.approve-button {
+    background-color: #00796B;
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: "Roboto Thin";
+    transition: background-color 0.3s ease;
+}
+
+.approve-button:hover {
+    background-color: #005e52;
+    font-weight: bold;
+}
+
+.reject-button {
+    background-color: #d32f2f;
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: "Roboto Thin";
+    transition: background-color 0.3s ease;
+}
+
+.reject-button:hover {
+    background-color: #a62828;
+    font-weight: bold;
+}
+.pending-leaves-panel{
+
+    margin-top: 10px;
+    border-color: rgba(239, 239, 239, 0.53);
+    border-width: 5px;
+    border-style: solid;
+}

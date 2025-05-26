@@ -37,3 +37,36 @@ out/
 .vscode/
 humanresource.log
 *.gz
+*.tmp
+
+# Compiled class files
+*.class
+
+# Package Files
+*.jar
+*.war
+*.ear
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build output
+build/
+target/
+out/
+
+# Node modules (if any frontend in same repo)
+node_modules/
+
+# Temporary files
+*.log
+*.tmp
+
+# Problematic controllers (team member issues)
+**/AddEmployeeController.java.bak
