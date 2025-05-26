@@ -73,7 +73,35 @@ function EmployeePage() {
 
         fetchApprovedLeaves();
     }, []);
+    function parseJwt(token: string) {
+        try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        } catch (e) {
+            return null;
+        }
+    }
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [titleName, setTitleName] = useState("");
+    const [companyName, setCompanyName] = useState("");
 
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            const payload = parseJwt(token);
+            if (payload) {
+                setFirstName(payload.firstName || "");
+                setLastName(payload.lastName || "");
+                setTitleName(payload.titleName || "");
+                setCompanyName(payload.companyName || "");
+            }
+        }
+    }, []);
     return (
         <>
         <div className="row">
@@ -123,7 +151,7 @@ function EmployeePage() {
             </div>
             <div className="col-10">
                 <div className="employee-page-header">
-                    <h2>Hello Employee!</h2>
+                    <h2>Hello {firstName}!</h2>
                     <h3>Today's Date: {dateString}, {dayName}</h3>
                     <hr/>
                 </div>
@@ -132,7 +160,7 @@ function EmployeePage() {
                         <div className="box1-dashboard">
                             <div className="profile-settings-header">
                                 <div className="col-8 profile-settings-header-name">
-                                    <h3>Employee Name</h3>
+                                    <h3>{firstName} {lastName}</h3>
                                 </div>
                                 <div className="col-4 profile-settings-header-icon">
                                     <img className="small-image-fixed-bar2" src="/img/profileicon.png" />
@@ -140,8 +168,8 @@ function EmployeePage() {
                             </div>
                             <div className="profile-settings-body">
                                 <div>
-                                    <h4>Title</h4>
-                                    <h6>Company</h6>
+                                    <h4>{titleName}</h4>
+                                    <h6>{companyName}</h6>
                                 </div>
                                 <hr/>
                                 <div className="account-button-container">
@@ -174,27 +202,32 @@ function EmployeePage() {
                         </div>
                     </div>
                     <div className="col-3 box-dashboard">
-                        <div className="box1-dashboard row p-2">
-                            <h3>Weekly Shift List</h3>
-                            <hr/>
-                            <div className="col-7 fontstyle-shiftnames mb-2">
-                                <p>Monday</p>
-                                <p>Tuesday</p>
-                                <p>Wednesday</p>
-                                <p>Thursday</p>
-                                <p>Friday</p>
-                                <p>Saturday</p>
-                                <p>Sunday</p>
+                        <div className="box1-dashboard p-2">
+                            <div>
+                                <h3>Weekly Shift List</h3>
+                                <hr/>
                             </div>
-                            <div className="col-5 fontstyle-shifthours mb-2">
-                                <p>08:00-12:00</p>
-                                <p>08:00-12:00</p>
-                                <p>13:00-17:00</p>
-                                <p>13:00-17:00</p>
-                                <p>18:00-22:00</p>
-                                <p>18:00-22:00</p>
-                                <p>---</p>
+                            <div className="row">
+                                <div className="col-7 fontstyle-shiftnames mb-2">
+                                    <p>Monday</p>
+                                    <p>Tuesday</p>
+                                    <p>Wednesday</p>
+                                    <p>Thursday</p>
+                                    <p>Friday</p>
+                                    <p>Saturday</p>
+                                    <p>Sunday</p>
+                                </div>
+                                <div className="col-5 fontstyle-shifthours mb-2">
+                                    <p>08:00-12:00</p>
+                                    <p>08:00-12:00</p>
+                                    <p>13:00-17:00</p>
+                                    <p>13:00-17:00</p>
+                                    <p>18:00-22:00</p>
+                                    <p>18:00-22:00</p>
+                                    <p>---</p>
+                                </div>
                             </div>
+
 
                             <hr/>
                             <div className="request-button-container mb-2">

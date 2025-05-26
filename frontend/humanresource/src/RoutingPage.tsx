@@ -7,6 +7,8 @@ import AdminPage from "./pages/AdminPage/AdninPage.tsx";
 import UserSettingsPage from "./pages/settingsPage/UserSettingsPage";
 import EmployeePage from "./pages/EmployeePage/EmployeePage.tsx";
 import CreatePasswordPage from "./pages/CreatePasswordPage/CreatePasswordPage.tsx";
+import EmployeeListPanel from "./pages/ManagerPage/EmployeeListPanel.tsx";
+import EmployeePersonalFilePage from "./pages/EmployeePage/EmployeePersonalFilePage.tsx";
 
 
 
@@ -24,6 +26,8 @@ function RoutingPage() {
                 <Route path='/employee' element={<EmployeePage />}/>
                 <Route path="/create-password" element={<CreatePasswordPage />} />
                 <Route path="/manager-login" element={<LoginPage />} />
+                <Route path="/manager/employeelist" element={<EmployeeListPanel />} />
+                <Route path="/employee/me" element={<EmployeePersonalFilePage />} />
             </Routes>
         </BrowserRouter>
     )

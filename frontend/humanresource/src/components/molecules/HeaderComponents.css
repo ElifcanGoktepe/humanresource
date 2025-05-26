@@ -78,7 +78,8 @@
     flex-wrap: wrap; /* Ekran küçülürse alt satıra geçebilir */
 }
 .deneme{
-    padding: 20px;
+    margin-left: 0px;
+    padding-top: 20px;
     width: 100%;
     height: 140px;
 }
