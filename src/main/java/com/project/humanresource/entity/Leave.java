@@ -28,4 +28,8 @@ public class Leave {
     @Enumerated(EnumType.STRING)
     StateTypes state;
     Long employeeId;
+    @Transient
+    private String firstName;
+    @Transient
+    private String lastName;
 }

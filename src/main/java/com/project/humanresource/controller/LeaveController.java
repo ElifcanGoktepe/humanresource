@@ -2,6 +2,7 @@ package com.project.humanresource.controller;
 
 import com.project.humanresource.dto.request.LeaveRequestDto;
 import com.project.humanresource.dto.response.BaseResponseShort;
+import com.project.humanresource.dto.response.LeaveResponseDto;
 import com.project.humanresource.entity.Leave;
 import com.project.humanresource.service.LeaveService;
 import com.project.humanresource.utility.StateTypes;
@@ -37,9 +38,9 @@ public class LeaveController {
         Long managerId = (Long) request.getAttribute("userId");
         List<Leave> pendingLeaves = leaveService.getPendingLeavesForManager(managerId);
         return ResponseEntity.ok(BaseResponseShort.<List<Leave>>builder()
-                        .data(pendingLeaves)
-                        .message("Pending leaves for manager " + managerId)
-                        .code(200)
+                .data(pendingLeaves)
+                .message("Pending leaves for manager " + managerId)
+                .code(200)
                 .build());
     }
 

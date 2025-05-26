@@ -43,69 +43,65 @@ function RegisterPage() {
     };
 
     return (
-        <div className="RegisterPage">
-            <div className="container-registerpage">
-                <div className="input-area">
-                    <form className="register-form" onSubmit={handleRegister}>
-                        <div className="logor">
-                            <img src="/img/logo.png" alt="logo" width="200px" />
-                        </div>
+        <div className="registerpage-registerpage">
+            <div className="container-registerpage-registerpage">
+                <div className="inputarea-registerpage">
+                    <form className="registerform-registerpage" onSubmit={handleRegister}>
 
-                        <div className="Name-group">
-                            <label className="Label">First Name</label>
-                            <input type="text" className="Name Input"
+
+                            <label className="label">First Name</label>
+                            <input type="text" className="firstnameinput-registerpage"
                                    value={firstName}
                                    onChange={(e) => setFirstName(e.target.value)}
                                    required />
-                        </div>
 
-                        <div className="SurName-group">
-                            <label className="Label">Last Name</label>
-                            <input type="text" className="SurName Input"
+
+
+                            <label className="label">Last Name</label>
+                            <input type="text" className="lastnameinput-registerpage"
                                    value={lastName}
                                    onChange={(e) => setLastName(e.target.value)}
                                    required />
-                        </div>
 
-                        <div className="E-mail-group">
-                            <label className="Label">E-mail</label>
-                            <input type="email" className="Email Input"
+
+
+                            <label className="label">E-mail</label>
+                            <input type="email" className="emailinput-registerpage"
                                    value={email}
                                    onChange={(e) => setEmail(e.target.value)}
                                    required />
-                        </div>
 
-                        <div className="PhoneNumber-group">
-                            <label className="Label">Phone Number</label>
-                            <input type="text" className="PhoneNumber Input"
+
+
+                            <label className="label">Phone Number</label>
+                            <input type="text" className="phonenumberinput-registerpage"
                                    value={phoneNumber}
                                    onChange={(e) => setPhoneNumber(e.target.value)}
                                    required />
-                        </div>
 
-                        <div className="CompanyName-group">
-                            <label className="Label">Company Name</label>
-                            <input type="text" className="CompanyName Input"
+
+
+                            <label className="label">Company Name</label>
+                            <input type="text" className="companynameinput-registerpage"
                                    value={companyName}
                                    onChange={(e) => setCompanyName(e.target.value)}
                                    required />
-                        </div>
 
-                        <div className="TitleName-group">
-                            <label className="Label">Title</label>
-                            <input type="text" className="TitleName Input"
+
+
+                            <label className="label">Title</label>
+                            <input type="text" className="titlenameinput-registerpage"
                                    value={titleName}
                                    onChange={(e) => setTitleName(e.target.value)}
                                    required />
-                        </div>
 
-                        <div className="button-registerm">
-                            <button type="submit" className="signup-btnm">SIGN UP</button>
-                        </div>
 
-                        <div className="to-register">
-                            <a id="ar" href="/login">Back to Login</a>
-                        </div>
+
+                            <button type="submit" className="signup-btn-registerpage">APPLY</button>
+
+
+                            <a id="loginlinkwords-registerpage" href="/login">Back to Login</a>
+
                     </form>
                 </div>
             </div>

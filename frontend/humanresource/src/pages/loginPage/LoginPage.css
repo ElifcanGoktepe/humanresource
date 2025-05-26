@@ -1,164 +1,134 @@
-
 .loginPage-loginpage {
-
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    align-content: center;
     height: 100vh;
     width: 100vw;
-
-
-
-
-
-
-
-
+    position: relative;
+    overflow: hidden;
+    font-family: "Roboto", sans-serif;
+    animation: fadeIn 0.8s ease-in-out;
 }
 
 .loginPage-loginpage::before {
-
     content: "";
     position: absolute;
     inset: 0;
     background-image: url("/img/logo4.png");
     background-size: cover;
     background-position: center;
-    opacity: 0.3; /* Burada opaklığı ayarlarsın */
+    opacity: 0.2;
     z-index: -1;
-
+    animation: zoomFade 2s ease-in-out;
 }
 
-.container-loginpage-loginpage{
-
+.container-loginpage-loginpage {
+    background-color: rgba(30, 30, 30, 0.75); /* Daha fazla şeffaflık */
+    backdrop-filter: blur(8px); /* Arka plan bulanıklığı */
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    align-content: center;
-
-
-    height: 100vh;
-    width: 100vh;
-
+    gap: 24px;
+    min-width: 320px;
+    animation: slideUp 0.6s ease-in-out;
+    transition: transform 0.3s ease;
 }
 
-.inputarea-loginpage{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100vw;
+.container-loginpage-loginpage:hover {
+    transform: translateY(-4px);
 }
 
-
-.loginform-loginpage{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100vw;
-}
-
-
-.logocontainer-loginpage{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    align-content: center;
-    height: 100vh;
-    width: 100vw;
-
-
-
-}
-
-
-.logoimg-loginpage{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-image: url("/img/logo.png");
-    background-blend-mode: multiply;
-    background-size: contain;
-    background-repeat: no-repeat;
-}
-
-label.Label{
-
-    display: flex;
-    flex-direction: column;
-    font-size: 0.8rem;
-    margin-bottom: 3px;
-
-}
-
-.Emailgroup-loginpage{
-
-    display: flex;
-    flex-direction: column;
+.inputarea-loginpage {
     width: 100%;
-    margin-bottom: 12px;
-
-
 }
 
-.Passwordgroup-loginpage{
-
+.loginform-loginpage {
     display: flex;
     flex-direction: column;
+    gap: 18px;
     width: 100%;
-    margin-bottom: 12px;
-
-
 }
 
-.Label{
-    display: flex;
-    flex-direction: column;
-    padding: 3%;}
+.label {
+    color: #e0e0e0;
+    font-weight: bold;
+    font-size: 1.05rem;
+    letter-spacing: 0.5px;
+}
 
-input.E-mail.Input{
+.emailinput-loginpage,
+.passwordinput-loginpage {
+    padding: 12px;
     border-radius: 10px;
     border: none;
-    padding: 5px;
-
+    font-size: 1rem;
+    background-color: #f3f3f3;
+    color: #333;
+    transition: all 0.2s ease-in-out;
 }
 
-input.Password.Input{
-
-    border-radius: 10px;
-    border: none;
-    padding: 5px;
-}
-
-.button-login-loginpage{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin-top: 25%;
-
+.emailinput-loginpage:focus,
+.passwordinput-loginpage:focus {
+    outline: 2px solid #00796B;
+    background-color: #ffffff;
+    box-shadow: 0 0 5px #00796B;
 }
 
 .login-btn-loginpage {
-    background-color: transparent;
+    background-color: #00796B;
     color: white;
-    border: 2px solid white;
-    border-radius: 40px;
-    padding: 5px;
-    font-size: 1.3rem;
-    font-weight: 600;
+    border: none;
+    border-radius: 30px;
+    padding: 12px;
+    font-size: 1.15rem;
+    font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
-    width: 180px;
-    height: 50px;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(0, 121, 107, 0.4);
 }
 
+.login-btn-loginpage:hover {
+    background-color: #005f56;
+    transform: scale(1.03);
+    box-shadow: 0 6px 20px rgba(0, 121, 107, 0.5);
+}
 
+#registerlinkwords-loginpage {
+    color: #cccccc;
+    margin-top: 12px;
+    text-align: center;
+    text-decoration: underline;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+    display: block;
+}
+
+#registerlinkwords-loginpage:hover {
+    color: #00796B;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes zoomFade {
+    0% { transform: scale(1.05); opacity: 0; }
+    100% { transform: scale(1); opacity: 0.2; }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

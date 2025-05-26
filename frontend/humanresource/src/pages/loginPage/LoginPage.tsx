@@ -59,34 +59,34 @@ function LoginPage() {
 
 
 
-                            <label className="Label">E-mail</label>
+                            <label className="label">E-mail</label>
                             <input
                                 type="email"
                                 name="Email Area"
                                 placeholder="Work Email"
-                                className="E-mail Input"
+                                className="emailinput-loginpage"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
                             />
 
-                            <label className="Label">Password</label>
+                            <label className="label">Password</label>
                             <input
                                 type="password"
                                 name="Password Area"
                                 placeholder="Password"
-                                className="Password Input"
+                                className="passwordinput-loginpage"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                             />
 
-                        <div className="button-login-loginpage">
+
                             <button type="submit" className="login-btn-loginpage">LOG IN</button>
-                        </div>
-                        <div className='gotoregisterpage-loginpage'>
-                            <a id="registerlinkwords-loginpage" href="/register">create new account</a>
-                        </div>
+
+
+                            <a id="registerlinkwords-loginpage" href="/register">back to apply</a>
+
                     </form>
                 </div>
             </div>
