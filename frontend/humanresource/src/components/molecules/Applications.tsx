@@ -7,8 +7,8 @@ interface Application {
     id: number;
     firstName: string;
     lastName: string;
-    emailWork: string;
-    phoneWork: string;
+    email: string;
+    phoneNumber: string;
     companyName: string;
     titleName: string;
     isApproved: boolean;
@@ -89,8 +89,8 @@ function Applications() {
                     {applications.map((app) => (
                         <div className="app-card" key={app.id}>
                             <h5>{app.firstName} {app.lastName}</h5>
-                            <p><strong>Email:</strong> {app.emailWork}</p>
-                            <p><strong>Phone:</strong> {app.phoneWork}</p>
+                            <p><strong>Email:</strong> {app.email}</p>
+                            <p><strong>Phone:</strong> {app.phoneNumber}</p>
                             <p><strong>Company:</strong> {app.companyName}</p>
                             <p><strong>Title:</strong> {app.titleName}</p>
                             <p><strong>Approved:</strong> {app.isApproved ? 'Yes' : 'No'}</p>

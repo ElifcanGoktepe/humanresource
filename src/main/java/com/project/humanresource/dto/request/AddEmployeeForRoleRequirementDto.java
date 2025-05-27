@@ -4,7 +4,7 @@ public record AddEmployeeForRoleRequirementDto(
         String firstName,
         String lastName,
         String email,
-        String phoneWork,
+        String phoneNumber,
         String companyName,
         String titleName
 ) {

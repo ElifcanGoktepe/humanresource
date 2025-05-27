@@ -8,6 +8,7 @@ import com.project.humanresource.exception.ErrorType;
 import com.project.humanresource.exception.HumanResourceException;
 import com.project.humanresource.repository.*;
 import com.project.humanresource.utility.UserStatus;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,6 +24,10 @@ public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final UserRoleRepository userRoleRepository;
     private final EmailVerificationService emailVerificationService;
+    private final PersonelFileRepository personelFileRepository;
+    private final UserRepository userRepository;
+    private final UserRoleService userRoleService;
+    private final CompanyRepository companyRepository;
 
     public Optional<Employee> findById(Long employeeId) {
         return employeeRepository.findById(employeeId);
@@ -32,12 +37,17 @@ public class EmployeeService {
         employeeRepository.save(employee);
     }
 
-    public void addEmployeeForManager(AddEmployeeForRoleRequirementDto dto) { //manager tarafından eklenen employee
+    public void addEmployeeForManager(AddEmployeeForRoleRequirementDto dto,  HttpServletRequest request) { //manager tarafından eklenen employee
+        Long managerId = (Long) request.getAttribute("userId");
+
+        if (managerId == null) {
+            throw new IllegalStateException("Manager ID not found in request.");
+        }
         Employee employee = Employee.builder()
                 .firstName(dto.firstName())
                 .lastName(dto.lastName())
                 .email(dto.email())
-                .phoneNumber(dto.phoneWork())
+                .phoneNumber(dto.phoneNumber())
                 .companyName(dto.companyName())
                 .titleName(dto.titleName())
                 .managerId(managerId)
@@ -70,7 +80,7 @@ public class EmployeeService {
 //        Employee employee= Employee.builder()
 //                .firstName(dto.name())
 //                .lastName(dto.surname())
-//                .phoneWork(dto.phoneNumber())
+//                .phoneNumber(dto.phoneNumber())
 //                .companyId(companyId)
 //                .titleId(dto.titleId())
 //                .userId(null)

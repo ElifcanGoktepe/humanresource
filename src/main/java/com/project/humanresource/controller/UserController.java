@@ -73,7 +73,7 @@ public class UserController {
                 .map(role -> role.getUserStatus().name())
                 .toList();
 
-        Optional<Employee> optionalEmployee = employeeRepository.findByEmailWork(dto.email());
+        Optional<Employee> optionalEmployee = employeeRepository.findByemail(dto.email());
 
         if (optionalEmployee.isEmpty()) {
             throw new HumanResourceException(ErrorType.USER_NOT_FOUND); // ya da uygun hata

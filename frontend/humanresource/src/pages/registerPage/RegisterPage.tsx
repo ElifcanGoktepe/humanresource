@@ -79,7 +79,7 @@ function RegisterPage() {
 
 
                             <label className="label">E-mail</label>
-                            <input type="emailWork" className="emailinput-registerpage"
+                            <input type="email" className="emailinput-registerpage"
                                    value={email}
                                    onChange={(e) => setEmail(e.target.value)}
                                    required />

@@ -6,8 +6,8 @@ type Props = {
     onSubmit: (data: {
         firstName: string;
         lastName: string;
-        emailWork: string;
-        phoneWork: string;
+        email: string;
+        phoneNumber: string;
         companyName: string;
         titleName: string;
     }) => void;
@@ -16,8 +16,8 @@ type Props = {
 function AddEmployeeModal({ onClose, onSubmit }: Props) {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
-    const [emailWork, setEmailWork] = useState("");
-    const [phoneWork, setPhoneWork] = useState("");
+    const [email, setemail] = useState("");
+    const [phoneNumber, setphoneNumber] = useState("");
     const [companyName, setCompanyName] = useState("");
     const [titleName, setTitleName] = useState("");
 
@@ -25,8 +25,8 @@ function AddEmployeeModal({ onClose, onSubmit }: Props) {
         const employeeData = {
             firstName,
             lastName,
-            emailWork,
-            phoneWork,
+            email,
+            phoneNumber,
             companyName,
             titleName
         };
@@ -47,10 +47,10 @@ function AddEmployeeModal({ onClose, onSubmit }: Props) {
                 <input type="text" value={lastName} onChange={e => setLastName(e.target.value)} />
 
                 <label>Work Email:</label>
-                <input type="email" value={emailWork} onChange={e => setEmailWork(e.target.value)} />
+                <input type="email" value={email} onChange={e => setemail(e.target.value)} />
 
                 <label>Work Phone:</label>
-                <input type="text" value={phoneWork} onChange={e => setPhoneWork(e.target.value)} />
+                <input type="text" value={phoneNumber} onChange={e => setphoneNumber(e.target.value)} />
 
                 <label>Company Name:</label>
                 <input type="text" value={companyName} onChange={e => setCompanyName(e.target.value)} />

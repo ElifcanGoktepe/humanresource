@@ -26,7 +26,7 @@ function ManagerPage() {
         firstName: string;
         lastName: string;
         email: string;
-        phoneWork: string;
+        phoneNumber: string;
         companyName: string;
         titleName: string;
     }) => {
