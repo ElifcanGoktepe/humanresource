@@ -28,7 +28,7 @@ public class EmailVerificationService {
         private final EmployeeRepository employeeRepository;
 
         public void sendVerificationEmail(String toEmail) {
-            Optional<Employee> optionalEmployee = employeeRepository.findByEmail(toEmail);
+            Optional<Employee> optionalEmployee = employeeRepository.findByEmailWork(toEmail);
             if (optionalEmployee.isEmpty()) {
                 throw new RuntimeException("User not found: " + toEmail);
             }
@@ -45,48 +45,53 @@ public class EmailVerificationService {
             verification.setEmployeeId(employee.getId());
             repository.save(verification);
 
-            sendEmail(toEmail, token);
+            sendEmail(toEmail, token, employee);
         }
 
-        private void sendEmail(String toEmail, String token) {
-            // SMTP ayarlarının tanılanması:
-            // Bu ayarlar, Gmail’in SMTP (Mail Gönderim) sunucusuna bağlanmak için gerekli.
-            // TLS protokolü (güvenli bağlantı) ve kimlik doğrulama (auth) açılmış.
-            Properties props = new Properties();
-            props.put("mail.smtp.auth", "true");
-            props.put("mail.smtp.starttls.enable", "true");
-            props.put("mail.smtp.host", "smtp.gmail.com");
-            props.put("mail.smtp.port", "587");
+    private void sendEmail(String toEmail, String token, Employee employee) {
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
 
-            // Session.getInstance(...): Bu ayarlarla oturum (bağlantı ortamı) oluşturur
-            // session: Artık bu session üzerinden e-posta gönderimi yapılabilir
-            Session session = Session.getInstance(props, // props: SMTP sunucusu için gerekli ayarları içerir (host, port, TLS vb.)
-                    new Authenticator() { // Authenticator: Sunucuya giriş için kullanıcı adı ve şifreyi sağlar
-                        protected PasswordAuthentication getPasswordAuthentication() {
-                            return new PasswordAuthentication("elifcangoktepe@gmail.com", "jynohncfzxegpmrz");
-                        }
-                    });
-            /**
-             * 🧠 Gerçek dünya benzetmesi:
-             * 📫 E-posta göndermek bir posta ofisine gitmek gibidir.
-             * props → hangi postaneye gideceğini (adres, güvenlik kuralı) belirler.
-             * Authenticator → postanedeki hesabını göstermek için kimliğini (mail ve şifre) kullanır.
-             * Session → bu kimlik ve kurallarla oraya bağlanmış bir "oturumdur", yani artık işlem yapmaya hazırsındır.
-             */
-
-            try {
-                Message message = new MimeMessage(session);
-                message.setFrom(new InternetAddress(fromEmail));
-                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-                message.setSubject("Email Verification");
-                message.setText("Click the link below to verify your email:\n\n" +
-                        "http://localhost:9090/api/verify?token=" + token);
-
-                Transport.send(message);
-            } catch (MessagingException e) {
-                throw new RuntimeException(e);
+        Session session = Session.getInstance(props, new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication("elifcangoktepe@gmail.com", "jynohncfzxegpmrz");
             }
+        });
+
+        try {
+            String verifyLink = "http://localhost:9090/api/verify?token=" + token;
+
+            // 🔵 HTML gövdeli mail içeriği
+            String htmlBody = "<p>Hello " + employee.getFirstName() + ",</p>" +
+                    "<p>Click the button below to verify your email:</p>" +
+                    "<a href=\"" + verifyLink + "\" style=\"" +
+                    "display: inline-block;" +
+                    "padding: 10px 20px;" +
+                    "background-color: #00796B;" +
+                    "color: white;" +
+                    "text-decoration: none;" +
+                    "border-radius: 5px;" +
+                    "font-weight: bold;" +
+                    "margin-top: 10px;\">" +
+                    "Verify Email</a>" +
+                    "<p style=\"margin-top: 20px;\">Best Regards,<br>Humin Team</p>";
+
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress("elifcangoktepe@gmail.com"));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
+            message.setSubject("Email Verification");
+
+            // ✨ HTML formatlı içerik gönderiyoruz
+            message.setContent(htmlBody, "text/html; charset=utf-8");
+
+            Transport.send(message);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
         }
+    }
 
     public boolean verifyToken(String token) {
         Optional<EmailVerification> optional = repository.findByToken(token);
@@ -108,7 +113,7 @@ public class EmailVerificationService {
         employeeRepository.save(employee);
 
         // burada kullanıcıya parola oluşturma linki gönderilebilir
-        sendSetPasswordEmail(employee.getEmail(), token);
+        sendSetPasswordEmail(employee.getEmailWork(), token, employee);
 
         return true;
     }
@@ -124,18 +129,29 @@ public class EmailVerificationService {
         employeeRepository.save(employee);
 
         // ✅ Şimdi doğrulama maili gönder
-        sendVerificationEmail(employee.getEmail());
+        sendVerificationEmail(employee.getEmailWork());
 
         return true;
     }
 
-    public void sendApprovalRequestToAdmin(Employee manager) {
+    public void sendApprovalRequestToAdmin(Employee manager, String token) {
         String subject = "New Company Manager Application";
-        String approvalLink = "http://localhost:9090/approve/" + manager.getId();
-        String body = "There is a new company application:\n\n" +
-                "Name: " + manager.getFirstName() + " " + manager.getLastName() + "\n" +
-                "Email: " + manager.getEmail() + "\n\n" +
-                "Click to approve:\n" + approvalLink;
+
+        // 🔐 Token ekli endpoint
+        String approvalLink = "http://localhost:9090/approve/" + manager.getId() + "?token=" + token;
+
+        // 💌 HTML içerikli e-posta gövdesi
+        String htmlBody = "<p>Hello Admin,</p>" +
+                "<p>There is a new company manager application:</p>" +
+                "<ul>" +
+                "<li><strong>Name:</strong> " + manager.getFirstName() + " " + manager.getLastName() + "</li>" +
+                "<li><strong>Email:</strong> " + manager.getEmailWork() + "</li>" +
+                "<li><strong>Company:</strong> " + manager.getCompanyName() + "</li>" +
+                "<li><strong>Title:</strong> CEO</li>" +
+                "</ul>" +
+                "<p>Click the button below to approve:</p>" +
+                "<a href=\"" + approvalLink + "\" style=\"display:inline-block; padding:10px 20px; background-color:#00796B; color:white; text-decoration:none; border-radius:5px;\">Approve</a>" +
+                "<p><br/>Best Regards,<br/>Humin Team</p>";
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
@@ -152,21 +168,35 @@ public class EmailVerificationService {
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(fromEmail));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("elifcangoktepe@gmail.com")); // admin mail
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("elifcangoktepe@gmail.com"));
             message.setSubject(subject);
-            message.setText(body);
+            message.setContent(htmlBody, "text/html; charset=utf-8");
+
             Transport.send(message);
         } catch (MessagingException e) {
-            e.printStackTrace(); // konsolda detaylı hata görmek için
+            e.printStackTrace();
         }
     }
-    @Value("jynohncfzxegpmrz")
+    @Value("${spring.mail.password}")
     private String fromPassword;
 
     //Şifre oluşturma bağlantısı gönder
-    public void sendSetPasswordEmail(String toEmail, String token) {
+    public void sendSetPasswordEmail(String toEmail, String token, Employee employee) {
         System.out.println("A mail for setting password has sent: " + toEmail);
         String link = "http://localhost:5173/create-password?token=" + token;
+
+        String htmlBody = "<p>Hello " + employee.getFirstName() + ",</p>" +
+                "<p>Click the button below to set your password:</p>" +
+                "<a href=\"" + link + "\" style=\"" +
+                "display: inline-block;" +
+                "padding: 10px 20px;" +
+                "background-color: #00796B;" +
+                "color: white;" +
+                "text-decoration: none;" +
+                "border-radius: 5px;" +
+                "font-weight: bold;\">" +
+                "Set Password</a>" +
+                "<p style=\"margin-top: 20px;\">Best Regards,<br>Humin Team</p>";
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
@@ -184,8 +214,11 @@ public class EmailVerificationService {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(fromEmail));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-            message.setSubject("Parola Oluştur");
-            message.setText("Click the link below to set your password:\n\n" + link);
+            message.setSubject("Create Password");
+
+            // ✨ HTML içerik olarak gönder
+            message.setContent(htmlBody, "text/html; charset=utf-8");
+
             Transport.send(message);
         } catch (MessagingException e) {
             e.printStackTrace();
