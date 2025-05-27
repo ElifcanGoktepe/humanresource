@@ -46,8 +46,8 @@ function ManagerPage() {
     const handleAddEmployee = async (employeeData: {
         firstName: string;
         lastName: string;
-        emailWork: string;
-        phoneWork: string;
+        email: string;
+        phoneNumber: string;
         companyName: string;
         titleName: string;
     }) => {

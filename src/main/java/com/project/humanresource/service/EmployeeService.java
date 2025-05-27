@@ -50,7 +50,7 @@ public class EmployeeService {
                 .phoneNumber(dto.phoneNumber())
                 .companyName(dto.companyName())
                 .titleName(dto.titleName())
-                .managerId(managerId)
+                .managerId(dto.managerId())
                 .isApproved(true)
                 .build();
         employeeRepository.save(employee);

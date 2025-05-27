@@ -57,7 +57,7 @@ public class EmailVerificationService {
 
         Session session = Session.getInstance(props, new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("elifcangoktepe@gmail.com", "jynohncfzxegpmrz");
+                return new PasswordAuthentication("serkan.klcdr@gmail.com", "xlclftccllcqlnav");
             }
         });
 
@@ -80,7 +80,7 @@ public class EmailVerificationService {
                     "<p style=\"margin-top: 20px;\">Best Regards,<br>Humin Team</p>";
 
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("elifcangoktepe@gmail.com"));
+            message.setFrom(new InternetAddress("serkan.klcdr@gmail.com"));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
             message.setSubject("Email Verification");
 
@@ -161,14 +161,14 @@ public class EmailVerificationService {
 
         Session session = Session.getInstance(props, new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(fromEmail, "jynohncfzxegpmrz"); // app password
+                return new PasswordAuthentication(fromEmail, "xlclftccllcqlnav"); // app password
             }
         });
 
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(fromEmail));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("elifcangoktepe@gmail.com"));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("serkan.klcdr@gmail.com"));
             message.setSubject(subject);
             message.setContent(htmlBody, "text/html; charset=utf-8");
 
