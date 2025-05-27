@@ -185,7 +185,6 @@ public class EmailVerificationService {
         System.out.println("A mail for setting password has sent: " + toEmail);
         String link = "http://localhost:5173/create-password?token=" + token;
 
-        // 🔵 HTML butonlu içerik
         String htmlBody = "<p>Hello " + employee.getFirstName() + ",</p>" +
                 "<p>Click the button below to set your password:</p>" +
                 "<a href=\"" + link + "\" style=\"" +
