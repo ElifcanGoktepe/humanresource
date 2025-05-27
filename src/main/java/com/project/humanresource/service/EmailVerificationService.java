@@ -28,7 +28,7 @@ public class EmailVerificationService {
         private final EmployeeRepository employeeRepository;
 
         public void sendVerificationEmail(String toEmail) {
-            Optional<Employee> optionalEmployee = employeeRepository.findByEmailWork(toEmail);
+            Optional<Employee> optionalEmployee = employeeRepository.findByEmail(toEmail);
             if (optionalEmployee.isEmpty()) {
                 throw new RuntimeException("User not found: " + toEmail);
             }
@@ -113,7 +113,7 @@ public class EmailVerificationService {
         employeeRepository.save(employee);
 
         // burada kullanıcıya parola oluşturma linki gönderilebilir
-        sendSetPasswordEmail(employee.getEmailWork(), token, employee);
+        sendSetPasswordEmail(employee.getEmail(), token, employee);
 
         return true;
     }
@@ -129,7 +129,7 @@ public class EmailVerificationService {
         employeeRepository.save(employee);
 
         // ✅ Şimdi doğrulama maili gönder
-        sendVerificationEmail(employee.getEmailWork());
+        sendVerificationEmail(employee.getEmail());
 
         return true;
     }
@@ -145,7 +145,7 @@ public class EmailVerificationService {
                 "<p>There is a new company manager application:</p>" +
                 "<ul>" +
                 "<li><strong>Name:</strong> " + manager.getFirstName() + " " + manager.getLastName() + "</li>" +
-                "<li><strong>Email:</strong> " + manager.getEmailWork() + "</li>" +
+                "<li><strong>Email:</strong> " + manager.getEmail() + "</li>" +
                 "<li><strong>Company:</strong> " + manager.getCompanyName() + "</li>" +
                 "<li><strong>Title:</strong> CEO</li>" +
                 "</ul>" +
