@@ -63,7 +63,7 @@ public class EmailVerificationService {
             Session session = Session.getInstance(props, // props: SMTP sunucusu için gerekli ayarları içerir (host, port, TLS vb.)
                     new Authenticator() { // Authenticator: Sunucuya giriş için kullanıcı adı ve şifreyi sağlar
                         protected PasswordAuthentication getPasswordAuthentication() {
-                            return new PasswordAuthentication("serkan.klcdr@gmail.com", "xlclftccllcqlnav");
+                            return new PasswordAuthentication("elifcangoktepe@gmail.com", "jynohncfzxegpmrz");
                         }
                     });
             /**
@@ -145,14 +145,14 @@ public class EmailVerificationService {
 
         Session session = Session.getInstance(props, new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(fromEmail, "xlclftccllcqlnav"); // app password
+                return new PasswordAuthentication(fromEmail, "jynohncfzxegpmrz"); // app password
             }
         });
 
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(fromEmail));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("serkan.klcdr@gmail.com")); // admin mail
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("elifcangoktepe@gmail.com")); // admin mail
             message.setSubject(subject);
             message.setText(body);
             Transport.send(message);
@@ -160,7 +160,7 @@ public class EmailVerificationService {
             e.printStackTrace(); // konsolda detaylı hata görmek için
         }
     }
-    @Value("xlclftccllcqlnav")
+    @Value("jynohncfzxegpmrz")
     private String fromPassword;
 
     //Şifre oluşturma bağlantısı gönder
