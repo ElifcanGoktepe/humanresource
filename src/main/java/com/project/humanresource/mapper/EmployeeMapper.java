@@ -11,7 +11,7 @@ public class EmployeeMapper {
         return new EmployeeResponseDto(
                 fullName,
                 employee.getEmail(),
-                employee.getphoneNumber(),
+                employee.getPhoneNumber(),
                 employee.getTitleName(),
                 employee.isActive()
         );
