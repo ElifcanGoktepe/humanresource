@@ -6,7 +6,7 @@ function Employee (){
     return (
         <div>
 
-
+            <h1> CONTENT AREA </h1>
 
         </div>
     )
