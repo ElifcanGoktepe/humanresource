@@ -25,6 +25,8 @@ public class RestApis {
     public static final String LISTALLDEPARTMENTS = BASE_URL + "/listalldepartments";
     public static final String FINDDEPARTMENTBYID = BASE_URL + "/finddepartmentbyid";
     public static final String FINDDEPARTMENTBYNAME = BASE_URL + "/finddepartmentbyname";
+    public static final String PENDINGAPPLICATIONS= BASE_URL + "/pendingapplications";
+    public static final String UPDATEAPPLICATIONSTATUSBYID = BASE_URL + "/updateapplicationstatusbyid";
     public static final String EMPLOYEE = BASE_URL + "/employee";
     public static final String EXPENSES = BASE_URL + "/expenses";
     public static final String LEAVE = BASE_URL + "/leave";
@@ -37,7 +39,7 @@ public class RestApis {
     public static final String LOGIN = "/login";
     public static final String LOGOUT = "/logout";
     public static final String ADDSHIFT = "/add-shift";
-    public static final String REQUESTLEAVE = "/request-leave";
+    public static final String REQUESTLEAVE = "/request-login";
     public static final String REQUESTSHIFT = "/request-shift";
     public static final String REGISTER = "/register";
     public static final String ADD_EMPLOYEE = "/add-employee";

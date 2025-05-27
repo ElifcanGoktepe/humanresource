@@ -28,7 +28,7 @@ public class EmailVerificationService {
         private final EmployeeRepository employeeRepository;
 
         public void sendVerificationEmail(String toEmail) {
-            Optional<Employee> optionalEmployee = employeeRepository.findByEmailWork(toEmail);
+            Optional<Employee> optionalEmployee = employeeRepository.findByEmail(toEmail);
             if (optionalEmployee.isEmpty()) {
                 throw new RuntimeException("User not found: " + toEmail);
             }
@@ -45,10 +45,10 @@ public class EmailVerificationService {
             verification.setEmployeeId(employee.getId());
             repository.save(verification);
 
-            sendEmail(toEmail, token, employee);
+            sendEmail(toEmail, token);
         }
 
-        private void sendEmail(String toEmail, String token, Employee employee) {
+        private void sendEmail(String toEmail, String token) {
             // SMTP ayarlarının tanılanması:
             // Bu ayarlar, Gmail’in SMTP (Mail Gönderim) sunucusuna bağlanmak için gerekli.
             // TLS protokolü (güvenli bağlantı) ve kimlik doğrulama (auth) açılmış.
@@ -63,7 +63,7 @@ public class EmailVerificationService {
             Session session = Session.getInstance(props, // props: SMTP sunucusu için gerekli ayarları içerir (host, port, TLS vb.)
                     new Authenticator() { // Authenticator: Sunucuya giriş için kullanıcı adı ve şifreyi sağlar
                         protected PasswordAuthentication getPasswordAuthentication() {
-                            return new PasswordAuthentication("elifcangoktepe@gmail.com", "jynohncfzxegpmrz");
+                            return new PasswordAuthentication("serkan.klcdr@gmail.com", "xlclftccllcqlnav");
                         }
                     });
             /**
@@ -79,10 +79,8 @@ public class EmailVerificationService {
                 message.setFrom(new InternetAddress(fromEmail));
                 message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
                 message.setSubject("Email Verification");
-                message.setText("Hello " + employee.getFirstName() + ",\n\n" +
-                        "Click the link below to verify your email:\n\n" +
-                        "http://localhost:9090/api/verify?token=" + token + "\n\n" +
-                        "Best Regards,\nHumin Team");
+                message.setText("Click the link below to verify your email:\n\n" +
+                        "http://localhost:9090/api/verify?token=" + token);
 
                 Transport.send(message);
             } catch (MessagingException e) {
@@ -110,7 +108,7 @@ public class EmailVerificationService {
         employeeRepository.save(employee);
 
         // burada kullanıcıya parola oluşturma linki gönderilebilir
-        sendSetPasswordEmail(employee.getEmail(), token, employee);
+        sendSetPasswordEmail(employee.getEmail(), token);
 
         return true;
     }
@@ -134,14 +132,10 @@ public class EmailVerificationService {
     public void sendApprovalRequestToAdmin(Employee manager) {
         String subject = "New Company Manager Application";
         String approvalLink = "http://localhost:9090/approve/" + manager.getId();
-        String body = "Hello Admin,\n\n" +
-                "There is a new company application:\n\n" +
+        String body = "There is a new company application:\n\n" +
                 "Name: " + manager.getFirstName() + " " + manager.getLastName() + "\n" +
                 "Email: " + manager.getEmail() + "\n\n" +
-                "Company: " + manager.getCompanyName() + "\n" +
-                "Title : CEO\n\n" +
-                "Click to approve:\n" + approvalLink + "\n\n" +
-                "Best Regards,\nHumin Team";
+                "Click to approve:\n" + approvalLink;
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
@@ -151,14 +145,14 @@ public class EmailVerificationService {
 
         Session session = Session.getInstance(props, new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(fromEmail, "jynohncfzxegpmrz"); // app password
+                return new PasswordAuthentication(fromEmail, "xlclftccllcqlnav"); // app password
             }
         });
 
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(fromEmail));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("elifcangoktepe@gmail.com")); // admin mail
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("serkan.klcdr@gmail.com")); // admin mail
             message.setSubject(subject);
             message.setText(body);
             Transport.send(message);
@@ -166,11 +160,11 @@ public class EmailVerificationService {
             e.printStackTrace(); // konsolda detaylı hata görmek için
         }
     }
-    @Value("${spring.mail.password}")
+    @Value("xlclftccllcqlnav")
     private String fromPassword;
 
     //Şifre oluşturma bağlantısı gönder
-    public void sendSetPasswordEmail(String toEmail, String token, Employee employee) {
+    public void sendSetPasswordEmail(String toEmail, String token) {
         System.out.println("A mail for setting password has sent: " + toEmail);
         String link = "http://localhost:5173/create-password?token=" + token;
 
@@ -190,11 +184,8 @@ public class EmailVerificationService {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(fromEmail));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-            message.setSubject("Create Password");
-            message.setText("Hello " + employee.getFirstName() + ",\n\n" +
-                    "Click the link below to set your password:\n\n" +
-                    link + "\n\n" +
-                    "Best Regards,\nHumin Team");
+            message.setSubject("Parola Oluştur");
+            message.setText("Click the link below to set your password:\n\n" + link);
             Transport.send(message);
         } catch (MessagingException e) {
             e.printStackTrace();

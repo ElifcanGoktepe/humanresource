@@ -9,9 +9,14 @@ import com.project.humanresource.repository.UserRepository;
 import com.project.humanresource.utility.UserStatus;
 import jakarta.validation.Valid;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -24,8 +29,9 @@ public class UserService {
     private final EmployeeRepository employeeRepository;
     private final UserRoleService userRoleService;
 
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+
+    public Optional<User> findByEmailAndPassword(String email  ,String password) {
+        return userRepository.findOptionalByEmailAndPassword(email , password);
     }
 
     public Optional<User> findById(Long id) {
@@ -37,7 +43,7 @@ public class UserService {
 
         if (dto.role() == UserStatus.Admin) {
             Employee admin = Employee.builder()
-                    .email(dto.emailWork()) // ya da email
+                    .email(dto.email()) // ya da email
                     .password(dto.password()) // TODO: şifre hashle
                     .firstName(dto.firstName())
                     .lastName(dto.lastName())
@@ -53,7 +59,7 @@ public class UserService {
 
         } else if (dto.role() == UserStatus.Manager || dto.role() == UserStatus.Employee) {
             Employee employee = Employee.builder()
-                    . email(dto.emailWork())
+                    .email(dto.email())
                     .password(dto.password())
                     .isActive(true)
                     .isApproved(false)
@@ -80,7 +86,11 @@ public class UserService {
     }
 
 
-    public Optional<User> findByEmailWorkPassword(@Valid LoginRequestDto dto) {
-        return employeeRepository.findOptionalByEmailWorkAndPassword(dto.email(), dto.password());
+    public Optional<User> findByEmailPassword(@Valid LoginRequestDto dto) {
+        return employeeRepository.findOptionalByEmailAndPassword(dto.email(), dto.password());
+    }
+
+    public Optional<User> findByEmail(@Email @NotEmpty @NotNull String email) {
+        return userRepository.findByEmail(email);
     }
 }

@@ -56,8 +56,10 @@ public class UserController {
      */
     @PostMapping(LOGIN)
     public ResponseEntity<BaseResponseShort<String>> login(@RequestBody @Valid LoginRequestDto dto) {
-        Optional<User> optionalUser = userService.findByEmailWorkPassword(dto);
+        Optional<User> optionalUser = userService.findByEmailPassword(dto);
+        System.out.println("optionalUser present? " + optionalUser.isPresent());
         if (optionalUser.isEmpty()) {
+            System.out.println("DEBUG - User not found, throwing exception");
             throw new HumanResourceException(ErrorType.EMAIL_PASSWORD_ERROR);
         }
 
@@ -82,8 +84,8 @@ public class UserController {
      * Email adresine göre kullanıcı sorgulama
      */
     @GetMapping("/by-email")
-    public ResponseEntity<BaseResponse<User>> getUserByEmail(@RequestParam(name = "email") String email) {
-        User user = userService.findByEmail(email).orElse(null);
+    public ResponseEntity<BaseResponse<User>> getUserByEmail(@RequestParam LoginRequestDto loginRequestDto) {
+        User user = userService.findByEmail(loginRequestDto.email()).orElse(null);
 
         if (user == null) {
             return ResponseEntity.ok(new BaseResponse<>(false, "User not found", null));

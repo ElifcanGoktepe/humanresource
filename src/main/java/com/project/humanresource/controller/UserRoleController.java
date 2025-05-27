@@ -2,6 +2,7 @@ package com.project.humanresource.controller;
 
 import com.project.humanresource.dto.request.AddRoleRequestDto;
 import com.project.humanresource.dto.request.AddUserRequestDto;
+import com.project.humanresource.dto.request.LoginRequestDto;
 import com.project.humanresource.dto.response.BaseResponseShort;
 import com.project.humanresource.entity.User;
 import com.project.humanresource.entity.UserRole;
@@ -30,8 +31,8 @@ public class UserRoleController {
     }
 
     @GetMapping("/by-email")
-    public ResponseEntity<BaseResponse<User>> getUserByEmail(@RequestParam(name = "email") String email) {
-        User user = userService.findByEmail(email).orElse(null);
+    public ResponseEntity<BaseResponse<User>> getUserByEmail(@RequestParam LoginRequestDto loginRequestDto) {
+        User user = userService.findByEmail(loginRequestDto.email()).orElse(null);
         if (user == null) {
             return ResponseEntity.ok(new BaseResponse<>(false, "User not found", null));
         }

@@ -1,0 +1,59 @@
+.applications-container {
+    padding: 30px;
+    background-color: #f7f9fb;
+    min-height: 100vh;
+}
+
+.applications-title {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.no-applications {
+    text-align: center;
+    font-size: 18px;
+    color: #888;
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.app-card {
+    background-color: #ffffff;
+    border: 1px solid #dcdcdc;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+.app-card:hover {
+    transform: translateY(-5px);
+}
+
+.app-card h5 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: #34495e;
+}
+
+.app-card p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #555;
+}
+
+.btn-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.btn {
+    width: 48%;
+}
