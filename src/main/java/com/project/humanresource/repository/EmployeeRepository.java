@@ -1,16 +1,15 @@
 package com.project.humanresource.repository;
 
 import com.project.humanresource.entity.Employee;
-import com.project.humanresource.entity.Leave;
 import com.project.humanresource.entity.User;
-import com.project.humanresource.utility.StateTypes;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Optional;
-
+@Repository  // eklendi serkan 12:24  26/05
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     Optional<Employee> findByFirstNameAndLastName(String firstName, String lastName);
 
@@ -21,11 +20,11 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     Optional<Employee> findByManagerId(Long managerId);
 
-    Optional<Employee> findByEmailWork(String toEmail);
+    Optional<Employee> findByEmail(String toEmail);
 
-    Optional<User> findOptionalByEmailWorkAndPassword(String email, String password);
+    Optional<User> findOptionalByEmailAndPassword(String email, String password);
 
-    @Query("SELECT e.id FROM Employee e WHERE e.managerId = :managerId")
-    List<Long> findEmployeeIdsByManagerId(@Param("managerId") Long managerId);
+
+    List<Employee> findByIsApprovedFalse();  //  26/05  pazartesi 08:19 eklendi  serkan
 
 }

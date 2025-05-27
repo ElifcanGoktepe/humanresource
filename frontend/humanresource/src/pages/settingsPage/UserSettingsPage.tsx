@@ -10,35 +10,24 @@ import {
   CircularProgress,
   Tabs,
   Tab,
-  Divider,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel
+  Divider
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 import LockIcon from '@mui/icons-material/Lock';
 import PersonIcon from '@mui/icons-material/Person';
-import WorkIcon from '@mui/icons-material/Work';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import './UserSettingsPage.css';
 import * as React from "react";
-import { 
-  Gender, 
-  BloodType, 
-  EducationLevel, 
-  MaritalStatus,
-  GenderLabels,
-  BloodTypeLabels,
-  EducationLevelLabels,
-  MaritalStatusLabels 
-} from '../../constants/enums';
 
-// API Configuration - Correct port 9090
-const API_BASE_URL = 'http://localhost:9090/api/users';
-const PERSONAL_FILE_API = 'http://localhost:9090/api/personel-file';
-const CURRENT_USER_ID = 1; // This should come from authentication context
+// Backend'den çekilecek user datası için örnek type
+// Gerçek projede context veya props ile alınabilir
+const mockUser = {
+  firstName: 'Test',
+  lastName: 'User',
+  email: 'test@example.com',
+  phone: '+905551234567',
+};
 
 type UserData = {
   firstName: string;
@@ -61,68 +50,17 @@ type FormErrors = {
   currentPassword?: string;
   newPassword?: string;
   confirmPassword?: string;
-  // Personal File errors
-  gender?: string;
-  birthdate?: string;
-  personalPhone?: string;
-  personalEmail?: string;
-  nationalId?: string;
-  educationLevel?: string;
-  maritalStatus?: string;
-  bloodType?: string;
-  address?: string;
-  city?: string;
-  iban?: string;
-};
-
-type PersonalFileData = {
-  gender: string;
-  birthdate: string;
-  personalPhone: string;
-  personalEmail: string;
-  nationalId: string;
-  educationLevel: string;
-  maritalStatus: string;
-  bloodType: string;
-  numberOfChildren: string;
-  address: string;
-  city: string;
-  iban: string;
-  bankName: string;
-  bankAccountNumber: string;
-  bankAccountType: string;
 };
 
 const UserSettingsPage = () => {
+  // Gerçek projede context veya API'den alınmalı
+  const [user, setUser] = useState<UserData>(mockUser);
   const navigate = useNavigate();
-  const [user, setUser] = useState<UserData>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: ''
-  });
   const [formData, setFormData] = useState<UserData>(user);
   const [passwordData, setPasswordData] = useState<PasswordData>({
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
-  });
-  const [personalFileData, setPersonalFileData] = useState<PersonalFileData>({
-    gender: '',
-    birthdate: '',
-    personalPhone: '',
-    personalEmail: '',
-    nationalId: '',
-    educationLevel: '',
-    maritalStatus: '',
-    bloodType: '',
-    numberOfChildren: '',
-    address: '',
-    city: '',
-    iban: '',
-    bankName: '',
-    bankAccountNumber: '',
-    bankAccountType: ''
   });
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<{text: string; type: 'success' | 'error'} | null>(null);
@@ -131,70 +69,9 @@ const UserSettingsPage = () => {
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  // Load user profile on component mount
-  useEffect(() => {
-    fetchUserProfile();
-    fetchPersonalFile();
-  }, []);
-
   useEffect(() => {
     setFormData(user);
   }, [user]);
-
-  // API call to fetch user profile
-  const fetchUserProfile = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch(`${API_BASE_URL}/${CURRENT_USER_ID}/profile`);
-      const result = await response.json();
-      
-      if (result.success && result.data) {
-        const userData = {
-          firstName: result.data.firstName || '',
-          lastName: result.data.lastName || '',
-          email: result.data.email || '',
-          phone: result.data.phone || ''
-        };
-        setUser(userData);
-      } else {
-        setMessage({ text: 'Failed to load profile data', type: 'error' });
-      }
-    } catch (error) {
-      setMessage({ text: 'Error loading profile data', type: 'error' });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // API call to fetch personal file
-  const fetchPersonalFile = async () => {
-    try {
-      const response = await fetch(`${PERSONAL_FILE_API}/me`);
-      const result = await response.json();
-      
-      if (result.code === 200 && result.data) {
-        setPersonalFileData({
-          gender: result.data.gender || '',
-          birthdate: result.data.birthdate || '',
-          personalPhone: result.data.personalPhone || '',
-          personalEmail: result.data.personalEmail || '',
-          nationalId: result.data.nationalId || '',
-          educationLevel: result.data.educationLevel || '',
-          maritalStatus: result.data.maritalStatus || '',
-          bloodType: result.data.bloodType || '',
-          numberOfChildren: result.data.numberOfChildren || '',
-          address: result.data.address || '',
-          city: result.data.city || '',
-          iban: result.data.iban || '',
-          bankName: result.data.bankName || '',
-          bankAccountNumber: result.data.bankAccountNumber || '',
-          bankAccountType: result.data.bankAccountType || ''
-        });
-      }
-    } catch (error) {
-      console.error('Error loading personal file:', error);
-    }
-  };
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
@@ -204,7 +81,7 @@ const UserSettingsPage = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     
-    // Clear form error
+    // Form hatasını temizle
     setErrors(prev => ({ ...prev, [name]: undefined }));
     
     if (name === 'firstName' || name === 'lastName') {
@@ -219,23 +96,8 @@ const UserSettingsPage = () => {
       }
     } else if (name === 'currentPassword' || name === 'newPassword' || name === 'confirmPassword') {
       setPasswordData(prev => ({ ...prev, [name]: value }));
-    } else if (name === 'personalPhone' || name === 'personalEmail' || 
-               name === 'nationalId' || name === 'numberOfChildren' || name === 'address' || name === 'city' || 
-               name === 'iban' || name === 'bankName' || name === 'bankAccountNumber' || name === 'bankAccountType') {
-      setPersonalFileData(prev => ({ ...prev, [name]: value }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
-    }
-  };
-
-  const handleSelectChange = (e: any) => {
-    const { name, value } = e.target;
-    
-    // Clear form error
-    setErrors(prev => ({ ...prev, [name]: undefined }));
-    
-    if (name === 'gender' || name === 'birthdate' || name === 'educationLevel' || name === 'maritalStatus' || name === 'bloodType') {
-      setPersonalFileData(prev => ({ ...prev, [name]: value }));
     }
   };
 
@@ -300,35 +162,12 @@ const UserSettingsPage = () => {
     
     setIsLoading(true);
     setMessage(null);
-    
-    try {
-      const response = await fetch(`${API_BASE_URL}/${CURRENT_USER_ID}/profile`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-      
-      const result = await response.json();
-      
-      if (result.success && result.data) {
-        const userData = {
-          firstName: result.data.firstName || '',
-          lastName: result.data.lastName || '',
-          email: result.data.email || '',
-          phone: result.data.phone || ''
-        };
-        setUser(userData);
-        setMessage({ text: 'Your profile information has been updated successfully!', type: 'success' });
-      } else {
-        setMessage({ text: result.message || 'Failed to update profile', type: 'error' });
-      }
-    } catch (error) {
-      setMessage({ text: 'Error updating profile', type: 'error' });
-    } finally {
+    // API çağrısı burada yapılacak
+    setTimeout(() => {
+      setUser(formData);
+      setMessage({ text: 'Your profile information has been updated successfully!', type: 'success' });
       setIsLoading(false);
-    }
+    }, 1200);
   };
   
   const handlePasswordSubmit = async (e: React.FormEvent) => {
@@ -338,62 +177,16 @@ const UserSettingsPage = () => {
     
     setIsLoading(true);
     setMessage(null);
-    
-    try {
-      const response = await fetch(`${API_BASE_URL}/${CURRENT_USER_ID}/password`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(passwordData),
+    // API çağrısı burada yapılacak
+    setTimeout(() => {
+      setPasswordData({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
       });
-      
-      const result = await response.json();
-      
-      if (result.success) {
-        setPasswordData({
-          currentPassword: '',
-          newPassword: '',
-          confirmPassword: ''
-        });
-        setMessage({ text: 'Your password has been changed successfully!', type: 'success' });
-      } else {
-        setMessage({ text: result.message || 'Failed to change password', type: 'error' });
-      }
-    } catch (error) {
-      setMessage({ text: 'Error changing password', type: 'error' });
-    } finally {
+      setMessage({ text: 'Your password has been changed successfully!', type: 'success' });
       setIsLoading(false);
-    }
-  };
-
-  const handlePersonalFileSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    setIsLoading(true);
-    setMessage(null);
-    
-    try {
-      const response = await fetch(`${PERSONAL_FILE_API}/save`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(personalFileData),
-      });
-      
-      const result = await response.json();
-      
-      if (result.code === 200) {
-        setMessage({ text: 'Personal file updated successfully!', type: 'success' });
-      } else {
-        setMessage({ text: result.message || 'Failed to update personal file', type: 'error' });
-      }
-    } catch (error) {
-      setMessage({ text: 'Error updating personal file', type: 'error' });
-    } finally {
-      setIsLoading(false);
-    }
+    }, 1200);
   };
 
   if (isLoading) {
@@ -406,7 +199,7 @@ const UserSettingsPage = () => {
 
   return (
     <div className="settings-background">
-      {/* Company Logo */}
+      {/* Şirket Logosu */}
       <Box 
         component="img"
         src="/img/logo1.png" 
@@ -426,7 +219,7 @@ const UserSettingsPage = () => {
         }}
         onClick={() => navigate('/')}
       />
-      {/* Home Button */}
+      {/* Ana Sayfa Butonu */}
       <Box sx={{ position: 'absolute', top: 20, right: 20, zIndex: 10 }}>
         <IconButton 
           onClick={() => navigate('/')}
@@ -498,479 +291,197 @@ const UserSettingsPage = () => {
             >
               <Tab icon={<PersonIcon />} label="Profile" />
               <Tab icon={<LockIcon />} label="Password" />
-              <Tab icon={<WorkIcon />} label="Personal File" />
-            </Tabs>
-            {activeTab === 0 && (
-              <Box 
-                component="form" 
-                onSubmit={handleSubmit} 
-                className="settings-form" 
-                sx={{ width: '100%' }}
-              >
-                <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap' }}>
-                  <Box sx={{ flex: '1 1 300px' }}>
-                    <TextField
-                      fullWidth
-                      label="First Name"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleChange}
-                      variant="outlined"
-                      required
-                      disabled={isLoading}
-                      error={!!errors.firstName}
-                      helperText={errors.firstName}
-                      inputProps={{
-                        pattern: '[A-Za-zğüşıöçĞÜŞİÖÇ\\s]*',
-                        title: 'Please enter only letters and spaces'
-                      }}
-                    />
-                  </Box>
-                  <Box sx={{ flex: '1 1 300px' }}>
-                    <TextField
-                      fullWidth
-                      label="Last Name"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleChange}
-                      variant="outlined"
-                      required
-                      disabled={isLoading}
-                      error={!!errors.lastName}
-                      helperText={errors.lastName}
-                      inputProps={{
-                        pattern: '[A-Za-zğüşıöçĞÜŞİÖÇ\\s]*',
-                        title: 'Please enter only letters and spaces'
-                      }}
-                    />
-                  </Box>
-                </Box>
-                <Box sx={{ mb: 3 }}>
+          </Tabs>
+          {activeTab === 0 && (
+            <Box 
+              component="form" 
+              onSubmit={handleSubmit} 
+              className="settings-form" 
+              sx={{ width: '100%' }}
+            >
+              <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap' }}>
+                <Box sx={{ flex: '1 1 300px' }}>
                   <TextField
                     fullWidth
-                    label="Email"
-                    name="email"
-                    type="email"
-                    value={formData.email}
+                    label="First Name"
+                    name="firstName"
+                    value={formData.firstName}
                     onChange={handleChange}
                     variant="outlined"
                     required
-                    disabled
-                  />
-                </Box>
-                <Box sx={{ mb: 4 }}>
-                  <TextField
-                    fullWidth
-                    label="Phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    variant="outlined"
-                    placeholder="+90 555 123 4567"
                     disabled={isLoading}
-                    error={!!errors.phone}
-                    helperText={errors.phone}
+                    error={!!errors.firstName}
+                    helperText={errors.firstName}
                     inputProps={{
-                      pattern: '[0-9+\\s]*',
-                      title: 'Please enter only numbers, plus sign and spaces'
+                      pattern: '[A-Za-zğüşıöçĞÜŞİÖÇ\\s]*',
+                      title: 'Please enter only letters and spaces'
                     }}
                   />
                 </Box>
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    disabled={isLoading}
-                    sx={{
-                      backgroundColor: '#00796B',
-                      px: 4,
-                      py: 1.5,
-                      borderRadius: 2,
-                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        backgroundColor: '#00695C',
-                        transform: 'translateY(-2px)',
-                        boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)'
-                      }
-                    }}
-                  >
-                    Save Changes
-                  </Button>
-                </Box>
-              </Box>
-            )}
-            
-            {activeTab === 1 && (
-              <Box 
-                component="form" 
-                onSubmit={handlePasswordSubmit} 
-                className="settings-form" 
-                sx={{ width: '100%' }}
-              >
-                <Box sx={{ mb: 3 }}>
+                <Box sx={{ flex: '1 1 300px' }}>
                   <TextField
                     fullWidth
-                    label="Current Password"
-                    name="currentPassword"
-                    type="password"
-                    value={passwordData.currentPassword}
+                    label="Last Name"
+                    name="lastName"
+                    value={formData.lastName}
                     onChange={handleChange}
                     variant="outlined"
                     required
                     disabled={isLoading}
-                    error={!!errors.currentPassword}
-                    helperText={errors.currentPassword}
-                  />
-                </Box>
-                <Box sx={{ mb: 3 }}>
-                  <TextField
-                    fullWidth
-                    label="New Password"
-                    name="newPassword"
-                    type="password"
-                    value={passwordData.newPassword}
-                    onChange={handleChange}
-                    variant="outlined"
-                    required
-                    disabled={isLoading}
-                    error={!!errors.newPassword}
-                    helperText={errors.newPassword}
-                  />
-                </Box>
-                <Box sx={{ mb: 4 }}>
-                  <TextField
-                    fullWidth
-                    label="Confirm New Password"
-                    name="confirmPassword"
-                    type="password"
-                    value={passwordData.confirmPassword}
-                    onChange={handleChange}
-                    variant="outlined"
-                    required
-                    disabled={isLoading}
-                    error={!!errors.confirmPassword}
-                    helperText={errors.confirmPassword}
-                  />
-                </Box>
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    disabled={isLoading}
-                    sx={{
-                      backgroundColor: '#00796B',
-                      px: 4,
-                      py: 1.5,
-                      borderRadius: 2,
-                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        backgroundColor: '#00695C',
-                        transform: 'translateY(-2px)',
-                        boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)'
-                      }
+                    error={!!errors.lastName}
+                    helperText={errors.lastName}
+                    inputProps={{
+                      pattern: '[A-Za-zğüşıöçĞÜŞİÖÇ\\s]*',
+                      title: 'Please enter only letters and spaces'
                     }}
-                  >
-                    Change Password
-                  </Button>
+                  />
                 </Box>
               </Box>
-            )}
-            
-            {activeTab === 2 && (
-              <Box 
-                component="form" 
-                onSubmit={handlePersonalFileSubmit} 
-                className="settings-form" 
-                sx={{ width: '100%' }}
-              >
-                <Typography variant="h6" sx={{ mb: 3, color: '#00796B' }}>
-                  Personal Information
-                </Typography>
-                <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap' }}>
-                  <Box sx={{ flex: '1 1 300px' }}>
-                    <FormControl fullWidth>
-                      <InputLabel id="gender-label">Gender</InputLabel>
-                      <Select
-                        labelId="gender-label"
-                        id="gender"
-                        name="gender"
-                        value={personalFileData.gender}
-                        onChange={handleSelectChange}
-                        label="Gender"
-                        disabled={isLoading}
-                        error={!!errors.gender}
-                      >
-                        {Object.entries(GenderLabels).map(([key, label]) => (
-                          <MenuItem key={key} value={key}>
-                            {label}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </Box>
-                  <Box sx={{ flex: '1 1 300px' }}>
-                    <TextField
-                      fullWidth
-                      label="Birth Date"
-                      name="birthdate"
-                      type="date"
-                      value={personalFileData.birthdate}
-                      onChange={handleSelectChange}
-                      variant="outlined"
-                      disabled={isLoading}
-                      error={!!errors.birthdate}
-                      helperText={errors.birthdate}
-                      InputLabelProps={{ shrink: true }}
-                    />
-                  </Box>
-                </Box>
-                <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap' }}>
-                  <Box sx={{ flex: '1 1 300px' }}>
-                    <TextField
-                      fullWidth
-                      label="Personal Phone"
-                      name="personalPhone"
-                      value={personalFileData.personalPhone}
-                      onChange={handleSelectChange}
-                      variant="outlined"
-                      disabled={isLoading}
-                      error={!!errors.personalPhone}
-                      helperText={errors.personalPhone}
-                    />
-                  </Box>
-                  <Box sx={{ flex: '1 1 300px' }}>
-                    <TextField
-                      fullWidth
-                      label="Personal Email"
-                      name="personalEmail"
-                      type="email"
-                      value={personalFileData.personalEmail}
-                      onChange={handleSelectChange}
-                      variant="outlined"
-                      disabled={isLoading}
-                      error={!!errors.personalEmail}
-                      helperText={errors.personalEmail}
-                    />
-                  </Box>
-                </Box>
-                <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap' }}>
-                  <Box sx={{ flex: '1 1 300px' }}>
-                    <TextField
-                      fullWidth
-                      label="National ID"
-                      name="nationalId"
-                      value={personalFileData.nationalId}
-                      onChange={handleSelectChange}
-                      variant="outlined"
-                      disabled={isLoading}
-                      error={!!errors.nationalId}
-                      helperText={errors.nationalId}
-                    />
-                  </Box>
-                  <Box sx={{ flex: '1 1 300px' }}>
-                    <FormControl fullWidth>
-                      <InputLabel id="educationLevel-label">Education Level</InputLabel>
-                      <Select
-                        labelId="educationLevel-label"
-                        id="educationLevel"
-                        name="educationLevel"
-                        value={personalFileData.educationLevel}
-                        onChange={handleSelectChange}
-                        label="Education Level"
-                        disabled={isLoading}
-                        error={!!errors.educationLevel}
-                      >
-                        {Object.entries(EducationLevelLabels).map(([key, label]) => (
-                          <MenuItem key={key} value={key}>
-                            {label}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </Box>
-                </Box>
-                
-                <Typography variant="h6" sx={{ mb: 3, color: '#00796B' }}>
-                  Family & Health Information
-                </Typography>
-                <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap' }}>
-                  <Box sx={{ flex: '1 1 300px' }}>
-                    <FormControl fullWidth>
-                      <InputLabel id="maritalStatus-label">Marital Status</InputLabel>
-                      <Select
-                        labelId="maritalStatus-label"
-                        id="maritalStatus"
-                        name="maritalStatus"
-                        value={personalFileData.maritalStatus}
-                        onChange={handleSelectChange}
-                        label="Marital Status"
-                        disabled={isLoading}
-                        error={!!errors.maritalStatus}
-                      >
-                        {Object.entries(MaritalStatusLabels).map(([key, label]) => (
-                          <MenuItem key={key} value={key}>
-                            {label}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </Box>
-                  <Box sx={{ flex: '1 1 300px' }}>
-                    <FormControl fullWidth>
-                      <InputLabel id="bloodType-label">Blood Type</InputLabel>
-                      <Select
-                        labelId="bloodType-label"
-                        id="bloodType"
-                        name="bloodType"
-                        value={personalFileData.bloodType}
-                        onChange={handleSelectChange}
-                        label="Blood Type"
-                        disabled={isLoading}
-                        error={!!errors.bloodType}
-                      >
-                        {Object.entries(BloodTypeLabels).map(([key, label]) => (
-                          <MenuItem key={key} value={key}>
-                            {label}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </Box>
-                </Box>
-                <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap' }}>
-                  <Box sx={{ flex: '1 1 300px' }}>
-                    <TextField
-                      fullWidth
-                      label="Number of Children"
-                      name="numberOfChildren"
-                      type="number"
-                      value={personalFileData.numberOfChildren}
-                      onChange={handleSelectChange}
-                      variant="outlined"
-                      disabled={isLoading}
-                    />
-                  </Box>
-                  <Box sx={{ flex: '1 1 300px' }}>
-                    <TextField
-                      fullWidth
-                      label="City"
-                      name="city"
-                      value={personalFileData.city}
-                      onChange={handleSelectChange}
-                      variant="outlined"
-                      disabled={isLoading}
-                      error={!!errors.city}
-                      helperText={errors.city}
-                    />
-                  </Box>
-                </Box>
-                <Box sx={{ mb: 3 }}>
-                  <TextField
-                    fullWidth
-                    label="Address"
-                    name="address"
-                    value={personalFileData.address}
-                    onChange={handleSelectChange}
-                    variant="outlined"
-                    disabled={isLoading}
-                    error={!!errors.address}
-                    helperText={errors.address}
-                    multiline
-                    rows={3}
-                  />
-                </Box>
-                
-                <Typography variant="h6" sx={{ mb: 3, color: '#00796B' }}>
-                  Banking Information
-                </Typography>
-                <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap' }}>
-                  <Box sx={{ flex: '1 1 300px' }}>
-                    <TextField
-                      fullWidth
-                      label="IBAN"
-                      name="iban"
-                      value={personalFileData.iban}
-                      onChange={handleSelectChange}
-                      variant="outlined"
-                      disabled={isLoading}
-                      error={!!errors.iban}
-                      helperText={errors.iban}
-                    />
-                  </Box>
-                  <Box sx={{ flex: '1 1 300px' }}>
-                    <TextField
-                      fullWidth
-                      label="Bank Name"
-                      name="bankName"
-                      value={personalFileData.bankName}
-                      onChange={handleSelectChange}
-                      variant="outlined"
-                      disabled={isLoading}
-                    />
-                  </Box>
-                </Box>
-                <Box sx={{ display: 'flex', gap: 3, mb: 4, flexWrap: 'wrap' }}>
-                  <Box sx={{ flex: '1 1 300px' }}>
-                    <TextField
-                      fullWidth
-                      label="Bank Account Number"
-                      name="bankAccountNumber"
-                      value={personalFileData.bankAccountNumber}
-                      onChange={handleSelectChange}
-                      variant="outlined"
-                      disabled={isLoading}
-                    />
-                  </Box>
-                  <Box sx={{ flex: '1 1 300px' }}>
-                    <TextField
-                      fullWidth
-                      label="Bank Account Type"
-                      name="bankAccountType"
-                      value={personalFileData.bankAccountType}
-                      onChange={handleSelectChange}
-                      variant="outlined"
-                      disabled={isLoading}
-                    />
-                  </Box>
-                </Box>
-                
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    disabled={isLoading}
-                    sx={{
-                      backgroundColor: '#00796B',
-                      px: 4,
-                      py: 1.5,
-                      borderRadius: 2,
-                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        backgroundColor: '#00695C',
-                        transform: 'translateY(-2px)',
-                        boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)'
-                      }
-                    }}
-                  >
-                    Save Personal File
-                  </Button>
-                </Box>
+              <Box sx={{ mb: 3 }}>
+                <TextField
+                  fullWidth
+                  label="Email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  variant="outlined"
+                  required
+                  disabled
+                />
               </Box>
-            )}
-          </Box>
-        </Container>
-      </div>
+              <Box sx={{ mb: 4 }}>
+                <TextField
+                  fullWidth
+                  label="Phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  variant="outlined"
+                  placeholder="+90 555 123 4567"
+                  disabled={isLoading}
+                  error={!!errors.phone}
+                  helperText={errors.phone}
+                  inputProps={{
+                    pattern: '[0-9+\\s]*',
+                    title: 'Please enter only numbers, plus sign and spaces'
+                  }}
+                />
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  disabled={isLoading}
+                  sx={{
+                    backgroundColor: '#00796B',
+                    px: 4,
+                    py: 1.5,
+                    borderRadius: 2,
+                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      backgroundColor: '#00695C',
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)'
+                    }
+                  }}
+                >
+                  Save Changes
+                </Button>
+              </Box>
+            </Box>
+          )}
+          
+          {activeTab === 1 && (
+            <Box 
+              component="form" 
+              onSubmit={handlePasswordSubmit} 
+              className="settings-form" 
+              sx={{ width: '100%' }}
+            >
+              <Box sx={{ mb: 3 }}>
+                <TextField
+                  fullWidth
+                  label="Current Password"
+                  name="currentPassword"
+                  type="password"
+                  value={passwordData.currentPassword}
+                  onChange={handleChange}
+                  variant="outlined"
+                  required
+                  disabled={isLoading}
+                  error={!!errors.currentPassword}
+                  helperText={errors.currentPassword}
+                />
+              </Box>
+              <Box sx={{ mb: 3 }}>
+                <TextField
+                  fullWidth
+                  label="New Password"
+                  name="newPassword"
+                  type="password"
+                  value={passwordData.newPassword}
+                  onChange={handleChange}
+                  variant="outlined"
+                  required
+                  disabled={isLoading}
+                  error={!!errors.newPassword}
+                  helperText={errors.newPassword}
+                />
+              </Box>
+              <Box sx={{ mb: 4 }}>
+                <TextField
+                  fullWidth
+                  label="Confirm New Password"
+                  name="confirmPassword"
+                  type="password"
+                  value={passwordData.confirmPassword}
+                  onChange={handleChange}
+                  variant="outlined"
+                  required
+                  disabled={isLoading}
+                  error={!!errors.confirmPassword}
+                  helperText={errors.confirmPassword}
+                />
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  disabled={isLoading}
+                  sx={{
+                    backgroundColor: '#00796B',
+                    px: 4,
+                    py: 1.5,
+                    borderRadius: 2,
+                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      backgroundColor: '#00695C',
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)'
+                    }
+                  }}
+                >
+                  Change Password
+                </Button>
+              </Box>
+            </Box>
+          )}
+        </Box>
+      </Container>
     </div>
-  );
+  </div>
+);
 };
 
 export default UserSettingsPage; 
+
+//TODO: Backend ile entegre edilecek
+
+

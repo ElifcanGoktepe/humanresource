@@ -17,6 +17,19 @@ function RegisterPage() {
     const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
+        const requestBody = {
+            firstName,
+            lastName,
+            email,
+            companyName,
+            phoneNumber,
+            titleName
+        };
+
+        // 🔍 GÖNDERİLEN VERİYİ KONSOLA YAZ
+        console.log("➡️ GÖNDERİLEN VERİ:", JSON.stringify(requestBody, null, 2));
+
+
         try {
             const response = await fetch("http://localhost:9090/register", {
                 method: "POST",
@@ -66,7 +79,7 @@ function RegisterPage() {
 
 
                             <label className="label">E-mail</label>
-                            <input type="email" className="emailinput-registerpage"
+                            <input type="emailWork" className="emailinput-registerpage"
                                    value={email}
                                    onChange={(e) => setEmail(e.target.value)}
                                    required />

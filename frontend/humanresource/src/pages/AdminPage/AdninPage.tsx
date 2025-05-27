@@ -1,11 +1,9 @@
-
-import CompanyArea  from "../../components/molecules/CompanyArea.tsx";
+import CompanyArea from "../../components/molecules/CompanyArea.tsx";
 import BranchArea from "../../components/molecules/BranchArea.tsx";
-import DepartmentArea   from "../../components/molecules/DepartmentArea..tsx";
+import DepartmentArea from "../../components/molecules/DepartmentArea..tsx";
 import './AdminPage.css';
 import { useState } from 'react';
 import Applications from "../../components/molecules/Applications.tsx";
-
 
 function AdminPage() {
     const today = new Date();
@@ -13,12 +11,12 @@ function AdminPage() {
     const dateString = today.toLocaleDateString("en-US");
     const dayName = days[today.getDay()];
 
-    const [selectedContent, setSelectedContent] = useState('ManagerApproval');
+    const [selectedContent, setSelectedContent] = useState<string>('Applications'); // default olarak Applications seçili
 
     const renderContent = () => {
         switch (selectedContent) {
             case 'Applications':
-                return  <Applications/>
+                return <Applications />;
             case 'CompanyArea':
                 return <CompanyArea />;
             case 'BranchArea':
@@ -32,26 +30,42 @@ function AdminPage() {
 
     return (
         <div className="row">
-            <div className="col-2 adminpage fixed-side-bar ">
+            <div className="col-2 adminpage fixed-side-bar">
                 <div className="fixed-bar-image">
                     <img className="logo-left-menu" src="/img/logo1.png" alt="logo" />
                 </div>
-                <hr/>
+                <hr />
                 <div className="fixed-bar-button-container">
-                    <button className="fixed-bar-buttons" onClick={() => setSelectedContent('Applications')}>
-                        <img className="small-image-fixed-bar" src="/img/list-task.svg" />
+                    <button
+                        className="fixed-bar-buttons"
+                        onClick={() => setSelectedContent('Applications')}
+                        style={{ fontWeight: selectedContent === 'Applications' ? 'bold' : 'normal' }}
+                    >
+                        <img className="small-image-fixed-bar" src="/img/list-task.svg" alt="Applications Icon" />
                         Applications
                     </button>
-                    <button className="fixed-bar-buttons" onClick={() => setSelectedContent('CompanyArea')}>
-                        <img className="small-image-fixed-bar" src="/img/list-task.svg" />
+                    <button
+                        className="fixed-bar-buttons"
+                        onClick={() => setSelectedContent('CompanyArea')}
+                        style={{ fontWeight: selectedContent === 'CompanyArea' ? 'bold' : 'normal' }}
+                    >
+                        <img className="small-image-fixed-bar" src="/img/list-task.svg" alt="Companies Icon" />
                         Companies
                     </button>
-                    <button className="fixed-bar-buttons" onClick={() => setSelectedContent('BranchArea')}>
-                        <img className="small-image-fixed-bar" src="/img/list-task.svg" />
+                    <button
+                        className="fixed-bar-buttons"
+                        onClick={() => setSelectedContent('BranchArea')}
+                        style={{ fontWeight: selectedContent === 'BranchArea' ? 'bold' : 'normal' }}
+                    >
+                        <img className="small-image-fixed-bar" src="/img/list-task.svg" alt="Branches Icon" />
                         Branches
                     </button>
-                    <button className="fixed-bar-buttons" onClick={() => setSelectedContent('DepartmentArea')}>
-                        <img className="small-image-fixed-bar" src="/img/list-task.svg" />
+                    <button
+                        className="fixed-bar-buttons"
+                        onClick={() => setSelectedContent('DepartmentArea')}
+                        style={{ fontWeight: selectedContent === 'DepartmentArea' ? 'bold' : 'normal' }}
+                    >
+                        <img className="small-image-fixed-bar" src="/img/list-task.svg" alt="Departments Icon" />
                         Departments
                     </button>
                 </div>
@@ -59,15 +73,15 @@ function AdminPage() {
                 <div className="bottombar-adminpage-fixedsidebar">
                     <hr />
                     <button className="fixed-bar-buttons">
-                        <img className="small-image-fixed-bar" src="/img/profileicon.png" />
+                        <img className="small-image-fixed-bar" src="/img/profileicon.png" alt="Profile Icon" />
                         Profile
                     </button>
                     <button className="fixed-bar-buttons">
-                        <img className="small-image-fixed-bar" src="/img/settingsicon.png" />
+                        <img className="small-image-fixed-bar" src="/img/settingsicon.png" alt="Settings Icon" />
                         Settings
                     </button>
                     <button className="fixed-bar-buttons">
-                        <img className="small-image-fixed-bar" src="/img/helpicon.png" />
+                        <img className="small-image-fixed-bar" src="/img/helpicon.png" alt="Help Icon" />
                         Help
                     </button>
                 </div>
@@ -77,7 +91,7 @@ function AdminPage() {
                 <div className="adminpage-pageheader">
                     <h3>Hello!</h3>
                     <h4>Today's Date: {dateString}, {dayName}</h4>
-                    <hr/>
+                    <hr />
                 </div>
 
                 <div className="adminpage-content fixed-body-area">
@@ -85,7 +99,7 @@ function AdminPage() {
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
 export default AdminPage;

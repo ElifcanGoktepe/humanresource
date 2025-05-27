@@ -26,11 +26,9 @@ public enum ErrorType {
     MAIL_SEND_FAILED(4800,"Email could not be sent",BAD_REQUEST),
     USER_NOT_ACTIVE(2003,"User not active",BAD_REQUEST),
     USER_NOT_FOUND(2004, "User not found.", INTERNAL_SERVER_ERROR),
-    USER_ALREADY_EXISTS(2005, "User already exists.", BAD_REQUEST),
     COMPANY_NOT_FOUND(2005,"Company not found.",INTERNAL_SERVER_ERROR),
     COMPANY_BRANCH_NOT_FOUND(2006,"Company branch not found.",INTERNAL_SERVER_ERROR),
     DEPARTMENT_NOT_FOUND(2007,"Department not found.",INTERNAL_SERVER_ERROR),
-    PERSONEL_FILE_NOT_FOUND(2008,"Personal file not found.",INTERNAL_SERVER_ERROR),
     INTERNAL_SERVER(5000, "An unexpected error occurred on the server.", INTERNAL_SERVER_ERROR),
     EMPLOYEE_NOT_FOUND(5001, "Employee not found.", BAD_REQUEST);
 
