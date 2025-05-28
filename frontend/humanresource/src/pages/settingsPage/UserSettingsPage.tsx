@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { 
+import {
   Typography, 
   TextField, 
   Button, 
@@ -10,30 +10,40 @@ import {
   CircularProgress,
   Tabs,
   Tab,
-  Divider
+  Avatar,
+  Badge
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 import LockIcon from '@mui/icons-material/Lock';
 import PersonIcon from '@mui/icons-material/Person';
-import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import DeleteIcon from '@mui/icons-material/Delete';
 import './UserSettingsPage.css';
 import * as React from "react";
 
-// Backend'den çekilecek user datası için örnek type
-// Gerçek projede context veya props ile alınabilir
-const mockUser = {
-  firstName: 'Test',
-  lastName: 'User',
-  email: 'test@example.com',
-  phone: '+905551234567',
+// API Configuration - Correct port 9090
+const API_BASE_URL = 'http://localhost:9090/api/users';
+
+const getCurrentUserId = () => {
+  // TODO: Replace with real authentication context or JWT decode
+  // Example: return authContext.user?.id;
+  // const token = localStorage.getItem('authToken');
+  // if (token) {
+  //   const decoded = jwtDecode(token);
+  //   return decoded.userId;
+  // }
+  return 1;
 };
+
+const CURRENT_USER_ID = getCurrentUserId();
 
 type UserData = {
   firstName: string;
   lastName: string;
   email: string;
   phone?: string;
+  profileImageUrl?: string;
 };
 
 type PasswordData = {
@@ -53,9 +63,14 @@ type FormErrors = {
 };
 
 const UserSettingsPage = () => {
-  // Gerçek projede context veya API'den alınmalı
-  const [user, setUser] = useState<UserData>(mockUser);
   const navigate = useNavigate();
+  const [user, setUser] = useState<UserData>({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    profileImageUrl: ''
+  });
   const [formData, setFormData] = useState<UserData>(user);
   const [passwordData, setPasswordData] = useState<PasswordData>({
     currentPassword: '',
@@ -63,15 +78,53 @@ const UserSettingsPage = () => {
     confirmPassword: ''
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [message, setMessage] = useState<{text: string; type: 'success' | 'error'} | null>(null);
   const [errors, setErrors] = useState<FormErrors>({});
   const [activeTab, setActiveTab] = useState<number>(0);
-  const [profileImage, setProfileImage] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  // Load user profile on component mount
+  useEffect(() => {
+    fetchUserProfile();
+  }, []);
 
   useEffect(() => {
     setFormData(user);
   }, [user]);
+
+  // Mesajların otomatik temizlenmesi
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => setMessage(null), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
+
+  // API call to fetch user profile
+  const fetchUserProfile = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/${CURRENT_USER_ID}/profile`);
+      const result = await response.json();
+      
+      if (result.success && result.data) {
+        const userData = {
+          firstName: result.data.firstName || '',
+          lastName: result.data.lastName || '',
+          email: result.data.email || '',
+          phone: result.data.phone || '',
+          profileImageUrl: result.data.profileImageUrl || ''
+        };
+        setUser(userData);
+      } else {
+        setMessage({ text: 'Profil bilgileri yüklenemedi', type: 'error' });
+      }
+    } catch (error) {
+      setMessage({ text: 'Profil bilgileri yüklenirken hata oluştu', type: 'error' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
@@ -101,31 +154,23 @@ const UserSettingsPage = () => {
     }
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setProfileImage(file);
-      setPreviewUrl(URL.createObjectURL(file));
-    }
-  };
-
   const validateProfileForm = (): boolean => {
     const newErrors: FormErrors = {};
     
     if (!formData.firstName) {
-      newErrors.firstName = 'First name is required';
+      newErrors.firstName = 'Ad alanı zorunludur';
     } else if (formData.firstName.length < 2) {
-      newErrors.firstName = 'First name must be at least 2 characters';
+      newErrors.firstName = 'Ad en az 2 karakter olmalıdır';
     }
     
     if (!formData.lastName) {
-      newErrors.lastName = 'Last name is required';
+      newErrors.lastName = 'Soyad alanı zorunludur';
     } else if (formData.lastName.length < 2) {
-      newErrors.lastName = 'Last name must be at least 2 characters';
+      newErrors.lastName = 'Soyad en az 2 karakter olmalıdır';
     }
     
     if (formData.phone && formData.phone.length < 10) {
-      newErrors.phone = 'Phone number must be at least 10 digits';
+      newErrors.phone = 'Telefon numarası en az 10 haneli olmalıdır';
     }
     
     setErrors(newErrors);
@@ -136,19 +181,19 @@ const UserSettingsPage = () => {
     const newErrors: FormErrors = {};
     
     if (!passwordData.currentPassword) {
-      newErrors.currentPassword = 'Current password is required';
+      newErrors.currentPassword = 'Mevcut şifre zorunludur';
     }
     
     if (!passwordData.newPassword) {
-      newErrors.newPassword = 'New password is required';
+      newErrors.newPassword = 'Yeni şifre zorunludur';
     } else if (passwordData.newPassword.length < 6) {
-      newErrors.newPassword = 'New password must be at least 6 characters';
+      newErrors.newPassword = 'Yeni şifre en az 6 karakter olmalıdır';
     }
     
     if (!passwordData.confirmPassword) {
-      newErrors.confirmPassword = 'Please confirm your new password';
+      newErrors.confirmPassword = 'Yeni şifrenizi tekrar giriniz';
     } else if (passwordData.newPassword !== passwordData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+      newErrors.confirmPassword = 'Şifreler eşleşmiyor';
     }
     
     setErrors(newErrors);
@@ -162,12 +207,36 @@ const UserSettingsPage = () => {
     
     setIsLoading(true);
     setMessage(null);
-    // API çağrısı burada yapılacak
-    setTimeout(() => {
-      setUser(formData);
-      setMessage({ text: 'Your profile information has been updated successfully!', type: 'success' });
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/${CURRENT_USER_ID}/profile`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      
+      const result = await response.json();
+      
+      if (result.success && result.data) {
+        const userData = {
+          firstName: result.data.firstName || '',
+          lastName: result.data.lastName || '',
+          email: result.data.email || '',
+          phone: result.data.phone || '',
+          profileImageUrl: result.data.profileImageUrl || ''
+        };
+        setUser(userData);
+        setMessage({ text: 'Profil bilgileriniz başarıyla güncellendi!', type: 'success' });
+      } else {
+        setMessage({ text: result.message || 'Profil güncellenemedi', type: 'error' });
+      }
+    } catch (error) {
+      setMessage({ text: 'Profil güncellenirken hata oluştu', type: 'error' });
+    } finally {
       setIsLoading(false);
-    }, 1200);
+    }
   };
   
   const handlePasswordSubmit = async (e: React.FormEvent) => {
@@ -177,16 +246,106 @@ const UserSettingsPage = () => {
     
     setIsLoading(true);
     setMessage(null);
-    // API çağrısı burada yapılacak
-    setTimeout(() => {
-      setPasswordData({
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: ''
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/${CURRENT_USER_ID}/password`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword
+        }),
       });
-      setMessage({ text: 'Your password has been changed successfully!', type: 'success' });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        setPasswordData({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        });
+        setMessage({ text: 'Şifreniz başarıyla değiştirildi!', type: 'success' });
+      } else {
+        setMessage({ text: result.message || 'Şifre değiştirilemedi', type: 'error' });
+      }
+    } catch (error) {
+      setMessage({ text: 'Şifre değiştirilirken hata oluştu', type: 'error' });
+    } finally {
       setIsLoading(false);
-    }, 1200);
+    }
+  };
+
+  // Profil fotoğrafı yükleme
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Dosya boyutu kontrolü (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setMessage({ text: 'Dosya boyutu 5MB\'dan büyük olamaz', type: 'error' });
+      return;
+    }
+
+    // Dosya tipi kontrolü
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+    if (!allowedTypes.includes(file.type)) {
+      setMessage({ text: 'Sadece JPG, JPEG, PNG ve GIF dosyaları yüklenebilir', type: 'error' });
+      return;
+    }
+
+    setUploadingImage(true);
+    setMessage(null);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch(`${API_BASE_URL}/${CURRENT_USER_ID}/profile-image`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setUser(prev => ({ ...prev, profileImageUrl: result.data }));
+        setMessage({ text: 'Profil fotoğrafı başarıyla yüklendi!', type: 'success' });
+      } else {
+        setMessage({ text: result.message || 'Profil fotoğrafı yüklenemedi', type: 'error' });
+      }
+    } catch (error) {
+      setMessage({ text: 'Profil fotoğrafı yüklenirken hata oluştu', type: 'error' });
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  // Profil fotoğrafını silme
+  const handleImageDelete = async () => {
+    setUploadingImage(true);
+    setMessage(null);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/${CURRENT_USER_ID}/profile-image`, {
+        method: 'DELETE',
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setUser(prev => ({ ...prev, profileImageUrl: '' }));
+        setMessage({ text: 'Profil fotoğrafı başarıyla silindi!', type: 'success' });
+      } else {
+        setMessage({ text: result.message || 'Profil fotoğrafı silinemedi', type: 'error' });
+      }
+    } catch (error) {
+      setMessage({ text: 'Profil fotoğrafı silinirken hata oluştu', type: 'error' });
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   if (isLoading) {
@@ -244,29 +403,89 @@ const UserSettingsPage = () => {
         <Container maxWidth="lg">
           <Box className="settings-container">
             <Box className="settings-header">
-              <Box className="user-avatar" sx={{ position: 'relative' }}>
-                {previewUrl ? (
-                  <img src={previewUrl} alt="Profile Preview" className="profile-img-preview" />
-                ) : (
-                  <>
-                    {formData.firstName?.charAt(0).toUpperCase()}{formData.lastName?.charAt(0).toUpperCase()}
-                  </>
+              <Box sx={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
+                <Badge
+                  overlap="circular"
+                  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                  badgeContent={
+                    <Box sx={{ display: 'flex', gap: 0.5 }}>
+                      <input
+                        accept="image/*"
+                        style={{ display: 'none' }}
+                        id="profile-image-upload"
+                        type="file"
+                        onChange={handleImageUpload}
+                        disabled={uploadingImage}
+                      />
+                      <label htmlFor="profile-image-upload">
+                        <IconButton
+                          component="span"
+                          size="small"
+                          disabled={uploadingImage}
+                          sx={{
+                            backgroundColor: '#00796B',
+                            color: 'white',
+                            '&:hover': { backgroundColor: '#00695C' },
+                            width: 32,
+                            height: 32
+                          }}
+                        >
+                          <PhotoCameraIcon fontSize="small" />
+                        </IconButton>
+                      </label>
+                      {user.profileImageUrl && (
+                        <IconButton
+                          size="small"
+                          onClick={handleImageDelete}
+                          disabled={uploadingImage}
+                          sx={{
+                            backgroundColor: '#f44336',
+                            color: 'white',
+                            '&:hover': { backgroundColor: '#d32f2f' },
+                            width: 32,
+                            height: 32
+                          }}
+                        >
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      )}
+                    </Box>
+                  }
+                >
+                  <Avatar
+                    src={user.profileImageUrl ? `http://localhost:9090${user.profileImageUrl}` : undefined}
+                    sx={{
+                      width: 120,
+                      height: 120,
+                      fontSize: '2.5rem',
+                      backgroundColor: '#00796B',
+                      border: '4px solid white',
+                      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
+                    }}
+                  >
+                    {!user.profileImageUrl && (
+                      `${formData.firstName?.charAt(0).toUpperCase()}${formData.lastName?.charAt(0).toUpperCase()}`
+                    )}
+                  </Avatar>
+                </Badge>
+                {uploadingImage && (
+                  <CircularProgress
+                    size={24}
+                    sx={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      marginTop: '-12px',
+                      marginLeft: '-12px',
+                    }}
+                  />
                 )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  style={{ display: 'none' }}
-                  id="profile-image-upload"
-                  onChange={handleImageChange}
-                />
-                <label htmlFor="profile-image-upload" className="profile-img-upload-label">
-                  <IconButton component="span" sx={{ position: 'absolute', bottom: 0, right: 0, backgroundColor: 'white', boxShadow: 1 }}>
-                    <PhotoCamera sx={{ color: '#00796B' }} />
-                  </IconButton>
-                </label>
+                <Typography variant="caption" color="textSecondary" sx={{ mt: 1, textAlign: 'center' }}>
+                  Profil fotoğrafınızı değiştirmek için kamera simgesine tıklayın
+                </Typography>
               </Box>
               <Typography variant="h4" component="h1" className="settings-title">
-                Account Settings
+                Hesap Ayarları
               </Typography>
             </Box>
             {message && (
@@ -278,209 +497,258 @@ const UserSettingsPage = () => {
               </Alert>
             )}
             
-            <Tabs
-              value={activeTab}
-              onChange={handleTabChange}
-              aria-label="settings tabs"
-              sx={{ 
-                mb: 3,
-                '& .MuiTabs-indicator': { backgroundColor: '#00796B' },
-                '& .MuiTab-root': { color: 'rgba(0, 0, 0, 0.6)' },
-                '& .Mui-selected': { color: '#00796B' }
-              }}
-            >
-              <Tab icon={<PersonIcon />} label="Profile" />
-              <Tab icon={<LockIcon />} label="Password" />
-          </Tabs>
-          {activeTab === 0 && (
-            <Box 
-              component="form" 
-              onSubmit={handleSubmit} 
-              className="settings-form" 
-              sx={{ width: '100%' }}
-            >
-              <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap' }}>
-                <Box sx={{ flex: '1 1 300px' }}>
-                  <TextField
-                    fullWidth
-                    label="First Name"
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    variant="outlined"
-                    required
-                    disabled={isLoading}
-                    error={!!errors.firstName}
-                    helperText={errors.firstName}
-                    inputProps={{
-                      pattern: '[A-Za-zğüşıöçĞÜŞİÖÇ\\s]*',
-                      title: 'Please enter only letters and spaces'
-                    }}
-                  />
-                </Box>
-                <Box sx={{ flex: '1 1 300px' }}>
-                  <TextField
-                    fullWidth
-                    label="Last Name"
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    variant="outlined"
-                    required
-                    disabled={isLoading}
-                    error={!!errors.lastName}
-                    helperText={errors.lastName}
-                    inputProps={{
-                      pattern: '[A-Za-zğüşıöçĞÜŞİÖÇ\\s]*',
-                      title: 'Please enter only letters and spaces'
-                    }}
-                  />
-                </Box>
-              </Box>
-              <Box sx={{ mb: 3 }}>
-                <TextField
-                  fullWidth
-                  label="Email"
-                  name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  variant="outlined"
-                  required
-                  disabled
-                />
-              </Box>
-              <Box sx={{ mb: 4 }}>
-                <TextField
-                  fullWidth
-                  label="Phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  variant="outlined"
-                  placeholder="+90 555 123 4567"
-                  disabled={isLoading}
-                  error={!!errors.phone}
-                  helperText={errors.phone}
-                  inputProps={{
-                    pattern: '[0-9+\\s]*',
-                    title: 'Please enter only numbers, plus sign and spaces'
-                  }}
-                />
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  disabled={isLoading}
-                  sx={{
-                    backgroundColor: '#00796B',
-                    px: 4,
-                    py: 1.5,
-                    borderRadius: 2,
-                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                    transition: 'all 0.3s ease',
-                    '&:hover': {
-                      backgroundColor: '#00695C',
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)'
+            {/* Ana Container - Sol tab, sağ içerik */}
+            <Box sx={{ display: 'flex', gap: 4, minHeight: '500px' }}>
+              {/* Sol taraf - Vertical Tabs */}
+              <Box sx={{ minWidth: 200 }}>
+                <Tabs
+                  orientation="vertical"
+                  value={activeTab}
+                  onChange={handleTabChange}
+                  aria-label="settings tabs"
+                  sx={{ 
+                    borderRight: 1, 
+                    borderColor: 'divider',
+                    '& .MuiTabs-indicator': { 
+                      backgroundColor: '#00796B',
+                      width: 3,
+                      left: 0
+                    },
+                    '& .MuiTab-root': { 
+                      color: 'rgba(0, 0, 0, 0.6)',
+                      alignItems: 'flex-start',
+                      textAlign: 'left',
+                      minHeight: 60,
+                      fontSize: '1rem',
+                      fontWeight: 500,
+                      padding: '12px 20px',
+                      textTransform: 'none',
+                      '&:hover': {
+                        backgroundColor: 'rgba(0, 121, 107, 0.04)',
+                        color: '#00796B'
+                      }
+                    },
+                    '& .Mui-selected': { 
+                      color: '#00796B',
+                      backgroundColor: 'rgba(0, 121, 107, 0.08)',
+                      fontWeight: 600
+                    },
+                    '& .MuiTab-iconWrapper': {
+                      marginBottom: '4px !important',
+                      marginRight: '8px !important'
                     }
                   }}
                 >
-                  Save Changes
-                </Button>
+                  <Tab 
+                    icon={<PersonIcon />} 
+                    label="Profil Bilgileri" 
+                    iconPosition="start"
+                    sx={{ justifyContent: 'flex-start' }}
+                  />
+                  <Tab 
+                    icon={<LockIcon />} 
+                    label="Şifre Değiştir" 
+                    iconPosition="start"
+                    sx={{ justifyContent: 'flex-start' }}
+                  />
+                </Tabs>
+              </Box>
+
+              {/* Sağ taraf - Tab İçeriği */}
+              <Box sx={{ flex: 1 }}>
+                {activeTab === 0 && (
+                  <Box 
+                    component="form" 
+                    onSubmit={handleSubmit} 
+                    className="settings-form" 
+                    sx={{ width: '100%' }}
+                  >
+                    <Typography variant="h5" sx={{ mb: 3, color: '#00796B', fontWeight: 600 }}>
+                      Profil Bilgileri
+                    </Typography>
+                    <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap' }}>
+                      <Box sx={{ flex: '1 1 300px' }}>
+                        <TextField
+                          fullWidth
+                          label="Ad"
+                          name="firstName"
+                          value={formData.firstName}
+                          onChange={handleChange}
+                          variant="outlined"
+                          required
+                          error={!!errors.firstName}
+                          helperText={errors.firstName}
+                          className="custom-textfield"
+                        />
+                      </Box>
+                      <Box sx={{ flex: '1 1 300px' }}>
+                        <TextField
+                          fullWidth
+                          label="Soyad"
+                          name="lastName"
+                          value={formData.lastName}
+                          onChange={handleChange}
+                          variant="outlined"
+                          required
+                          error={!!errors.lastName}
+                          helperText={errors.lastName}
+                          className="custom-textfield"
+                        />
+                      </Box>
+                    </Box>
+                    <Box sx={{ display: 'flex', gap: 3, mb: 3, flexWrap: 'wrap' }}>
+                      <Box sx={{ flex: '1 1 300px' }}>
+                        <TextField
+                          fullWidth
+                          label="E-posta"
+                          name="email"
+                          type="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          variant="outlined"
+                          required
+                          error={!!errors.email}
+                          helperText={errors.email}
+                          className="custom-textfield"
+                        />
+                      </Box>
+                      <Box sx={{ flex: '1 1 300px' }}>
+                        <TextField
+                          fullWidth
+                          label="Telefon"
+                          name="phone"
+                          value={formData.phone}
+                          onChange={handleChange}
+                          variant="outlined"
+                          error={!!errors.phone}
+                          helperText={errors.phone}
+                          className="custom-textfield"
+                          placeholder="+905551234567"
+                        />
+                      </Box>
+                    </Box>
+                    <Box sx={{ textAlign: 'right', mt: 4 }}>
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        disabled={isLoading}
+                        className="submit-button"
+                        sx={{
+                          minWidth: 200,
+                          height: 50,
+                          fontSize: '1.1rem',
+                          fontWeight: 'bold',
+                          borderRadius: 3,
+                          backgroundColor: '#00796B',
+                          textTransform: 'none',
+                          '&:hover': {
+                            backgroundColor: '#00695C',
+                            transform: 'translateY(-2px)',
+                            boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)'
+                          },
+                          transition: 'all 0.3s ease'
+                        }}
+                      >
+                        {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Profili Güncelle'}
+                      </Button>
+                    </Box>
+                  </Box>
+                )}
+                
+                {activeTab === 1 && (
+                  <Box 
+                    component="form" 
+                    onSubmit={handlePasswordSubmit} 
+                    className="settings-form" 
+                    sx={{ width: '100%' }}
+                  >
+                    <Typography variant="h5" sx={{ mb: 3, color: '#00796B', fontWeight: 600 }}>
+                      Şifre Değiştir
+                    </Typography>
+                    <Box sx={{ maxWidth: 400 }}>
+                      <Box sx={{ mb: 3 }}>
+                        <TextField
+                          fullWidth
+                          label="Mevcut Şifre"
+                          name="currentPassword"
+                          type="password"
+                          value={passwordData.currentPassword}
+                          onChange={handleChange}
+                          variant="outlined"
+                          required
+                          error={!!errors.currentPassword}
+                          helperText={errors.currentPassword}
+                          className="custom-textfield"
+                        />
+                      </Box>
+                      <Box sx={{ mb: 3 }}>
+                        <TextField
+                          fullWidth
+                          label="Yeni Şifre"
+                          name="newPassword"
+                          type="password"
+                          value={passwordData.newPassword}
+                          onChange={handleChange}
+                          variant="outlined"
+                          required
+                          error={!!errors.newPassword}
+                          helperText={errors.newPassword}
+                          className="custom-textfield"
+                        />
+                      </Box>
+                      <Box sx={{ mb: 3 }}>
+                        <TextField
+                          fullWidth
+                          label="Yeni Şifre (Tekrar)"
+                          name="confirmPassword"
+                          type="password"
+                          value={passwordData.confirmPassword}
+                          onChange={handleChange}
+                          variant="outlined"
+                          required
+                          error={!!errors.confirmPassword}
+                          helperText={errors.confirmPassword}
+                          className="custom-textfield"
+                        />
+                      </Box>
+                    </Box>
+                    <Box sx={{ textAlign: 'right', mt: 4 }}>
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        disabled={isLoading}
+                        className="submit-button"
+                        sx={{
+                          minWidth: 200,
+                          height: 50,
+                          fontSize: '1.1rem',
+                          fontWeight: 'bold',
+                          borderRadius: 3,
+                          backgroundColor: '#00796B',
+                          textTransform: 'none',
+                          '&:hover': {
+                            backgroundColor: '#00695C',
+                            transform: 'translateY(-2px)',
+                            boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)'
+                          },
+                          transition: 'all 0.3s ease'
+                        }}
+                      >
+                        {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Şifreyi Değiştir'}
+                      </Button>
+                    </Box>
+                  </Box>
+                )}
               </Box>
             </Box>
-          )}
-          
-          {activeTab === 1 && (
-            <Box 
-              component="form" 
-              onSubmit={handlePasswordSubmit} 
-              className="settings-form" 
-              sx={{ width: '100%' }}
-            >
-              <Box sx={{ mb: 3 }}>
-                <TextField
-                  fullWidth
-                  label="Current Password"
-                  name="currentPassword"
-                  type="password"
-                  value={passwordData.currentPassword}
-                  onChange={handleChange}
-                  variant="outlined"
-                  required
-                  disabled={isLoading}
-                  error={!!errors.currentPassword}
-                  helperText={errors.currentPassword}
-                />
-              </Box>
-              <Box sx={{ mb: 3 }}>
-                <TextField
-                  fullWidth
-                  label="New Password"
-                  name="newPassword"
-                  type="password"
-                  value={passwordData.newPassword}
-                  onChange={handleChange}
-                  variant="outlined"
-                  required
-                  disabled={isLoading}
-                  error={!!errors.newPassword}
-                  helperText={errors.newPassword}
-                />
-              </Box>
-              <Box sx={{ mb: 4 }}>
-                <TextField
-                  fullWidth
-                  label="Confirm New Password"
-                  name="confirmPassword"
-                  type="password"
-                  value={passwordData.confirmPassword}
-                  onChange={handleChange}
-                  variant="outlined"
-                  required
-                  disabled={isLoading}
-                  error={!!errors.confirmPassword}
-                  helperText={errors.confirmPassword}
-                />
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  disabled={isLoading}
-                  sx={{
-                    backgroundColor: '#00796B',
-                    px: 4,
-                    py: 1.5,
-                    borderRadius: 2,
-                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-                    transition: 'all 0.3s ease',
-                    '&:hover': {
-                      backgroundColor: '#00695C',
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)'
-                    }
-                  }}
-                >
-                  Change Password
-                </Button>
-              </Box>
-            </Box>
-          )}
-        </Box>
-      </Container>
+          </Box>
+        </Container>
+      </div>
     </div>
-  </div>
-);
+  );
 };
 
-export default UserSettingsPage; 
+export default UserSettingsPage;
 
 //TODO: Backend ile entegre edilecek
 
