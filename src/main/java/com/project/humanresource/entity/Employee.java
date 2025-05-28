@@ -25,6 +25,7 @@ public class Employee extends User {
     Long titleId;
     Long personalFiledId;
     Long managerId;
+    String profileImageUrl; // Profil fotoğrafı URL'i
 
     @Column(nullable = false)   // 26/05 09:49 serkan güncellendi
     @Builder.Default
