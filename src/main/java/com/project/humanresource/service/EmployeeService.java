@@ -65,6 +65,14 @@ public class EmployeeService {
 
     }
 
+    public Employee findEmployeeByUserId(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        return employeeRepository.findByEmail(user.getEmail())
+                .orElseThrow(() -> new RuntimeException("Employee not found with email: " + user.getEmail()));
+    }
+
 //    private final EmployeeRepository employeeRepository;
 //
 //    // Geçici: email → employeeId eşlemesi için in-memory map

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping()
+@RequestMapping
 @CrossOrigin("*")
 public class TitleController {
 }

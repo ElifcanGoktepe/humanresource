@@ -13,7 +13,7 @@ import static com.project.humanresource.config.RestApis.REQUESTLEAVE;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping()
+@RequestMapping
 @CrossOrigin("*")
 @SecurityRequirement(name = "bearerAuth")
 public class LeaveController {

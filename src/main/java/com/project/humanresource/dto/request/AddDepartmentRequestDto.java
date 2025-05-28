@@ -6,11 +6,17 @@ import jakarta.validation.constraints.NotNull;
 
 public record AddDepartmentRequestDto(
 
-        @NotBlank @NotNull @NotEmpty
+        @NotNull @NotBlank @NotEmpty
         String departmentName,
 
-        @NotBlank @NotNull @NotEmpty
-                String departmentDescription
+        @NotNull @NotBlank @NotEmpty
+        String departmentCode,
+
+        // Şirket id - Department e doğrudan bağlıysa
+        Long companyId,
+
+        // Branch id - Department e branch üzerinden bağlıysa
+        Long companyBranchId
 
 ) {
 }

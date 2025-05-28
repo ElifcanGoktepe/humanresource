@@ -20,7 +20,7 @@ public class JwtManager {
     private String secretKey;
     private String issuer = "MuhammetHOCA";
     private Long expirationDate = 1000L * 60 * 60 * 5;
-    public String createToken(Long userId, List<String> roles, String firstName, String lastName, String titleName, String companyName) {
+    public String createToken(String email,Long userId, List<String> roles, String firstName, String lastName, String titleName, String companyName) {
         Long now = System.currentTimeMillis();
         Date issuedAt = new Date(now);
         Date expiration = new Date(now + expirationDate);
@@ -31,6 +31,7 @@ public class JwtManager {
                 .withIssuer(issuer)
                 .withIssuedAt(issuedAt)
                 .withExpiresAt(expiration)
+                .withSubject(email)
                 .withClaim("userId", userId)
                 .withClaim("roles", roles)
                 .withClaim("firstName", firstName)

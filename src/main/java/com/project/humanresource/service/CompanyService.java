@@ -2,19 +2,16 @@ package com.project.humanresource.service;
 
 import com.project.humanresource.dto.request.AddCompanyRequestDto;
 import com.project.humanresource.entity.Company;
+import com.project.humanresource.entity.Employee;
 import com.project.humanresource.repository.CompanyRepository;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
-
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,62 +20,92 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
 
 
-
-
-
-    public Company addCompany(@Valid AddCompanyRequestDto dto) {
-
-        Company company = Company.builder().
-                companyName(dto.companyName()).
-                companyAddress(dto.companyAddress()).
-                companyEmail(dto.companyEmail()).
-                companyPhoneNumber(dto.companyPhoneNumber()).
-                build();
-
-        return companyRepository.save(company);
-    }
-
-
-
-    public Company findByCompanyName(String companyName) {
-        if (!companyRepository.existsByCompanyName(companyName)){
-            throw new EntityNotFoundException("Company not found with name: " + companyName);
+    public AddCompanyRequestDto getMyCompany() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            return null;
         }
-       return companyRepository.findByCompanyName(companyName);
-    }
 
-    public Company findByCompanyEmailAddress(@NotNull @NotEmpty @NotBlank String companyEmailAddress) {
-        if(!companyRepository.existsByCompanyEmail(companyEmailAddress)){
-            throw new EntityNotFoundException("Company not found with email: " + companyEmailAddress);
+        // Burada principal objesini kendi projenin yapısına göre cast et
+        // Örnek:
+        Employee employee = (Employee) auth.getPrincipal();
 
+        if (employee == null || employee.getCompany() == null) {
+            return null;
         }
-        return companyRepository.findByCompanyEmail(companyEmailAddress);
+
+        Long companyId = employee.getCompany().getId();
+
+        return getCompanyById(companyId);
     }
 
-    public Company findByCompanyPhoneNumber(@NotNull @NotEmpty @NotBlank String companyPhoneNumber) {
-        if (!companyRepository.existsByCompanyPhoneNumber(companyPhoneNumber)){
-            throw new EntityNotFoundException("Company not found with phone number: " + companyPhoneNumber);
-        }
-        return companyRepository.findByCompanyPhoneNumber(companyPhoneNumber);
+    public List<AddCompanyRequestDto> getAllCompanies() {
+        return companyRepository.findAll().stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
     }
-/*
+
+    public AddCompanyRequestDto getCompanyById(Long id) {
+        Optional<Company> companyOpt = companyRepository.findById(id);
+        return companyOpt.map(this::toDto).orElse(null);
+    }
+
+    public AddCompanyRequestDto addCompany(AddCompanyRequestDto dto) {
+        Company company = toEntity(dto);
+        Company saved = companyRepository.save(company);
+        return toDto(saved);
+    }
+
+    public AddCompanyRequestDto updateCompany(Long id, AddCompanyRequestDto dto) {
+        Optional<Company> companyOpt = companyRepository.findById(id);
+        if (companyOpt.isPresent()) {
+            Company company = companyOpt.get();
+            company.setCompanyName(dto.getCompanyName());
+            company.setCompanyAddress(dto.getCompanyAddress());
+            company.setCompanyPhoneNumber(dto.getCompanyPhoneNumber());
+            company.setCompanyEmail(dto.getCompanyEmail());
+            return toDto(companyRepository.save(company));
+        }
+        return null;
+    }
+
     public void deleteCompany(Long id) {
-        if (!companyRepository.existsById(id)) {
-            throw new EntityNotFoundException("Company not found with id: " + id);
-        }
         companyRepository.deleteById(id);
     }
- */
-    public Company deleteCompany(Long id) {
-        Company company = companyRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Company not found with id: " + id));
 
-        companyRepository.delete(company);
-        return company;
+    public List<AddCompanyRequestDto> searchCompaniesByName(String name) {
+        return companyRepository.findByCompanyNameContainingIgnoreCase(name).stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
     }
 
-    public List<Company> findAll() {
+    public AddCompanyRequestDto updateCompanyEmail(Long id, String email) {
+        Optional<Company> companyOpt = companyRepository.findById(id);
+        if (companyOpt.isPresent()) {
+            Company company = companyOpt.get();
+            company.setCompanyEmail(email);
+            return toDto(companyRepository.save(company));
+        }
+        return null;
+    }
 
-        return companyRepository.findAllByOrderByCompanyNameAsc();
+    private AddCompanyRequestDto toDto(Company company) {
+        return AddCompanyRequestDto.builder()
+                .id(company.getId())
+                .companyName(company.getCompanyName())
+                .companyAddress(company.getCompanyAddress())
+                .companyPhoneNumber(company.getCompanyPhoneNumber())
+                .companyEmail(company.getCompanyEmail())
+                .build();
+    }
+
+    private Company toEntity(AddCompanyRequestDto dto) {
+        return Company.builder()
+                .id(dto.getId())
+                .companyName(dto.getCompanyName())
+                .companyAddress(dto.getCompanyAddress())
+                .companyPhoneNumber(dto.getCompanyPhoneNumber())
+                .companyEmail(dto.getCompanyEmail())
+                .build();
     }
 }

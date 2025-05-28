@@ -16,7 +16,7 @@ import static com.project.humanresource.config.RestApis.ADD_EMPLOYEE;
 @RequiredArgsConstructor
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
-@RequestMapping()
+@RequestMapping
 @SecurityRequirement(name = "bearerAuth")
 public class AddEmployeeController {
     // Bu sınıf deneme amaçlıdır, managerın employee eklemesi ve izin kısımlarının denenmesi açılmıştır.

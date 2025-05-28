@@ -21,11 +21,9 @@ public class Employee extends User {
     String phoneNumber;
     String companyName;
     String titleName;
-    Long companyId;
     Long titleId;
     Long personalFiledId;
     Long managerId;
-    String profileImageUrl; // Profil fotoğrafı URL'i
 
     @Column(nullable = false)   // 26/05 09:49 serkan güncellendi
     @Builder.Default
@@ -35,4 +33,7 @@ public class Employee extends User {
     @Builder.Default
     boolean isActivated = false; // Email doğrulaması
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id")
+    private Company company;
 }

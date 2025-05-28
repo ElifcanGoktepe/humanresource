@@ -20,11 +20,13 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     Optional<Employee> findByManagerId(Long managerId);
 
-    Optional<Employee> findByEmail(String toEmail);
+    Optional<Employee> findByEmail(String Email);
 
     Optional<User> findOptionalByEmailAndPassword(String email, String password);
 
 
     List<Employee> findByIsApprovedFalse();  //  26/05  pazartesi 08:19 eklendi  serkan
+
+
 
 }
