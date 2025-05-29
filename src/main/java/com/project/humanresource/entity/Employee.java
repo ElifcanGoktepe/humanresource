@@ -25,6 +25,7 @@ public class Employee extends User {
     Long personalFiledId;
     Long managerId;
     Long companyId;
+    String profileImageUrl;
 
     @Column(nullable = false)   // 26/05 09:49 serkan güncellendi
     @Builder.Default
@@ -33,6 +34,5 @@ public class Employee extends User {
     boolean isApproved = false; // Site admin onayı
     @Builder.Default
     boolean isActivated = false; // Email doğrulaması
-
 
 }
