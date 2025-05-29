@@ -43,4 +43,5 @@ public class RestApis {
     public static final String REQUESTSHIFT = "/request-shift";
     public static final String REGISTER = "/register";
     public static final String ADD_EMPLOYEE = "/add-employee";
+    public static final String LISTSHIFT = "/list-shift";
 }

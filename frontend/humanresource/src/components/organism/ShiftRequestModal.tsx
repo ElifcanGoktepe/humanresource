@@ -32,24 +32,54 @@ function ShiftRequestModal({ onClose, onSubmit }: Props) {
         setShiftBreaks(updated);
     };
 
-    const handleSubmit = () => {
-        if (new Date(startTime) > new Date(endTime)) {
-            alert("Shift start time cannot be after end time.");
-            return;
-        }
-        for (const b of shiftBreaks) {
-            if (new Date(b.startTime) > new Date(b.endTime)) {
-                alert("One of the shift breaks has start time after end time.");
-                return;
-            }
-        }
-        onSubmit({ name, startTime, endTime, description, shiftBreaks });
-        onClose();
-    };
+
     const removeBreak = (index: number) => {
         const updated = shiftBreaks.filter((_, i) => i !== index);
         setShiftBreaks(updated);
     };
+
+    const handleSubmit = async () => {
+        if (new Date(startTime) > new Date(endTime)){
+            alert("Start time cannot be after and time.");
+            return;
+        }
+        const  shiftRequest: ShiftRequest = {
+            name,
+            startTime,
+            endTime,
+            description,
+            shiftBreaks,
+        };
+
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch("http://localhost:9090/add-shift", {
+
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(shiftRequest),
+            });
+            if (!response.ok) {
+                throw new Error("Shift request failed");
+            }
+
+            const data = await response.json();
+            console.log("Shift created:", data);
+
+            onSubmit(data);
+            onClose();
+        } catch (error) {
+            if (error instanceof Error) {
+                alert("Failed to create shift: " + error.message);
+            } else {
+                alert("Unknown error occurred.");
+            }
+        }
+    };
+
     return (
         <div className="overlay1">
             <div className="modal-board1">

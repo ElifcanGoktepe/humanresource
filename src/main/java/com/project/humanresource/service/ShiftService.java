@@ -26,7 +26,6 @@ public class ShiftService {
     public final ShiftRepository shiftRepository;
     private final ShiftBreakRepository shiftBreakRepository;
     private final HttpServletRequest request;
-
     public Shift addShift(AddShiftRequestDto dto) {
 
         // ✅ JwtTokenFilter tarafından set edilen userId burada alınır
@@ -52,5 +51,9 @@ public class ShiftService {
                 .build();
 
         return shiftRepository.save(shift);
+    }
+
+    public List<Shift> listAllShifts() {
+        return shiftRepository.findAll();
     }
 }

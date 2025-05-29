@@ -200,7 +200,7 @@ function ManagerPage() {
                                 <hr/>
                                 <div className="account-button-container">
                                     <button className="accountbutton">
-                                        Account →
+                                        Account →b
                                     </button>
                                 </div>
                             </div>

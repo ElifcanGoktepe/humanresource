@@ -40,6 +40,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/set-password").permitAll()
                         .requestMatchers("/assign-manager").permitAll()
                         .requestMatchers("/api/users/login").permitAll()
+                        .requestMatchers("/add-shift").permitAll()
+                        .requestMatchers("/list-shift").permitAll()
                         .requestMatchers("/dev/v1/shift","/dev/v1/employee","/dev/v1/user",
                                 "/api/users/create_user", "/api/users/login", "/api/users/by-email", "/api/user-roles", "/api/user-roles/by-email",
                                 "/api/assignments", "/api/assignments/**",
