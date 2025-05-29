@@ -28,7 +28,7 @@ public class EmailVerificationService {
         private final EmployeeRepository employeeRepository;
 
         public void sendVerificationEmail(String toEmail) {
-            Optional<Employee> optionalEmployee = employeeRepository.findByEmailWork(toEmail);
+            Optional<Employee> optionalEmployee = employeeRepository.findByEmail(toEmail);
             if (optionalEmployee.isEmpty()) {
                 throw new RuntimeException("User not found: " + toEmail);
             }

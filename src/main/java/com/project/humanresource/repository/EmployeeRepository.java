@@ -21,9 +21,9 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     Optional<Employee> findByManagerId(Long managerId);
 
-    Optional<Employee> findByEmailWork(String toEmail);
+    Optional<Employee> findByEmail(String toEmail);
 
-    Optional<User> findOptionalByEmailWorkAndPassword(String email, String password);
+    Optional<User> findOptionalByEmailAndPassword(String email, String password);
 
     @Query("SELECT e.id FROM Employee e WHERE e.managerId = :managerId")
     List<Long> findEmployeeIdsByManagerId(@Param("managerId") Long managerId);

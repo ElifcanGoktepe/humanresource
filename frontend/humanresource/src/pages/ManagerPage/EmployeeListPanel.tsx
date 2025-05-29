@@ -68,7 +68,7 @@ const EmployeeListPanel: React.FC = () => {
 
     const filtered = employees.filter(emp =>
         emp.fullName.toLowerCase().includes(query.toLowerCase()) ||
-        emp.emailWork.toLowerCase().includes(query.toLowerCase())
+        emp.Email.toLowerCase().includes(query.toLowerCase())
     );
 
     const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);

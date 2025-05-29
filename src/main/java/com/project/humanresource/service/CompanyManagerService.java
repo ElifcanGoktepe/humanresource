@@ -25,7 +25,7 @@ public class CompanyManagerService {
                 .firstName(dto.firstName())
                 .lastName(dto.lastName())
                 .email(dto.email())
-                .phoneWork(dto.phoneNumber())
+                .PhoneNumber(dto.phoneNumber())
                 .companyName(dto.companyName())
                 .titleName(dto.titleName())
                 .isActivated(false)

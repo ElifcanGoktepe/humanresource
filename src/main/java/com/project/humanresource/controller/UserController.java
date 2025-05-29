@@ -87,6 +87,7 @@ public class UserController {
 
         // Token oluştur
         String token = jwtManager.createToken(
+                employee.getEmail(),
                 employee.getId(),
                 roles,
                 employee.getFirstName(),
@@ -127,8 +128,8 @@ public class UserController {
                 employee.getId(),
                 employee.getFirstName(),
                 employee.getLastName(),
-                employee.getEmailWork(),
-                employee.getPhoneWork(),
+                employee.getEmail(),
+                employee.getPhoneNumber(),
                 employee.getProfileImageUrl(),
                 null, // lastUpdated - implement later
                 employee.isActive()

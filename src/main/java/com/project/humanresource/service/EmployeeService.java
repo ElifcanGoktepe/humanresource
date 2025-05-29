@@ -2,7 +2,6 @@ package com.project.humanresource.service;
 
 import com.project.humanresource.dto.request.AddEmployeeForRoleRequirementDto;
 import com.project.humanresource.dto.request.AddEmployeeRequestDto;
-import com.project.humanresource.dto.request.SetPersonalFileRequestDto;
 import com.project.humanresource.dto.response.EmployeeResponseDto;
 import com.project.humanresource.entity.*;
 import com.project.humanresource.exception.ErrorType;
@@ -50,8 +49,8 @@ public class EmployeeService {
         Employee employee = Employee.builder()
                 .firstName(dto.firstName())
                 .lastName(dto.lastName())
-                .email(dto.emailWork())
-                .phoneWork(dto.phoneWork())
+                .email(dto.email())
+                .phoneNumber(dto.phoneNumber())
                 .companyName(dto.companyName())
                 .titleName(dto.titleName())
                 .isApproved(true)
