@@ -120,7 +120,7 @@ public class UserController {
     /**
      * Get user profile
      */
-    @GetMapping("/{id}/profile")
+   @GetMapping("/{id}/profile")
     public ResponseEntity<BaseResponse<UserProfileResponseDto>> getUserProfile(@PathVariable Long id) {
         Employee employee = userService.getUserProfile(id);
         
@@ -154,7 +154,7 @@ public class UserController {
     /**
      * Change user password
      */
-    @PutMapping("/{id}/password")
+   @PutMapping("/{id}/password")
     public ResponseEntity<BaseResponse<String>> changePassword(
             @PathVariable Long id, 
             @RequestBody @Valid ChangePasswordRequestDto dto) {
@@ -167,7 +167,7 @@ public class UserController {
     /**
      * Upload profile image
      */
-    @PostMapping("/{id}/profile-image")
+   @PostMapping("/{id}/profile-image")
     public ResponseEntity<BaseResponse<String>> uploadProfileImage(
             @PathVariable Long id,
             @RequestParam("file") MultipartFile file) {
