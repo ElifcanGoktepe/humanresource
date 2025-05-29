@@ -32,7 +32,8 @@ public class EmployeeController {
     private final CompanyRepository companyRepository;
 
 
-    @PutMapping("/activate/{employeeId}")
+
+  /*  @PutMapping("/activate/{employeeId}")
     public ResponseEntity<BaseResponseShort<Boolean>> activateEmployee(@PathVariable Long employeeId){
         employeeService.setEmployeeActiveStatus(employeeId,true);
         return ResponseEntity.ok(BaseResponseShort.<Boolean>builder()
@@ -49,9 +50,9 @@ public class EmployeeController {
                         .message("Employee is deactivated.")
                         .data(true)
                 .build());
-    }
+    }*/
 
-    @DeleteMapping("/{employeeId}/delete")
+  /*  @DeleteMapping("/{employeeId}/delete")
     public ResponseEntity<BaseResponseShort<Boolean>> deleteEmployee(@PathVariable Long employeeId){
         employeeService.deleteEmployeeCompletely(employeeId);
         return ResponseEntity.ok(BaseResponseShort.<Boolean>builder()
@@ -59,9 +60,9 @@ public class EmployeeController {
                         .message("Employee deleted successfully.")
                         .data(true)
                 .build());
-    }
+    }*/
 
-    @GetMapping("/employee/get-all")
+   /* @GetMapping("/employee/get-all")
     public ResponseEntity<BaseResponseShort<List<EmployeeResponseDto>>> getAllEmployeesForManager() {
 //        String email = SecurityContextHolder.getContext().getAuthentication().getName();
 //        System.out.println("Emai,l : "+email);
@@ -73,7 +74,7 @@ public class EmployeeController {
                 .message("Employees listed")
                 .data(employees)
                 .build());
-    }
+    }*/
 
 
 
