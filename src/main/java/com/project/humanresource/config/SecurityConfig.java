@@ -3,14 +3,11 @@ package com.project.humanresource.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -23,10 +20,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
     private final JwtTokenFilter jwtTokenFilter;
     private final JwtUserDetails jwtUserDetails;
-
-
-
-
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -45,20 +38,12 @@ public class SecurityConfig {
                                 "/api/assignments", "/api/assignments/**",
                                 "/swagger-ui/**","/v3/api-docs/**",
                                 "/api/auth/**","/api/public/**",
-                                "/register","/dev/v1/company/add"
+                                ("/register")
                         ).permitAll()
-                        .requestMatchers("/dev/v1/company/add").hasAuthority("Manager")
-                        .requestMatchers("/dev/v1/mycompany").hasAuthority("Manager")
-                        .requestMatchers("/dev/v1/listofallbranchesofcompany/${selectedCompany.id}").hasAuthority("Manager")
-                        .requestMatchers("/dev/v1/department/listAll/${selectedCompany.id}").hasAuthority("Manager")
-                        .requestMatchers("/dev/v1/addcompanybranch").hasAuthority("Manager")
-                        .requestMatchers("/dev/v1/deletecompanybranch/${branchId}").hasAuthority("Manager")
-                        .requestMatchers("/dev/v1/department/add").hasAuthority("Manager")
-                        .requestMatchers("/dev/v1/department/delete/${departmentId}").hasAuthority("Manager")
                         .requestMatchers("/admin/**").hasAuthority("Admin")
-                        .requestMatchers(HttpMethod.PUT, "/dev/v1/updateapplicationstatus/**").hasAuthority("Admin")
-                        .requestMatchers("/dev/v1/pendingapplications").hasAuthority("Admin")
+                        .requestMatchers("/manager/**").hasAuthority("Manager")
                         .requestMatchers("/add-employee").hasAuthority("Manager")
+                        .requestMatchers("/employee/get-all").hasAuthority("Manager")
                         .requestMatchers("/company-manager/approve/{employeeId}").hasAuthority("Manager")
                         .requestMatchers("/employee/**").hasAuthority("Employee")
                         .anyRequest().authenticated()
