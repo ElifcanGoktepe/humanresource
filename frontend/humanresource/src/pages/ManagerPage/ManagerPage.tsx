@@ -60,7 +60,7 @@ function ManagerPage() {
             case 'Assignment':
                 return <Assignment />;
             case 'Settings' :
-                return <Settings/>;
+                return <Settings/>
             default:
                 return <Dashboard />;
         }
@@ -76,7 +76,7 @@ function ManagerPage() {
                 <hr />
                 <div className="fixed-bar-button-container">
                     <button className="fixed-bar-buttons" onClick={() => setSelectedTab('Dashboard')}>
-                        <img className="small-image-fixed-bar" src="/img/dashboard.png" alt="Dashboard" />
+                        <img className="small-image-fixed-bar" src="/img/adminpage.png" alt="Dashboard" />
                         Dashboard
                     </button>
                     <button className="fixed-bar-buttons" onClick={() => setSelectedTab('Company Page')}>
@@ -100,8 +100,9 @@ function ManagerPage() {
                         Assignment
                     </button>
                 </div>
-                <hr />
+
                 <div className="bottom-bar">
+                    <hr />
                     <button className="fixed-bar-buttons">
                         <img className="small-image-fixed-bar" src="/img/profileicon.png" />
                         Profile

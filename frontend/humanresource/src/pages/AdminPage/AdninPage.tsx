@@ -1,6 +1,7 @@
 import CompanyArea from "../../components/molecules/CompanyArea.tsx";
 import BranchArea from "../../components/molecules/BranchArea.tsx";
 import DepartmentArea from "../../components/molecules/DepartmentArea..tsx";
+import Settings from "../../components/molecules/Settings.tsx";
 import './AdminPage.css';
 import { useState } from 'react';
 import Applications from "../../components/molecules/Applications.tsx";
@@ -23,6 +24,8 @@ function AdminPage() {
                 return <BranchArea />;
             case 'DepartmentArea':
                 return <DepartmentArea />;
+            case 'Settings':
+                return <Settings />;
             default:
                 return <div>Select a menu item</div>;
         }
@@ -76,8 +79,12 @@ function AdminPage() {
                         <img className="small-image-fixed-bar" src="/img/profileicon.png" alt="Profile Icon" />
                         Profile
                     </button>
-                    <button className="fixed-bar-buttons">
-                        <img className="small-image-fixed-bar" src="/img/settingsicon.png" alt="Settings Icon" />
+                    <button
+                        className="fixed-bar-buttons"
+                        onClick={() => setSelectedContent('Settings')}
+                        style={{ fontWeight: selectedContent === 'Settings' ? 'bold' : 'normal' }}
+                    >
+                        <img className="small-image-fixed-bar"  src="/img/settingsicon.png" alt="Settings Icon" />
                         Settings
                     </button>
                     <button className="fixed-bar-buttons">

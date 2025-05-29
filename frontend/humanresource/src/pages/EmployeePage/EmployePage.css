@@ -1,5 +1,3 @@
-
-
 .fixed-side-bar{
     background: rgba(239, 239, 239, 0.53);
     height: 100vh;
@@ -14,9 +12,10 @@
     height: 70px;
     padding: 8px;
     justify-content: center;
+
+
 }
-
-
+.
 .fixed-bar-button-container{
     height: 1000px;
     display: flex;
@@ -27,7 +26,19 @@
     height: 100%;
     filter: drop-shadow(0 0 6px rgba(110, 110, 110, 0.7));
 }
-
+.fixed-bar-buttons{
+    background-color: transparent;
+    color: #6e6e6e;
+    padding: 5px;
+    width: 100%;
+    font-size: 18px;
+    font-weight: 600;
+    font-family: "Roboto Thin";
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    text-align: left;
+}
 .fixed-bar-buttons:hover{
     color: #00796B;
     font-weight: bolder;
@@ -47,7 +58,7 @@
     flex-direction: column;
     margin-bottom: 40px;
 }
-.manager-page-header{
+.employee-page-header{
     margin-right: 20px;
     margin-top: 10px;
     height: 100px;
@@ -56,7 +67,6 @@
 }
 .box-dashboard{
     max-height: 500px;
-
 }
 .box1-dashboard {
     margin-top: 10px;
@@ -118,6 +128,7 @@
     justify-content: space-between; /* grafik + buton arası denge */
 }
 .fontstyle-shiftnames{
+
     font-size: 14px;
     color: #6e6e6e;
 }
@@ -130,79 +141,4 @@
     display: flex;
     align-content: end;
     justify-content: end;
-}
-.box2-dashboard {
-    background-color: transparent;
-    padding: 10px;
-    margin-top: 10px;
-    margin-right: 20px;
-    margin-left: 5px;
-    border-color: rgba(239, 239, 239, 0.53);
-    border-width: 5px;
-    border-style: solid;
-}
-.add-employee{
-    width: 140px;
-    height: 25px;
-    margin-bottom: 10px;
-    border: none;
-    font-family: "Roboto Thin";
-    background-color: transparent;
-    cursor: pointer;
-    color: rgb(0, 121, 107);
-    font-weight: normal;
-}
-.add-employee:hover{
-    border: transparent;
-    color:#00796B;
-    font-weight: bolder;
-    transform: scale(1.03);
-}
-.manage-employee{
-
-}
-.action-buttons {
-    margin-top: 8px;
-    display: flex;
-    gap: 10px;
-}
-
-.approve-button {
-    background-color: #00796B;
-    color: white;
-    border: none;
-    padding: 5px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    font-family: "Roboto Thin";
-    transition: background-color 0.3s ease;
-}
-
-.approve-button:hover {
-    background-color: #005e52;
-    font-weight: bold;
-}
-
-.reject-button {
-    background-color: #d32f2f;
-    color: white;
-    border: none;
-    padding: 5px 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    font-family: "Roboto Thin";
-    transition: background-color 0.3s ease;
-}
-
-.reject-button:hover {
-    background-color: #a62828;
-    font-weight: bold;
-}
-.pending-leaves-panel{
-    margin-top: 10px;
-    border-color: rgba(239, 239, 239, 0.53);
-    border-width: 5px;
-    border-style: solid;
 }
