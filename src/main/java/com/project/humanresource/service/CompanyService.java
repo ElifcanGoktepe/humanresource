@@ -20,24 +20,7 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
 
 
-    public AddCompanyRequestDto getMyCompany() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated()) {
-            return null;
-        }
 
-        // Burada principal objesini kendi projenin yapısına göre cast et
-        // Örnek:
-        Employee employee = (Employee) auth.getPrincipal();
-
-        if (employee == null || employee.getCompany() == null) {
-            return null;
-        }
-
-        Long companyId = employee.getCompany().getId();
-
-        return getCompanyById(companyId);
-    }
 
     public List<AddCompanyRequestDto> getAllCompanies() {
         return companyRepository.findAll().stream()

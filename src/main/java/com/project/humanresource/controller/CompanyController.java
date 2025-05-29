@@ -64,14 +64,5 @@ public class CompanyController {
         return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
     }
 
-    @GetMapping(MY_COMPANY)
-    public ResponseEntity<AddCompanyRequestDto> getMyCompany() {
-        AddCompanyRequestDto myCompany = companyService.getMyCompany();
-        if (myCompany != null) {
-            return ResponseEntity.ok(myCompany);
-        } else {
-            return ResponseEntity.noContent().build();
-        }
-    }
 
 }
