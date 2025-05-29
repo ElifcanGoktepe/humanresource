@@ -359,25 +359,7 @@ const UserSettingsPage = () => {
     return (
         <div className="settings-background">
             {/* Şirket Logosu */}
-            <Box
-                component="img"
-                src="/img/logo1.png"
-                alt="Company Logo"
-                sx={{
-                    position: 'absolute',
-                    top: 20,
-                    left: 20,
-                    zIndex: 10,
-                    height: '40px',
-                    cursor: 'pointer',
-                    '&:hover': {
-                        opacity: 0.9,
-                        transform: 'scale(1.03)',
-                        transition: 'all 0.3s ease'
-                    }
-                }}
-                onClick={() => navigate('/')}
-            />
+
             {/* Ana Sayfa Butonu */}
             <Box sx={{ position: 'absolute', top: 20, right: 20, zIndex: 10 }}>
                 <IconButton

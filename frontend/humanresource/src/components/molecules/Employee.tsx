@@ -1,226 +1,113 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './Employee.css';
-import LeaveRequestModal from "../organism/LeaveRequestModal.tsx";
-import {
-    Chart as ChartJS,
-    ArcElement,
-    Tooltip,
-    Legend
-} from 'chart.js';
-import {useEffect, useState} from "react";
-import ShiftRequestModal from "../../components/organism/ShiftRequestModal.tsx";
+import React, { useEffect, useState } from "react";
+import SearchBarComponents from "../../components/molecules/SearchBarComponents";
+import EmployeeTable from "../organism/EmployeeTable.tsx";
+import type { Employee } from "../../components/molecules/EmployeeRow";
+
 import axios from "axios";
-import {Doughnut} from "react-chartjs-2";
-ChartJS.register(ArcElement, Tooltip, Legend);
-function EmployeePage() {
-    const today = new Date();
-    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    const dayIndex = today.getDay();
-    const dayName = days[dayIndex];
-    const dateString = today.toLocaleDateString("en-US");
 
-    const [chartData, setChartData] = useState({ total: 0, used: 0, remaining: 0 });
-    const [showModal, setShowModal] = useState(false);
-    const [showShiftModal, setShowShiftModal] = useState(false);
+const EmployeeListPanel: React.FC = () => {
+    const ITEMS_PER_PAGE = 15;
+    const [query, setQuery] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [employees, setEmployees] = useState<Employee[]>([]);
 
-    type LeaveChartProps = {
-        used: number;
-        remaining: number;
-    };
-
-    const LeaveChart = ({ used, remaining }: LeaveChartProps) => {
-        const data = {
-            labels: ['Used', 'Remaining'],
-            datasets: [
-                {
-                    data: [used, remaining],
-                    backgroundColor: ['#00796B', '#00FFF0'],
-                },
-            ],
-        };
-
-        return (
-            <div style={{ width: '100%', height: '100%' }}>
-                <Doughnut data={data} />
-            </div>
-        );
-    };
-    useEffect(() => {
-        const fetchApprovedLeaves = async () => {
-            const token = localStorage.getItem("token");
-            try {
-                const response = await axios.get("http://localhost:9090/leaves/approved", {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                const approvedLeaves = response.data.data;
-
-                const used = approvedLeaves.reduce((acc: number, leave: any) => {
-                    const start = new Date(leave.startDate);
-                    const end = new Date(leave.endDate);
-                    const days = (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24);
-                    return acc + days;
-                }, 0);
-
-                const total = 20;
-                const remaining = total - used;
-
-                setChartData({ total, used, remaining });
-
-            } catch (error) {
-                console.error("Failed to fetch approved leaves:", error);
-            }
-        };
-
-        fetchApprovedLeaves();
-    }, []);
-    function parseJwt(token: string) {
-        try {
-            const base64Url = token.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-            return JSON.parse(jsonPayload);
-        } catch (e) {
-            return null;
-        }
-    }
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [titleName, setTitleName] = useState("");
-    const [companyName, setCompanyName] = useState("");
-
-    useEffect(() => {
+    const handleToggleStatus = async (id: number, isActive: boolean) => {
         const token = localStorage.getItem("token");
-        if (token) {
-            const payload = parseJwt(token);
-            if (payload) {
-                setFirstName(payload.firstName || "");
-                setLastName(payload.lastName || "");
-                setTitleName(payload.titleName || "");
-                setCompanyName(payload.companyName || "");
-            }
+        const url = isActive
+            ? `http://localhost:9090/employee/deactive/${id}`
+            : `http://localhost:9090/employee/activate/${id}`;
+
+        try {
+            await axios.put(url, {}, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            setEmployees(prev =>
+                prev.map(emp =>
+                    emp.id === id ? { ...emp, active: !isActive } : emp
+                )
+            );
+        } catch (error) {
+            console.error("Status toggle failed", error);
         }
+    };
+
+    const handleDelete = async (id: number) => {
+        const token = localStorage.getItem("token");
+        try {
+            await axios.delete(`http://localhost:9090/employee/delete/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            });
+
+            setEmployees(prev => prev.filter(emp => emp.id !== id));
+        } catch (error) {
+            console.error("Failed to delete employee", error);
+        }
+    };
+
+    useEffect(() => {
+        const fetchEmployees = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                console.log("JWT TOKEN:", token); // ➕ Bunu ekleyerek console'da görebilirsin
+                const response = await axios.get("http://localhost:9090/employee/get-all", {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                setEmployees(response.data.data);
+            } catch (error) {
+                console.error("Failed to fetch employees", error);
+            }
+        };
+
+        fetchEmployees();
     }, []);
+
+    const filtered = employees.filter(emp =>
+        emp.fullName.toLowerCase().includes(query.toLowerCase()) ||
+        emp.Email.toLowerCase().includes(query.toLowerCase())
+    );
+
+    const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const currentEmployees = filtered.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
     return (
-        <>
-            <div className="row">
+        <div className="row m-0" style={{ minHeight: '100vh', backgroundColor: '#f8f9fa' }}>
 
-                <div className="col-10">
-                    <div className="employee-page-header">
-                        <h2>Hello {firstName}!</h2>
-                        <h3>Today's Date: {dateString}, {dayName}</h3>
-                        <hr/>
-                    </div>
-                    <div className="row">
-                        <div className="col-3 box-dashboard">
-                            <div className="box1-dashboard">
-                                <div className="profile-settings-header">
-                                    <div className="col-8 profile-settings-header-name">
-                                        <h3>{firstName} {lastName}</h3>
-                                    </div>
-                                    <div className="col-4 profile-settings-header-icon">
-                                        <img className="small-image-fixed-bar2" src="/img/profileicon.png" />
-                                    </div>
-                                </div>
-                                <div className="profile-settings-body">
-                                    <div>
-                                        <h4>{titleName}</h4>
-                                        <h6>{companyName}</h6>
-                                    </div>
-                                    <hr/>
-                                    <div className="account-button-container">
-                                        <button className="accountbutton">
-                                            Account →
+            <div className="col-10 p-4">
+                <div className="d-flex justify-content-end mb-3">
+                    <SearchBarComponents query={query} onChange={(q) => {
+                        setQuery(q);
+                        setCurrentPage(1);
+                    }} />
+                </div>
+                <div key={currentPage} className="card shadow-sm p-3 bg-white rounded">
+                    <EmployeeTable
+                        employees={currentEmployees}
+                        onToggleStatus={handleToggleStatus}
+                        onDelete={handleDelete}
+                    />
+                    <div className="d-flex justify-content-center mt-3">
+                        <nav>
+                            <ul className="pagination">
+                                {Array.from({ length: totalPages }, (_, i) => (
+                                    <li key={i} className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}>
+                                        <button className="page-link" onClick={() => setCurrentPage(i + 1)}>
+                                            {i + 1}
                                         </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="box1-dashboard p-3">
-                                <p> Employee Number : 20 </p>
-                            </div>
-                        </div>
-                        <div className="col-3 box-dashboard">
-                            <div className="box1-dashboard">
-                                <div className="leave-settings-body">
-                                    <div>
-                                        <LeaveChart used={chartData.used} remaining={chartData.remaining} />
-                                        <p> Total : {chartData.total} </p>
-                                        <p> Used :  {chartData.used} </p>
-                                        <p> Remaining : {chartData.remaining}</p>
-                                    </div>
-                                    <hr/>
-                                    <div className="request-button-container">
-                                        <button className="accountbutton" onClick={() => setShowModal(true)}>
-                                            Request →
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-3 box-dashboard">
-                            <div className="box1-dashboard p-2">
-                                <div>
-                                    <h3>Weekly Shift List</h3>
-                                    <hr/>
-                                </div>
-                                <div className="row">
-                                    <div className="col-7 fontstyle-shiftnames mb-2">
-                                        <p>Monday</p>
-                                        <p>Tuesday</p>
-                                        <p>Wednesday</p>
-                                        <p>Thursday</p>
-                                        <p>Friday</p>
-                                        <p>Saturday</p>
-                                        <p>Sunday</p>
-                                    </div>
-                                    <div className="col-5 fontstyle-shifthours mb-2">
-                                        <p>08:00-12:00</p>
-                                        <p>08:00-12:00</p>
-                                        <p>13:00-17:00</p>
-                                        <p>13:00-17:00</p>
-                                        <p>18:00-22:00</p>
-                                        <p>18:00-22:00</p>
-                                        <p>---</p>
-                                    </div>
-                                </div>
-
-
-                                <hr/>
-                                <div className="request-button-container mb-2">
-                                    <button className="accountbutton" onClick={() => setShowShiftModal(true)}>
-                                        Request →
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-3 box-dashboard">
-
-                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>
-            {showModal && (
-                <LeaveRequestModal
-                    onClose={() => setShowModal(false)}
-                    onSubmit={(data: any) => {
-                        console.log("Leave Request Data:", data);
-                        // API isteği gönderilebilir
-                    }}
-                />
-            )}
-            {showShiftModal && (
-                <ShiftRequestModal
-                    onClose={() => setShowShiftModal(false)}
-                    onSubmit={(data) => {
-                        console.log("Shift request submitted:", data);
-                        // Burada fetch ile backend'e gönderebilirsin
-                        setShowShiftModal(false);
-                    }}
-                />
-            )}
-        </>
+        </div>
     );
-}
+};
 
-export default EmployeePage;
+export default EmployeeListPanel;
