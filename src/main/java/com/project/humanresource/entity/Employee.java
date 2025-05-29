@@ -24,6 +24,7 @@ public class Employee extends User {
     Long titleId;
     Long personalFiledId;
     Long managerId;
+    Long companyId;
 
     @Column(nullable = false)   // 26/05 09:49 serkan güncellendi
     @Builder.Default
@@ -33,7 +34,5 @@ public class Employee extends User {
     @Builder.Default
     boolean isActivated = false; // Email doğrulaması
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id")
-    private Company company;
+
 }

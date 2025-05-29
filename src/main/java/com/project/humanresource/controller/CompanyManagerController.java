@@ -62,11 +62,7 @@ public class CompanyManagerController {
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).body("❌ Invalid or expired token.");
     }
 
-    @GetMapping(PENDINGAPPLICATIONS)
-    @PreAuthorize("hasAuthority('Admin')")// 26/05 pazartesi 08:19 eklendi  SERKAN
-    public ResponseEntity<List<Employee>> getPendingManagers() {
-        return ResponseEntity.ok(companyManagerService.getAllPendingManagers());
-    }
+
 
     @PutMapping("/dev/v1/updateapplicationstatus/{id}")
     @PreAuthorize("hasAuthority('Admin')")// 26/05 pazartesi 08:19 eklendi  SERKAN

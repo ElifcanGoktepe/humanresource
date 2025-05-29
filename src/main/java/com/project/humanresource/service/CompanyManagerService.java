@@ -11,6 +11,8 @@ import com.project.humanresource.utility.UserStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CompanyManagerService {
@@ -41,4 +43,6 @@ public class CompanyManagerService {
 
         emailVerificationService.sendApprovalRequestToAdmin(manager);
     }
+
+
 }
