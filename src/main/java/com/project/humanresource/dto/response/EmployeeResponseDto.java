@@ -2,8 +2,8 @@ package com.project.humanresource.dto.response;
 
 public record EmployeeResponseDto(
         String fullName,
-        String email,
-        String phoneNumber,
+        String emailWork,
+        String phoneWork,
         String title,
         boolean active
 ) {
