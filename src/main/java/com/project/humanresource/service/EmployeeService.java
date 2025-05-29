@@ -2,21 +2,20 @@ package com.project.humanresource.service;
 
 import com.project.humanresource.dto.request.AddEmployeeForRoleRequirementDto;
 import com.project.humanresource.dto.request.AddEmployeeRequestDto;
-import com.project.humanresource.dto.response.EmployeeResponseDto;
+import com.project.humanresource.dto.request.SetPersonelFileRequestDto;
 import com.project.humanresource.entity.*;
 import com.project.humanresource.exception.ErrorType;
 import com.project.humanresource.exception.HumanResourceException;
-import com.project.humanresource.mapper.EmployeeMapper;
 import com.project.humanresource.repository.*;
 import com.project.humanresource.utility.UserStatus;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import com.project.humanresource.config.SecurityUtil;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -27,10 +26,8 @@ public class EmployeeService {
     private final EmailVerificationService emailVerificationService;
     private final PersonelFileRepository personelFileRepository;
     private final UserRepository userRepository;
-
-
-    private final EmployeeMapper employeeMapper;
-
+    private final UserRoleService userRoleService;
+    private final CompanyRepository companyRepository;
 
     public Optional<Employee> findById(Long employeeId) {
         return employeeRepository.findById(employeeId);
@@ -53,6 +50,7 @@ public class EmployeeService {
                 .phoneNumber(dto.phoneNumber())
                 .companyName(dto.companyName())
                 .titleName(dto.titleName())
+                .managerId(dto.managerId())
                 .isApproved(true)
                 .build();
         employeeRepository.save(employee);
@@ -67,61 +65,13 @@ public class EmployeeService {
 
     }
 
-    public void setEmployeeActiveStatus (Long employeeId, boolean isActive) {
-        Employee employee=employeeRepository.findById(employeeId)
-                .orElseThrow(()->new HumanResourceException(ErrorType.EMPLOYEE_NOT_FOUND));
+    public Employee findEmployeeByUserId(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-
-        employee.setActive(isActive);
-        employeeRepository.save(employee);
+        return employeeRepository.findByEmail(user.getEmail())
+                .orElseThrow(() -> new RuntimeException("Employee not found with email: " + user.getEmail()));
     }
-//
-    public void deleteEmployeeCompletely(Long employeeId) {
-        String email=SecurityContextHolder.getContext().getAuthentication().getName();
-
-        User user=userRepository.findByEmail(email)
-                .orElseThrow(()->new HumanResourceException(ErrorType.USER_NOT_FOUND));
-
-
-
-        Employee employee=employeeRepository.findById(employeeId)
-                .orElseThrow(()->new HumanResourceException(ErrorType.EMPLOYEE_NOT_FOUND));
-
-
-
-        // 1. personelin özlük dosyasını sil
-        Optional.ofNullable(employee.getPersonalFiledId())
-                .flatMap(personelFileRepository::findById)
-                .ifPresent(personelFileRepository::delete);
-
-        userRoleRepository.deleteByUserId(employee.getId());
-
-        userRepository.findById(employee.getId())
-                .ifPresent(us -> userRepository.deleteById(user.getId()));
-
-        employeeRepository.deleteById(employeeId);
-
-
-    }
-
-          public List<EmployeeResponseDto> getAllEmployeesForManager() {
-//        System.out.println("Email ile gelen kullanıcı :"+email);
-//        User manager = userRepository.findByEmail(email)
-//                .orElseThrow(() -> new HumanResourceException(ErrorType.USER_NOT_FOUND));
-//
-//        System.out.println("Maanger ID : "+manager.getId());
-              Long managerId= SecurityUtil.getCurrentUserId();
-
-
-        return employeeRepository.findAllByManagerId(managerId)
-                .stream()
-                .map(employeeMapper::toEmployeeResponseDto)
-                .toList();
-    }
-
-
-
-
 
 //    private final EmployeeRepository employeeRepository;
 //
@@ -133,7 +83,26 @@ public class EmployeeService {
 //    //private final CompanyTitleRepository companyTitleRepository;
 //
 //
+//    public void addEmployee( AddEmployeeRequestDto dto, Long companyId) {
 //
+//        Employee employee= Employee.builder()
+//                .firstName(dto.name())
+//                .lastName(dto.surname())
+//                .phoneNumber(dto.phoneNumber())
+//                .companyId(companyId)
+//                .titleId(dto.titleId())
+//                .userId(null)
+//                .personalFiledId(null)
+//
+//
+//                .build();
+//
+//        employeeRepository.save(employee);
+//
+//        // Eşleşme için email üzerinden kaydı sakla
+//        emailToEmployeeMap.put(dto.email(),employee.getId());
+//
+//    }
 //
 //    // Şifre oluşturulduktan sonra eşleştirme işlemi yapılır
 //    public void assignUserToEmployee(String email,Long userId){
@@ -148,8 +117,44 @@ public class EmployeeService {
 //
 //    }
 //
-
+//    public void setPersonelFile( SetPersonelFileRequestDto dto) {
+//        String email= SecurityContextHolder.getContext().getAuthentication().getName();
+//        User user=userRepository.findByEmail(email)
+//                .orElseThrow(()->new HumanResourceException(ErrorType.USER_NOT_FOUND));
 //
+//        if (!user.getUserRoleId().equals(UserStatus.EMPLOYEE.ordinal())){
+//            throw new HumanResourceException(ErrorType.UNAUTHORIZED);
+//        }
+//
+//        Employee employee=employeeRepository.findByUserId(user.getId())
+//                .orElseThrow(()->new HumanResourceException(ErrorType.USER_NOT_FOUND));
+//
+//        if (personelFileRepository.existsById(employee.getId())){
+//            throw new HumanResourceException(ErrorType.DUPLICATE_PERSONAL_FILE);
+//
+//        }
+//        PersonalFile personalFile= PersonalFile.builder()
+//                .gender(dto.gender())
+//                .birthdate(dto.birthdate())
+//                .personalPhone(dto.personalPhone())
+//                .personalEmail(dto.personalEmail())
+//                .nationalId(dto.nationalId())
+//                .educationLevel(dto.educationLevel())
+//                .maritalStatus(dto.maritalStatus())
+//                .bloodType(dto.bloodType())
+//                .numberOfChildren(dto.numberOfChildren())
+//                .address(dto.address())
+//                .city(dto.city())
+//                .iban(dto.iban())
+//                .bankName(dto.bankName())
+//                .bankAccountNumber(dto.bankAccountNumber())
+//                .bankAccountType(dto.bankAccountType())
+//                .employeeId(employee.getId())
+//                .build();
+//
+//        personelFileRepository.save(personalFile);
+//
+//    }
 //
 //    public void assignTitleToEmployee(AssignTitleToEmployeeRequestDto dto) {
 //        String email= SecurityContextHolder.getContext().getAuthentication().getName();
@@ -178,7 +183,5 @@ public class EmployeeService {
 //        employee.setTitleId(dto.titleId());
 //        employeeRepository.save(employee);
 //    }
-
-
 
 }

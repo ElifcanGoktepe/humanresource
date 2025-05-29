@@ -2,6 +2,7 @@ package com.project.humanresource.service;
 
 import com.project.humanresource.dto.request.AddUserRequestDto;
 import com.project.humanresource.dto.request.LoginRequestDto;
+import com.project.humanresource.entity.Company;
 import com.project.humanresource.entity.Employee;
 import com.project.humanresource.entity.User;
 import com.project.humanresource.repository.EmployeeRepository;
@@ -9,9 +10,14 @@ import com.project.humanresource.repository.UserRepository;
 import com.project.humanresource.utility.UserStatus;
 import jakarta.validation.Valid;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -24,8 +30,9 @@ public class UserService {
     private final EmployeeRepository employeeRepository;
     private final UserRoleService userRoleService;
 
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+
+    public Optional<User> findByEmailAndPassword(String email  ,String password) {
+        return userRepository.findOptionalByEmailAndPassword(email , password);
     }
 
     public Optional<User> findById(Long id) {
@@ -53,14 +60,14 @@ public class UserService {
 
         } else if (dto.role() == UserStatus.Manager || dto.role() == UserStatus.Employee) {
             Employee employee = Employee.builder()
-                    . email(dto.email())
+                    .email(dto.email())
                     .password(dto.password())
                     .isActive(true)
                     .isApproved(false)
                     .isActivated(false)
                     .firstName(dto.firstName())
                     .lastName(dto.lastName())
-                    .companyId(dto.companyId())
+                    .company(Company.builder().id(dto.companyId()).build())
                     .titleId(dto.titleId())
                     .personalFiledId(dto.personalFiledId())
                     .managerId(managerId)
@@ -82,5 +89,9 @@ public class UserService {
 
     public Optional<User> findByEmailPassword(@Valid LoginRequestDto dto) {
         return employeeRepository.findOptionalByEmailAndPassword(dto.email(), dto.password());
+    }
+
+    public Optional<User> findByEmail(@Email @NotEmpty @NotNull String email) {
+        return userRepository.findByEmail(email);
     }
 }
