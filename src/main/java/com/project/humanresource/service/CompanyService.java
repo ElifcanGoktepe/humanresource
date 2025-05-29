@@ -2,11 +2,11 @@ package com.project.humanresource.service;
 
 import com.project.humanresource.dto.request.AddCompanyRequestDto;
 import com.project.humanresource.entity.Company;
-import com.project.humanresource.entity.Employee;
+
 import com.project.humanresource.repository.CompanyRepository;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +18,9 @@ import java.util.stream.Collectors;
 public class CompanyService {
 
     private final CompanyRepository companyRepository;
+
+
+
 
 
 
