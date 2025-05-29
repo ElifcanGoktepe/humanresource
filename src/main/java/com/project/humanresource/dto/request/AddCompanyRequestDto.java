@@ -1,18 +1,16 @@
 package com.project.humanresource.dto.request;
 
-import jakarta.validation.constraints.*;
+import lombok.*;
 
-public record AddCompanyRequestDto(
-
-
-        @NotNull @NotEmpty @NotBlank
-                String companyName,
-        @NotNull @NotEmpty @NotBlank
-                String companyAddress,
-        @NotNull @NotEmpty @NotBlank @Pattern(regexp = "^\\d{11}$")
-                String companyPhoneNumber,
-        @NotNull @NotEmpty @NotBlank @Email
-                String companyEmail
-
-) {
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class AddCompanyRequestDto {
+    private Long id;
+    private String companyName;
+    private String companyAddress;
+    private String companyPhoneNumber;
+    private String companyEmail;
 }

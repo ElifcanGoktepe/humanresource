@@ -6,25 +6,13 @@ public class RestApis {
     private static final String BASE_URL = DEV + VERSION;
 
     public static final String ADMIN = "/admin";
-    public static final String ADDCOMPANY = BASE_URL + "/addcompany";
-    public static final String FINDCOMPANYBYNAME = BASE_URL + "/findcompanybyname";
-    public static final String FINDCOMPANYBYEMAILADDRESS = BASE_URL + "/findcompanybyemailaddress";
-    public static final String FINDCOMPANYBYPHONENUMBER = BASE_URL + "/findcompanybyphonenumber";
-    public static final String LISTALLCOMPANY= BASE_URL + "/listallcompany";
-    public static final String DELETECOMPANYBYID = BASE_URL + "/deletecompanybyid";
-    public static final String ADDCOMPANYBRANCH= BASE_URL + "/addcompanybranch";
-    public static final String DELETECOMPANYBRANCHBYID = BASE_URL + "/deletecompanybranchbyid";
-    public static final String DELETECOMPANYBRANCHBYCOMPANYBRANCHCODE = BASE_URL + "/deletecompanybranchbycompanybranchcode";
-    public static final String LISTOFALLBRANCHESOFCOMPANY = BASE_URL + "/listofallbranchesofcompany";
-    public static final String FINDCOMPANYBRANCHBYADDRESS= BASE_URL + "/findcompanybranchbyaddress";
-    public static final String FINDCOMPANYBRANCHBYEMAILADDRESS = BASE_URL + "/findcompanybranchbyemailaddress";
-    public static final String FINDCOMPANYBRANCHBYPHONENUMBER = BASE_URL + "/findcompanybranchbyphonenumber";
-    public static final String ADDDEPARTMENT = BASE_URL + "/adddepartment";
-    public static final String DELETEDEPARTMENTBYID = BASE_URL + "/deletecompanydepartmentbyid";
-    public static final String DELETEDEPARTMENTBYDEPARTMENTNAME = BASE_URL + "/deletecompanydepartmentbydepartmentname";
-    public static final String LISTALLDEPARTMENTS = BASE_URL + "/listalldepartments";
-    public static final String FINDDEPARTMENTBYID = BASE_URL + "/finddepartmentbyid";
-    public static final String FINDDEPARTMENTBYNAME = BASE_URL + "/finddepartmentbyname";
+
+    public static final String ADDDERPARTAMENT = "/department/add";
+    public static final String FINDDEPARTMENTBYID = "/department/findById";
+    public static final String LISTALLDEPARTMENTS = "/department/listAll";
+    public static final String DELETEDEPARTMENTBYID = "/department/delete";
+    public static final String FINDDEPARTMENTBYCODE = "/department/findByCode";
+
     public static final String PENDINGAPPLICATIONS= BASE_URL + "/pendingapplications";
     public static final String UPDATEAPPLICATIONSTATUSBYID = BASE_URL + "/updateapplicationstatusbyid";
     public static final String EMPLOYEE = BASE_URL + "/employee";
@@ -43,5 +31,30 @@ public class RestApis {
     public static final String REQUESTSHIFT = "/request-shift";
     public static final String REGISTER = "/register";
     public static final String ADD_EMPLOYEE = "/add-employee";
-    public static final String LISTSHIFT = "/list-shift";
+
+    public static final String ADDCOMPANY =BASE_URL + "/company/add";
+    public static final String FINDCOMPANYBYNAME =BASE_URL + "/company/findByName";
+    public static final String FINDCOMPANYBYEMAILADDRESS = BASE_URL +"/company/findByEmail";
+    public static final String FINDCOMPANYBYPHONENUMBER = BASE_URL +"/company/findByPhoneNumber";
+    public static final String LISTALLCOMPANY = BASE_URL +"/company/listAll";
+    public static final String DELETECOMPANYBYID =BASE_URL + "/company/delete";
+    public static final String MYCOMPANY = BASE_URL + "/mycompany";
+    public static final String ADDCOMPANYBRANCH =BASE_URL + "/companyBranch/add";
+    public static final String LISTALLCOMPANYBRANCH =BASE_URL + "/companyBranch/listAll";
+    public static final String DELETECOMPANYBRANCHBYID = BASE_URL +"/companyBranch/delete";
+    public static final String FINDCOMPANYBRANCHBYADDRESS =BASE_URL + "/companyBranch/findByAddress";
+    public static final String FINDCOMPANYBRANCHBYEMAILADDRESS =BASE_URL + "/companyBranch/findByEmail";
+    public static final String FINDCOMPANYBRANCHBYPHONENUMBER = BASE_URL +"/companyBranch/findByPhoneNumber";
+
+
+    public static final String COMPANY = BASE_URL + "/company";
+
+    public static final String ADD_COMPANY = COMPANY + "/add";
+    public static final String GET_ALL_COMPANIES = COMPANY + "/listAll";
+    public static final String GET_COMPANY_BY_ID = COMPANY + "/findById/{id}";
+    public static final String UPDATE_COMPANY = COMPANY + "/update/{id}";
+    public static final String DELETE_COMPANY = COMPANY + "/delete/{id}";
+    public static final String SEARCH_COMPANY_BY_NAME = COMPANY + "/findByName";
+    public static final String UPDATE_COMPANY_EMAIL = COMPANY + "/updateEmail/{id}";
+    public static final String MY_COMPANY = COMPANY + "/myCompany";
 }

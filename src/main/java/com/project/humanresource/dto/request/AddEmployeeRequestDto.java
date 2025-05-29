@@ -22,6 +22,7 @@ public record AddEmployeeRequestDto(
         @NotNull
         Long departmentId,
         @NotNull
-        LocalDate hireDate
+        LocalDate hireDate,
+        Long managerId
 ) {
 }

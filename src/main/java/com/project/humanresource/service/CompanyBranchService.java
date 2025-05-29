@@ -2,12 +2,17 @@ package com.project.humanresource.service;
 
 import com.project.humanresource.dto.request.AddCompanyBranchRequestDto;
 
+import com.project.humanresource.entity.Company;
 import com.project.humanresource.entity.CompanyBranch;
+import com.project.humanresource.entity.Employee;
 import com.project.humanresource.repository.CompanyBranchRepository;
+import com.project.humanresource.repository.CompanyRepository;
+import com.project.humanresource.repository.EmployeeRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,57 +20,59 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CompanyBranchService {
-    private final CompanyBranchRepository companyBranchRepository;
 
+    private final CompanyBranchRepository companyBranchRepository;
+    private final CompanyRepository companyRepository;
+    private final EmployeeRepository employeeRepository;
 
     public CompanyBranch addCompanyBranch(@Valid AddCompanyBranchRequestDto dto) {
+        Long id = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
+
+        Employee manager = employeeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Manager not found with id: " + id));
+
+        Company company = companyRepository.findByCompanyNameIgnoreCase(manager.getCompanyName())
+                .stream().findFirst()
+                .orElseThrow(() -> new RuntimeException("Company not found with name: " + manager.getCompanyName()));
+
         CompanyBranch companyBranch = CompanyBranch.builder()
                 .companyBranchCode(dto.companyBranchCode())
                 .companyBranchAddress(dto.companyBranchAddress())
                 .companyBranchPhoneNumber(dto.companyBranchPhoneNumber())
                 .companyBranchEmailAddress(dto.companyBranchEmailAddress())
+                .company(company)
                 .build();
+
         return companyBranchRepository.save(companyBranch);
     }
 
     public CompanyBranch deleteCompanyBranch(Long id) {
         CompanyBranch companyBranch = companyBranchRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Company branch not found" + id));
-                companyBranchRepository.delete(companyBranch);
-                return companyBranch;
+                .orElseThrow(() -> new EntityNotFoundException("Company branch not found with id: " + id));
+        companyBranchRepository.delete(companyBranch);
+        return companyBranch;
     }
 
     public List<CompanyBranch> findAll() {
         return companyBranchRepository.findAll();
     }
 
-    public CompanyBranch findByCompanyBranchAddress(@NotNull @NotBlank @NotEmpty String companyBranchAddress) {
-        if (!companyBranchRepository.existsByCompanyBranchAddress(companyBranchAddress)){
+    public CompanyBranch findByCompanyBranchAddress(String address) {
+        if (!companyBranchRepository.existsByCompanyBranchAddress(address)) {
             throw new EntityNotFoundException("Company branch address not found");
         }
-        return companyBranchRepository.findByCompanyBranchAddress(companyBranchAddress);
+        return companyBranchRepository.findByCompanyBranchAddress(address);
     }
 
-    public CompanyBranch findByCompanyBranchEmailAddress(@NotNull @NotEmpty @NotBlank @Email String companyBranchEmailAddress) {
-       if (!companyBranchRepository.existsByCompanyBranchEmailAddress(companyBranchEmailAddress)){
-           throw new EntityNotFoundException("Company branch email address not found");
-       }
-       return companyBranchRepository.findByCompanyBranchEmailAddress(companyBranchEmailAddress);
+    public CompanyBranch findByCompanyBranchEmailAddress(String email) {
+        return companyBranchRepository.findByCompanyBranchEmailAddress(email)
+                .orElse(null);
     }
 
-    public CompanyBranch findByCompanyBranchPhoneNumber(@NotNull @NotBlank @NotEmpty @Pattern(regexp = "^\\d{11}$") String companyBranchPhoneNumber) {
-        if (!companyBranchRepository.existsByCompanyBranchPhoneNumber(companyBranchPhoneNumber)){
+    public CompanyBranch findByCompanyBranchPhoneNumber(String phoneNumber) {
+        if (!companyBranchRepository.existsByCompanyBranchPhoneNumber(phoneNumber)) {
             throw new EntityNotFoundException("Company branch phone number not found");
         }
-        return companyBranchRepository.findByCompanyBranchPhoneNumber(companyBranchPhoneNumber);
-    }
-
-    public CompanyBranch deleteCompanyBranchByCompanyBranchCode(String companyBranchCode) {
-        CompanyBranch companyBranch = companyBranchRepository.findByCompanyBranchCode(companyBranchCode);
-       if(companyBranch == null){
-           throw new EntityNotFoundException("Company branch not found");
-       }
-        companyBranchRepository.delete(companyBranch);
-         return companyBranch;
+        return companyBranchRepository.findByCompanyBranchPhoneNumber(phoneNumber);
     }
 }

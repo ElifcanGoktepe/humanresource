@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping()
+@RequestMapping
 @CrossOrigin("*")
 @SecurityRequirement(name = "bearerAuth")
 public class ShiftBreakController {

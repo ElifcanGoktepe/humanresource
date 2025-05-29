@@ -6,6 +6,7 @@ public record AddEmployeeForRoleRequirementDto(
         String email,
         String phoneNumber,
         String companyName,
-        String titleName
+        String titleName,
+        Long managerId
 ) {
 }

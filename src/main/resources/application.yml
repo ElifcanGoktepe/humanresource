@@ -8,7 +8,6 @@ spring:
     password: root
     driver-class-name: org.postgresql.Driver
 
-
   security:
     user:
       name: ADMINISTRATOR
@@ -25,14 +24,19 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: elifcangoktepe@gmail.com
-    password: jynohncfzxegpmrz
+    username: serkan.klcdr@gmail.com
+    password: xlclftccllcqlnav
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
+
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
 
 # ✅ JWT Secret Key Eklendi
 my-jwt:
@@ -50,3 +54,11 @@ logging:
       max-file-size: 10MB
   level:
     root: info
+
+# File Upload Configuration
+app:
+  upload:
+    dir: uploads
+    max-file-size: 5242880  # 5MB in bytes
+
+

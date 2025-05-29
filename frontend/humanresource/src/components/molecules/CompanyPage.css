@@ -1,0 +1,170 @@
+/* Genel yapı */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #F7F7F7; /* Sayfa arka planı */
+}
+
+.container {
+    max-width: 1000px;
+    margin: 25px auto;
+    padding: 20px;
+    color: #212529;
+    background-color: #F5F5F5; /* Ana kutu */
+    border-radius: 12px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    animation: slideUp 0.6s ease-in-out;
+}
+
+/* Formlar konteyneri */
+.add-forms-container {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 20px;
+    justify-content: space-between;
+}
+
+/* Form kutuları */
+.form-box, .department-form-box {
+    flex: 1 1 32%;
+    padding: 14px 12px;
+    border: 1px solid #d1d3d4;
+    border-radius: 10px;
+    background: #F2F3F4; /* Hafif gri tonu */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    min-width: 280px;
+}
+
+/* Başlıklar */
+h2, h3, h4 {
+    margin: 8px 0;
+    font-weight: 600;
+    color: #343a40;
+}
+
+/* Input alanları */
+.form-control {
+    width: 100%;
+    padding: 7px 10px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    border: 1px solid #adb5bd;
+    border-radius: 6px;
+    background-color: #ffffff;
+    color: #212529;
+    transition: all 0.2s ease-in-out;
+}
+
+.form-control:focus {
+    border-color: #495057;
+    outline: none;
+    box-shadow: 0 0 5px rgba(108, 117, 125, 0.3);
+}
+
+/* Butonlar */
+.btn {
+    padding: 7px 14px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 20px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(108, 117, 125, 0.25);
+}
+
+.btn-primary {
+    background-color: #F5FFFA; /* Mint white */
+    color: #212529;
+    border: 1px solid #ced4da;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: #FFFAFA; /* Soft pink hover */
+    transform: scale(1.03);
+    box-shadow: 0 6px 14px rgba(73, 80, 87, 0.25);
+}
+
+/* Liste başlığı */
+h3 {
+    margin-top: 25px;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+/* Liste yapısı */
+.list-group {
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    background: #ffffff;
+}
+
+.list-group-item {
+    padding: 10px 15px;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #212529;
+    transition: background-color 0.2s ease;
+    background-color: #F7F7F7;
+}
+
+.list-group-item:hover {
+    background-color: #F2F3F4; /* Hover tonu */
+}
+
+.list-group-item:last-child {
+    border-bottom: none;
+}
+
+/* Küçük ekranlar */
+@media (max-width: 900px) {
+    .form-box, .department-form-box {
+        flex: 1 1 48%;
+    }
+}
+
+@media (max-width: 600px) {
+    .form-box, .department-form-box {
+        flex: 1 1 100%;
+    }
+}
+
+/* Animasyon */
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Arama kutusu */
+.search-inputs input.form-control {
+    max-width: 320px;
+    margin-bottom: 10px;
+    background-color: #FFFAFA; /* Hafif pembemsi */
+}
+
+.page-background {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    padding-top: 20px;
+}
+
+.form-box {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+

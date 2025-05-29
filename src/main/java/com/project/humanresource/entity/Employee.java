@@ -21,10 +21,11 @@ public class Employee extends User {
     String phoneNumber;
     String companyName;
     String titleName;
-    Long companyId;
     Long titleId;
     Long personalFiledId;
     Long managerId;
+    Long companyId;
+    String profileImageUrl;
 
     @Column(nullable = false)   // 26/05 09:49 serkan güncellendi
     @Builder.Default

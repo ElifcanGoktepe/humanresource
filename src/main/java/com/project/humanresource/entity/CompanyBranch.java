@@ -1,5 +1,6 @@
 package com.project.humanresource.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -36,8 +37,9 @@ public class CompanyBranch {
     String companyBranchEmailAddress;
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = Company.class)
     @JoinColumn(name ="company_id",referencedColumnName = "id", nullable = false)
+    @JsonIgnore
     private Company company;
-
+    @Builder.Default
     @OneToMany(mappedBy = "companyBranch", cascade = CascadeType.ALL, orphanRemoval = true )
     private List<Department> departments = new ArrayList<>();
 

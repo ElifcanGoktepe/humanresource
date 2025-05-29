@@ -2,26 +2,22 @@ package com.project.humanresource.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record UpdateUserProfileRequestDto(
-        @NotBlank(message = "First name is required")
-        @Size(min = 2, max = 50, message = "First name must be between 2 and 50 characters")
-        @Pattern(regexp = "^[a-zA-ZğüşıöçĞÜŞİÖÇ\\s]+$", message = "First name must contain only letters and spaces")
+        @NotBlank(message = "Ad alanı zorunludur")
+        @Size(min = 2, max = 50, message = "Ad 2-50 karakter arasında olmalıdır")
         String firstName,
-
-        @NotBlank(message = "Last name is required")
-        @Size(min = 2, max = 50, message = "Last name must be between 2 and 50 characters")
-        @Pattern(regexp = "^[a-zA-ZğüşıöçĞÜŞİÖÇ\\s]+$", message = "Last name must contain only letters and spaces")
+        
+        @NotBlank(message = "Soyad alanı zorunludur")
+        @Size(min = 2, max = 50, message = "Soyad 2-50 karakter arasında olmalıdır")
         String lastName,
-
-        @Email(message = "Invalid email format")
-        @NotBlank(message = "Email is required")
+        
+        @NotBlank(message = "E-posta alanı zorunludur")
+        @Email(message = "Geçerli bir e-posta adresi giriniz")
         String email,
-
-        @Pattern(regexp = "^[+]?[0-9\\s]+$", message = "Phone number must contain only numbers, plus sign and spaces")
-        @Size(min = 10, max = 20, message = "Phone number must be between 10 and 20 characters")
+        
+        @Size(min = 10, max = 15, message = "Telefon numarası 10-15 haneli olmalıdır")
         String phone
 ) {
 } 

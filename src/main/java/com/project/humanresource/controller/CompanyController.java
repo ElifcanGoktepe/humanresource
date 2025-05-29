@@ -1,92 +1,74 @@
 package com.project.humanresource.controller;
 
-import com.project.humanresource.config.JwtManager;
 import com.project.humanresource.dto.request.AddCompanyRequestDto;
-import com.project.humanresource.dto.response.BaseResponseShort;
-
-import com.project.humanresource.entity.Company;
-
+import com.project.humanresource.entity.Employee;
+import com.project.humanresource.repository.EmployeeRepository;
 import com.project.humanresource.service.CompanyService;
-import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.annotation.Id;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 import static com.project.humanresource.config.RestApis.*;
 
-
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(ADMIN)
+@RequestMapping // Base URL sabitlerde
 @CrossOrigin("*")
 public class CompanyController {
 
-
     private final CompanyService companyService;
-    private final JwtManager jwtManager;
 
-    @PostMapping(ADDCOMPANY)
-    public ResponseEntity<BaseResponseShort<Company>> addCompany(@RequestBody @Valid AddCompanyRequestDto dto){
-        return ResponseEntity.ok(BaseResponseShort.<Company>builder()
-                .data(companyService.addCompany(dto))
-                .code(200)
-                .message("Company Added successfully.")
-                .build());
-
-
+    // Yeni şirket oluştur
+    @PostMapping(ADD_COMPANY)
+    public ResponseEntity<AddCompanyRequestDto> createCompany(@RequestBody AddCompanyRequestDto dto) {
+        return ResponseEntity.ok(companyService.addCompany(dto));
     }
 
-    @GetMapping(FINDCOMPANYBYNAME)
-    public ResponseEntity<BaseResponseShort<Company>> findCompanyByName(@RequestParam @Valid AddCompanyRequestDto dto){
-        return ResponseEntity.ok(BaseResponseShort.<Company>builder()
-                        .data(companyService.findByCompanyName(dto.companyName()))
-                        .code(200)
-                .message("Company found successfully")
-                .build());
+    // Tüm şirketleri getir
+    @GetMapping(GET_ALL_COMPANIES)
+    public ResponseEntity<List<AddCompanyRequestDto>> getAllCompanies() {
+        return ResponseEntity.ok(companyService.getAllCompanies());
     }
 
-
-    @GetMapping(FINDCOMPANYBYEMAILADDRESS)
-    public ResponseEntity<BaseResponseShort<Company>> findCompanyByEmailAddress(@RequestParam @Valid AddCompanyRequestDto dto){
-        return ResponseEntity.ok(BaseResponseShort.<Company>builder()
-                .data(companyService.findByCompanyEmailAddress(dto.companyEmail()))
-                .code(200)
-                .message("Company found successfully")
-                .build());
+    // ID'ye göre şirket getir
+    @GetMapping(GET_COMPANY_BY_ID)
+    public ResponseEntity<AddCompanyRequestDto> getCompanyById(@PathVariable Long id) {
+        AddCompanyRequestDto company = companyService.getCompanyById(id);
+        return company != null ? ResponseEntity.ok(company) : ResponseEntity.notFound().build();
     }
 
-    @GetMapping(FINDCOMPANYBYPHONENUMBER)
-    public ResponseEntity<BaseResponseShort<Company>> findCompanyByPhoneNumber(@RequestParam @Valid AddCompanyRequestDto dto){
-        return ResponseEntity.ok(BaseResponseShort.<Company>builder()
-                .data(companyService.findByCompanyPhoneNumber(dto.companyPhoneNumber()))
-                .code(200)
-                .message("Company found successfully")
-                .build());
+    // Şirket güncelle
+    @PutMapping(UPDATE_COMPANY)
+    public ResponseEntity<AddCompanyRequestDto> updateCompany(@PathVariable Long id, @RequestBody AddCompanyRequestDto dto) {
+        AddCompanyRequestDto updatedCompany = companyService.updateCompany(id, dto);
+        return updatedCompany != null ? ResponseEntity.ok(updatedCompany) : ResponseEntity.notFound().build();
     }
 
-    @GetMapping(LISTALLCOMPANY)
-    public ResponseEntity<BaseResponseShort<List<Company>>> findAll(){
-        List<Company> companies = companyService.findAll();
-        return ResponseEntity.ok(BaseResponseShort.<List<Company>>builder()
-                .data(companies)
-                .code(200)
-                .message("Companies listed successfully")
-                .build());
+    // Şirket sil
+    @DeleteMapping(DELETE_COMPANY)
+    public ResponseEntity<Void> deleteCompany(@PathVariable Long id) {
+        companyService.deleteCompany(id);
+        return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping(DELETECOMPANYBYID +"/{id}")
-    public ResponseEntity<BaseResponseShort<Company>> deleteCompany(@PathVariable @Valid Long id){
-        Company deletedCompany = companyService.deleteCompany(id);
-        return ResponseEntity.ok(BaseResponseShort.<Company>builder()
-                .data(deletedCompany)
-                .code(200)
-                .message("Company deleted successfully")
-                .build());
+    // Şirket adıyla arama
+    @GetMapping(SEARCH_COMPANY_BY_NAME)
+    public ResponseEntity<List<AddCompanyRequestDto>> searchCompaniesByName(@RequestParam String name) {
+        return ResponseEntity.ok(companyService.searchCompaniesByName(name));
     }
 
+    // Şirket e-posta güncelle
+    @PatchMapping(UPDATE_COMPANY_EMAIL)
+    public ResponseEntity<AddCompanyRequestDto> updateCompanyEmail(@PathVariable Long id, @RequestParam String email) {
+        AddCompanyRequestDto updated = companyService.updateCompanyEmail(id, email);
+        return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
+    }
 
 
 }

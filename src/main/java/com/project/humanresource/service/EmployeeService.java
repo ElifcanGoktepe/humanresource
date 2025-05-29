@@ -50,7 +50,7 @@ public class EmployeeService {
                 .phoneNumber(dto.phoneNumber())
                 .companyName(dto.companyName())
                 .titleName(dto.titleName())
-                .managerId(managerId)
+                .managerId(dto.managerId())
                 .isApproved(true)
                 .build();
         employeeRepository.save(employee);
@@ -63,6 +63,14 @@ public class EmployeeService {
 
         emailVerificationService.sendVerificationEmail(employee.getEmail());
 
+    }
+
+    public Employee findEmployeeByUserId(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        return employeeRepository.findByEmail(user.getEmail())
+                .orElseThrow(() -> new RuntimeException("Employee not found with email: " + user.getEmail()));
     }
 
 //    private final EmployeeRepository employeeRepository;

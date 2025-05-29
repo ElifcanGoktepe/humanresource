@@ -2,9 +2,12 @@ package com.project.humanresource.controller;
 
 import com.project.humanresource.config.JwtManager;
 import com.project.humanresource.dto.request.AddUserRequestDto;
+import com.project.humanresource.dto.request.ChangePasswordRequestDto;
 import com.project.humanresource.dto.request.LoginRequestDto;
+import com.project.humanresource.dto.request.UpdateUserProfileRequestDto;
 import com.project.humanresource.dto.response.BaseResponse;
 import com.project.humanresource.dto.response.BaseResponseShort;
+import com.project.humanresource.dto.response.UserProfileResponseDto;
 import com.project.humanresource.entity.Employee;
 import com.project.humanresource.entity.User;
 import com.project.humanresource.entity.UserRole;
@@ -17,6 +20,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -83,6 +87,7 @@ public class UserController {
 
         // Token oluştur
         String token = jwtManager.createToken(
+                employee.getEmail(),
                 employee.getId(),
                 roles,
                 employee.getFirstName(),
@@ -110,5 +115,76 @@ public class UserController {
         }
 
         return ResponseEntity.ok(new BaseResponse<>(true, "User found", user));
+    }
+
+    /**
+     * Get user profile
+     */
+   @GetMapping("/{id}/profile")
+    public ResponseEntity<BaseResponse<UserProfileResponseDto>> getUserProfile(@PathVariable Long id) {
+        Employee employee = userService.getUserProfile(id);
+        
+        UserProfileResponseDto profileDto = new UserProfileResponseDto(
+                employee.getId(),
+                employee.getFirstName(),
+                employee.getLastName(),
+                employee.getEmail(),
+                employee.getPhoneNumber(),
+                employee.getProfileImageUrl(),
+                null, // lastUpdated - implement later
+                employee.isActive()
+        );
+        
+        return ResponseEntity.ok(new BaseResponse<>(true, "Profile retrieved successfully", profileDto));
+    }
+
+    /**
+     * Update user profile
+     */
+    @PutMapping("/{id}/profile")
+    public ResponseEntity<BaseResponse<Employee>> updateUserProfile(
+            @PathVariable Long id, 
+            @RequestBody @Valid UpdateUserProfileRequestDto dto) {
+        
+        Employee updatedEmployee = userService.updateUserProfile(id, dto);
+        
+        return ResponseEntity.ok(new BaseResponse<>(true, "Profile updated successfully", updatedEmployee));
+    }
+
+    /**
+     * Change user password
+     */
+   @PutMapping("/{id}/password")
+    public ResponseEntity<BaseResponse<String>> changePassword(
+            @PathVariable Long id, 
+            @RequestBody @Valid ChangePasswordRequestDto dto) {
+        
+        userService.changePassword(id, dto);
+        
+        return ResponseEntity.ok(new BaseResponse<>(true, "Password changed successfully", null));
+    }
+
+    /**
+     * Upload profile image
+     */
+   @PostMapping("/{id}/profile-image")
+    public ResponseEntity<BaseResponse<String>> uploadProfileImage(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file) {
+        
+        String imageUrl = userService.uploadProfileImage(id, file);
+        
+        return ResponseEntity.ok(new BaseResponse<>(true, "Profile image uploaded successfully", imageUrl));
+    }
+
+    /**
+     * Delete profile image
+     */
+    @DeleteMapping("/{id}/profile-image")
+    public ResponseEntity<BaseResponse<String>> deleteProfileImage(@PathVariable Long id) {
+        
+        userService.deleteProfileImage(id);
+        
+        return ResponseEntity.ok(new BaseResponse<>(true, "Profile image deleted successfully", null));
     }
 }

@@ -7,21 +7,23 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
+
 @Repository
 public interface CompanyBranchRepository extends JpaRepository<CompanyBranch, Long> {
 
 
-    boolean existsByCompanyBranchAddress(@NotNull @NotBlank @NotEmpty String companyBranchAddress);
 
-    CompanyBranch findByCompanyBranchAddress(@NotNull @NotBlank @NotEmpty String companyBranchAddress);
+    boolean existsByCompanyBranchAddress(String address);
 
-    CompanyBranch findByCompanyBranchEmailAddress(@NotNull @NotEmpty @NotBlank @Email String companyBranchEmailAddress);
+    CompanyBranch findByCompanyBranchAddress(String address);
 
-    CompanyBranch findByCompanyBranchPhoneNumber(@NotNull @NotBlank @NotEmpty @Pattern(regexp = "^\\d{11}$") String companyBranchPhoneNumber);
+    Optional<CompanyBranch> findByCompanyBranchEmailAddress(String email);
 
-    boolean existsByCompanyBranchPhoneNumber(@NotNull @NotBlank @NotEmpty @Pattern(regexp = "^\\d{11}$") String companyBranchPhoneNumber);
+    boolean existsByCompanyBranchPhoneNumber(String phoneNumber);
 
-    boolean existsByCompanyBranchEmailAddress(String companyBranchEmailAddress);
+    CompanyBranch findByCompanyBranchPhoneNumber(String phoneNumber);
 
-    CompanyBranch findByCompanyBranchCode(String companyBranchCode);
+    CompanyBranch findByCompanyBranchCode(String code);
+
 }

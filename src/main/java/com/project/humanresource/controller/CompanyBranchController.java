@@ -7,6 +7,7 @@ import com.project.humanresource.entity.CompanyBranch;
 import com.project.humanresource.service.CompanyBranchService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,87 +18,72 @@ import static com.project.humanresource.config.RestApis.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(ADMIN)
+@RequestMapping
 @CrossOrigin("*")
 public class CompanyBranchController {
+
     private final CompanyBranchService companyBranchService;
-    private final JwtManager jwtManager;
-
-
 
     @PostMapping(ADDCOMPANYBRANCH)
     public ResponseEntity<BaseResponseShort<CompanyBranch>> addCompanyBranch(@RequestBody @Valid AddCompanyBranchRequestDto dto) {
+        CompanyBranch branch = companyBranchService.addCompanyBranch(dto);
         return ResponseEntity.ok(BaseResponseShort.<CompanyBranch>builder()
-                .data(companyBranchService.addCompanyBranch(dto))
+                .data(branch)
                 .code(200)
-                .message("Company Branch Added Successfully")
+                .message("Company branch added successfully")
                 .build());
-
     }
 
     @DeleteMapping(DELETECOMPANYBRANCHBYID + "/{id}")
-    public ResponseEntity<BaseResponseShort<CompanyBranch>> deleteCompanyBranchById(@PathVariable Long id) {
-        CompanyBranch deletedCompanyBranch = companyBranchService.deleteCompanyBranch(id);
+    public ResponseEntity<BaseResponseShort<CompanyBranch>> deleteCompanyBranch(@PathVariable Long id) {
+        CompanyBranch deletedBranch = companyBranchService.deleteCompanyBranch(id);
         return ResponseEntity.ok(BaseResponseShort.<CompanyBranch>builder()
-                .data(deletedCompanyBranch)
+                .data(deletedBranch)
                 .code(200)
-                .message("Company Branch Deleted Successfully")
+                .message("Company branch deleted successfully")
                 .build());
     }
 
-    @DeleteMapping(DELETECOMPANYBRANCHBYCOMPANYBRANCHCODE+"/companyBranchCode")
-    public ResponseEntity<BaseResponseShort<CompanyBranch>> deleteCompanyBranchByCompanyBranchCode(@RequestParam String companyBranchCode) {
-        CompanyBranch deletedCompanyBranch = companyBranchService.deleteCompanyBranchByCompanyBranchCode(companyBranchCode);
-        return ResponseEntity.ok(BaseResponseShort.<CompanyBranch>builder()
-                .data(deletedCompanyBranch)
+    @GetMapping(LISTALLCOMPANYBRANCH)
+    public ResponseEntity<BaseResponseShort<List<CompanyBranch>>> findAll() {
+        List<CompanyBranch> branches = companyBranchService.findAll();
+        return ResponseEntity.ok(BaseResponseShort.<List<CompanyBranch>>builder()
+                .data(branches)
                 .code(200)
-                .message("Company Branch Deleted Successfully")
+                .message("Company branches listed successfully")
                 .build());
-    }
-
-
-    @GetMapping(LISTOFALLBRANCHESOFCOMPANY)
-    public ResponseEntity<BaseResponseShort<List<CompanyBranch>>> listAllCompanyBranches() {
-        List<CompanyBranch> companyBranches = companyBranchService.findAll();
-        {
-            return ResponseEntity.ok(BaseResponseShort.<List<CompanyBranch>>builder()
-                    .data(companyBranches)
-                    .code(200)
-                    .message("All Company Branches Listed Successfully")
-                    .build());
-
-        }
     }
 
     @GetMapping(FINDCOMPANYBRANCHBYADDRESS)
-    public ResponseEntity<BaseResponseShort<CompanyBranch>> findCompanyBranchByAddress(@RequestParam @Valid AddCompanyBranchRequestDto dto) {
+    public ResponseEntity<BaseResponseShort<CompanyBranch>> findByAddress(@RequestParam String address) {
+        CompanyBranch branch = companyBranchService.findByCompanyBranchAddress(address);
         return ResponseEntity.ok(BaseResponseShort.<CompanyBranch>builder()
-                .data(companyBranchService.findByCompanyBranchAddress(dto.companyBranchAddress()))
+                .data(branch)
                 .code(200)
-                .message("Company found successfully")
+                .message("Company branch found successfully")
                 .build());
     }
 
     @GetMapping(FINDCOMPANYBRANCHBYEMAILADDRESS)
-    public ResponseEntity<BaseResponseShort<CompanyBranch>> findCompanyBranchByEmailAddress(@RequestParam AddCompanyBranchRequestDto dto) {
+    public ResponseEntity<BaseResponseShort<CompanyBranch>> findByEmail(@RequestParam String email) {
+        CompanyBranch branch = companyBranchService.findByCompanyBranchEmailAddress(email);
         return ResponseEntity.ok(BaseResponseShort.<CompanyBranch>builder()
-                .data(companyBranchService.findByCompanyBranchEmailAddress(dto.companyBranchEmailAddress()))
+                .data(branch)
                 .code(200)
-                .message("Company found successfully")
+                .message("Company branch found successfully")
                 .build());
     }
 
     @GetMapping(FINDCOMPANYBRANCHBYPHONENUMBER)
-    public ResponseEntity<BaseResponseShort<CompanyBranch>> findCompanyBranchByPhoneNumber(@RequestParam AddCompanyBranchRequestDto dto) {
+    public ResponseEntity<BaseResponseShort<CompanyBranch>> findByPhone(@RequestParam String phoneNumber) {
+        CompanyBranch branch = companyBranchService.findByCompanyBranchPhoneNumber(phoneNumber);
         return ResponseEntity.ok(BaseResponseShort.<CompanyBranch>builder()
-                        .data(companyBranchService.findByCompanyBranchPhoneNumber(dto.companyBranchPhoneNumber()))
-                        .code(200)
-                        .message("Company Found Successfully")
+                .data(branch)
+                .code(200)
+                .message("Company branch found successfully")
                 .build());
     }
-
 }
-
 
 
 
