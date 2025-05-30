@@ -243,6 +243,7 @@ function ManagerPage() {
 
                 </div>
             </div>
+
         </div>
             {showModal && (
                 <AddEmployeeModal
