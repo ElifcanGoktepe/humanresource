@@ -47,19 +47,21 @@ public class SecurityConfig {
                                 "/api/assignments", "/api/assignments/**",
                                 "/swagger-ui/**","/v3/api-docs/**",
                                 "/api/auth/**","/api/public/**",
-                                "/register","/dev/v1/company/add"
+                                "/register"
                         ).permitAll()
-                        .requestMatchers("/dev/v1/company/add").hasAuthority("Manager")
-                        .requestMatchers("/dev/v1/mycompany").hasAuthority("Manager")
-                        .requestMatchers("/dev/v1/listofallbranchesofcompany/**").hasAuthority("Manager")
-                        .requestMatchers("/dev/v1/department/**").hasAuthority("Manager")
-                        .requestMatchers("/dev/v1/addcompanybranch").hasAuthority("Manager")
-                        .requestMatchers("/dev/v1/deletecompanybranch/${branchId}").hasAuthority("Manager")
-                        .requestMatchers("/dev/v1/department/add").hasAuthority("Manager")
-                        .requestMatchers("/dev/v1/department/delete/**").hasAuthority("Manager")
+                        .requestMatchers("/dev/v1/company/**").hasAuthority("Manager")
+                        .requestMatchers("/dev/v1/company/myCompany").hasAuthority("Manager")
+                        .requestMatchers("/dev/v1/companybranch/listAll/{id}").hasAuthority("Manager")
+                        .requestMatchers("/dev/v1/department/listAll/{id}").hasAuthority("Manager")
+                        .requestMatchers("dev/v1/companybranch/**").hasAuthority("Manager")
+                        .requestMatchers(HttpMethod.DELETE, "/dev/v1/companybranch/delete/**").hasAuthority("Manager")
+                        .requestMatchers(HttpMethod.DELETE, "/dev/v1/department/delete/{id}").hasAuthority("Manager")
+                        .requestMatchers(HttpMethod.PUT,  "/comment/{id}").hasAuthority("Manager")
+                        .requestMatchers(HttpMethod.POST,  "/addcomment").hasAuthority("Manager")
+                        .requestMatchers(HttpMethod.GET,  "/comments").hasAuthority("Manager")
+                        .requestMatchers(HttpMethod.POST, "/dev/v1/department/add").hasAuthority("Manager")
+                        .requestMatchers(HttpMethod.GET,"/dev/v1/department/listAllByBranchId/{id}").hasAuthority("Manager")
                         .requestMatchers("/admin/**").hasAuthority("Admin")
-                        .requestMatchers(HttpMethod.PUT, "/dev/v1/updateapplicationstatus/**").hasAuthority("Admin")
-                        .requestMatchers("/dev/v1/pendingapplications").hasAuthority("Admin")
                         .requestMatchers("/add-employee").hasAuthority("Manager")
                         .requestMatchers("/company-manager/approve/{employeeId}").hasAuthority("Manager")
                         .requestMatchers("/employee/**").hasAuthority("Employee")

@@ -11,6 +11,7 @@ import Salary from  "../../components/molecules/Salary.tsx";
 import Shift from  "../../components/molecules/Shift.tsx";
 import Assignment from  "../../components/molecules/Assignment.tsx";
 import Settings from  "../../components/molecules/Settings.tsx";
+import Profile from  "../../components/molecules/Profile.tsx";
 
 
 function ManagerPage() {
@@ -61,6 +62,8 @@ function ManagerPage() {
                 return <Assignment />;
             case 'Settings' :
                 return <Settings/>
+            case 'Profile' :
+               return <Profile/>
             default:
                 return <Dashboard />;
         }
@@ -102,7 +105,7 @@ function ManagerPage() {
 
                 <div className="bottom-bar">
                     <hr />
-                    <button className="fixed-bar-buttons">
+                    <button className="fixed-bar-buttons" onClick={() => setSelectedTab('Profile')}>
                         <img className="small-image-fixed-bar" src="/img/profileicon.png" />
                         Profile
                     </button>

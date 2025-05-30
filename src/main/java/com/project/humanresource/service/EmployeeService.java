@@ -73,6 +73,12 @@ public class EmployeeService {
                 .orElseThrow(() -> new RuntimeException("Employee not found with email: " + user.getEmail()));
     }
 
+
+    public Optional<Employee> findByEmail(String email) {
+        return employeeRepository.findByEmail(email);
+    }
+
+
 //    private final EmployeeRepository employeeRepository;
 //
 //    // Geçici: email → employeeId eşlemesi için in-memory map

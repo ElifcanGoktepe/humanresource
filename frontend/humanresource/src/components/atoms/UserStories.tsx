@@ -1,12 +1,14 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './UserStories.css';
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function UserStories() {
     const profileRef = useRef(null);
     const commentRef = useRef(null);
     const [profileVisible, setProfileVisible] = useState(false);
     const [commentVisible, setCommentVisible] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const observer1 = new IntersectionObserver(
@@ -74,7 +76,10 @@ function UserStories() {
                             We’re simplifying HR together with thousands of human resources professionals. Discover how HR experts got started with Humin.
 
                         </h4>
-                        <button className="user-story-buton">
+                        <button
+                            className="user-story-buton"
+                            onClick={() => navigate('/user-stories')}
+                        >
                             Show All Stories →
                         </button>
 

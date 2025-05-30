@@ -24,8 +24,15 @@ public class Employee extends User {
     Long titleId;
     Long personalFiledId;
     Long managerId;
-    Long companyId;
+
     String profileImageUrl;
+    @Column(name = "company_id", nullable = true)
+    private Long companyId;
+
+    @ManyToOne
+    @JoinColumn(name = "company_branch_id")
+    private CompanyBranch companyBranch;
+
 
     @Column(nullable = false)   // 26/05 09:49 serkan güncellendi
     @Builder.Default
