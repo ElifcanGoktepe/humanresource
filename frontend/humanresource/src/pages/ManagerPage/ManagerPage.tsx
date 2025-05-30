@@ -124,6 +124,7 @@ function ManagerPage() {
                 </div>
                 {renderContent()}
             </div>
+
         </div>
     );
 }
