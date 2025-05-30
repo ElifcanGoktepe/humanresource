@@ -32,13 +32,13 @@ public class ShiftController {
                 .build());
     }
 
-    @GetMapping(LISTSHIFT)
+   /* @GetMapping(LISTSHIFT)
     public ResponseEntity<BaseResponseShort<List<Shift>>> getShiftList(){
         return ResponseEntity.ok(BaseResponseShort.<List<Shift>>builder()
                         .code(200)
                         .message("Shifts listed below.")
                         .data(shiftService.listAllShifts())
                 .build());
-    }
+    }*/
 
 }
