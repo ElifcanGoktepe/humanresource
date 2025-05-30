@@ -146,7 +146,7 @@ function Dashboard() {
                             <hr/>
                             <div className="account-button-container">
                                 <button className="accountbutton">
-                                    Account →b
+                                    Account →
                                 </button>
                             </div>
                         </div>
