@@ -1,6 +1,6 @@
 import React, {} from 'react';
 
-import EmployeeRow, {type Employee } from '../../molecules/EmployeeRow';
+import EmployeeRow, {type Employee } from '../molecules/EmployeeRow';
 //import axios from "axios"; // interface buradan import ediliyor!
 
 interface EmployeeTableProps {

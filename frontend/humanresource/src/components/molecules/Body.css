@@ -2,8 +2,16 @@
     gap: 20px; /* Butonlar arası boşluk */
     width: 100%;
     flex-wrap: wrap; /* Ekran küçülürse alt satıra geçebilir */
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+
 }
 .product-container{
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+
 
 }
 .user-stories-container{
