@@ -1,0 +1,44 @@
+.profile-comment-container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #fafafa;
+}
+
+.profile-comment-form textarea {
+    width: 100%;
+    padding: 8px;
+    resize: vertical;
+    font-size: 1rem;
+}
+
+.profile-comment-form input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin-top: 10px;
+    font-size: 1rem;
+}
+
+.profile-comment-form button {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    border: none;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.profile-comment-form button:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
+}
+
+.profile-message {
+    margin-top: 10px;
+    font-weight: 500;
+    color: green;
+}

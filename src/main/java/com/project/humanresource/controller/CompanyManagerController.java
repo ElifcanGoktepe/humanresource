@@ -1,7 +1,9 @@
 package com.project.humanresource.controller;
 
+import com.project.humanresource.dto.request.AddCommentDto;
 import com.project.humanresource.dto.request.AddCompanyManagerDto;
 import com.project.humanresource.dto.response.BaseResponseShort;
+import com.project.humanresource.entity.Comment;
 import com.project.humanresource.entity.EmailVerification;
 import com.project.humanresource.entity.Employee;
 import com.project.humanresource.repository.EmployeeRepository;
@@ -13,6 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -89,6 +94,39 @@ public class CompanyManagerController {
 
         employeeService.save(employee);
         return ResponseEntity.ok("Status updated.");
+    }
+
+    @PostMapping("/addcomment")
+    public ResponseEntity<BaseResponseShort<Boolean>> addComment(@RequestBody AddCommentDto dto) {
+        companyManagerService.addComment(dto);
+        return ResponseEntity.ok(BaseResponseShort.<Boolean>builder()
+                .code(200)
+                .message("Comment added successfully")
+                .data(true)
+                .build());
+    }
+
+    @GetMapping("/comments")
+    public ResponseEntity<List<Comment>> getAllComments() {
+        return ResponseEntity.ok(companyManagerService.getAllComments());
+    }
+
+
+    @PutMapping("/comment/{id}")
+    public ResponseEntity<Comment> updateComment(
+            @PathVariable Long id,
+            @RequestBody AddCommentDto dto) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName(); // login kullanıcının emaili
+
+        Employee manager = employeeService.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Manager not found"));
+
+        Long managerId = manager.getId();
+
+        Comment updatedComment = companyManagerService.updateComment(id, managerId, dto);
+        return ResponseEntity.ok(updatedComment);
     }
 
 

@@ -1,16 +1,19 @@
 package com.project.humanresource.dto.request;
 
-import lombok.*;
+import com.project.humanresource.entity.CompanyBranch;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class AddCompanyRequestDto {
-    private Long id;
-    private String companyName;
-    private String companyAddress;
-    private String companyPhoneNumber;
-    private String companyEmail;
-}
+
+import java.util.List;
+
+public record AddCompanyRequestDto(
+
+
+        Long id,
+
+        String companyName,
+                String companyPhoneNumber,
+                String companyAddress,
+        String companyEmail,
+        List<CompanyBranch> branches
+) {}
+

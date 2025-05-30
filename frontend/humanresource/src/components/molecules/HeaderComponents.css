@@ -85,8 +85,7 @@
     height: 140px;
     justify-content: center;
     align-content: center;
-    align-items: center;
-    align-self: center;
+
 }
 .dashboard-img{
     width: 80%;
@@ -117,10 +116,7 @@
 .blur-zone.blurred {
     filter: blur(5px);
     transition: filter 0.3s ease;
-    justify-content: center;
-    align-content: center;
-    align-items: center;
-    align-self: center;
+
 }
 
 /* Menü görünsün, bulanık olmasın */
@@ -129,7 +125,7 @@
     font-family: "Roboto Thin";
     position: absolute;
     top: 70px; /* Butonun altına hizalar */
-    left: 35px;
+    left:35%;
     background: rgba(255, 255, 255, 0.78);
     z-index: 1000;
     padding: 1rem;

@@ -134,19 +134,21 @@ function CompanyPage() {
     const [branchAddress, setBranchAddress] = useState('');
     const [branchPhoneNumber, setBranchPhoneNumber] = useState('');
     const [branchEmailAddress, setBranchEmailAddress] = useState('');
+    const [selectedBranchId, setSelectedBranchId] = useState('');
+
 
     // Department state
     const [departmentCode, setDepartmentCode] = useState('');
     const [departmentName, setDepartmentName] = useState('');
 
     // Branch ve Department listeleri
-    const [branches, setBranches] = useState<CompanyBranch[]>([]);
+       const [branches, setBranches] = useState<CompanyBranch[]>([]);
     const [departments, setDepartments] = useState<Department[]>([]);
 
     // Filtreler (branch arama)
-    const [searchPhone, setSearchPhone] = useState('');
-    const [searchEmail, setSearchEmail] = useState('');
-    const [searchAddress, setSearchAddress] = useState('');
+    //   const [searchPhone, setSearchPhone] = useState('');
+    //   const [searchEmail, setSearchEmail] = useState('');
+    //  const [searchAddress, setSearchAddress] = useState('');
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -154,6 +156,9 @@ function CompanyPage() {
     const [activeTab, setActiveTab] = useState<'company' | 'branch' | 'department'>('company');
 
     const token = localStorage.getItem('token');
+    const showSuccess = (message: string) => {
+        alert(message);
+    };
 
     const showMessage = (msg: string, duration = 3000) => {
         setMessage(msg);
@@ -198,36 +203,17 @@ function CompanyPage() {
         setLoading(true);
         try {
             const res = await axios.get(
-                `http://localhost:9090/dev/v1/listofallbranchesofcompany/${selectedCompany.id}`,
+                `http://localhost:9090/dev/v1/companybranch/listAll/${selectedCompany.id}`,
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 }
             );
-            setBranches(Array.isArray(res.data) ? res.data : []);
-        } catch {
+            console.log('Branches response:', res.data);
+            setBranches(Array.isArray(res.data.data) ? res.data.data : []);
+        } catch (e){
+            console.error('Fetch branches error:', e);
             showError('Failed to fetch branches.');
             setBranches([]);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const fetchDepartments = async () => {
-        if (!token) return showError('Authorization token not found.');
-        if (!selectedCompany?.id) return;
-
-        setLoading(true);
-        try {
-            const res = await axios.get(
-                `http://localhost:9090/dev/v1/department/listAll/${selectedCompany.id}`,
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
-            );
-            setDepartments(Array.isArray(res.data) ? res.data : []);
-        } catch {
-            showError('Failed to fetch departments.');
-            setDepartments([]);
         } finally {
             setLoading(false);
         }
@@ -247,12 +233,54 @@ function CompanyPage() {
         fetchCompanies();
     }, []);
 
+    const fetchDepartments = async () => {
+        if (!token) return showError('Authorization token not found.');
+        if (!selectedBranchId) return;
+
+        setLoading(true);
+        try {
+            const res = await axios.get(
+                `http://localhost:9090/dev/v1/department/listAllByBranchId/${selectedBranchId}`,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+            setDepartments(Array.isArray(res.data.data) ? res.data.data : []);
+        } catch {
+            showError('Failed to fetch departments.');
+            setDepartments([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+    useEffect(() => {
+        if (selectedBranchId) {
+            fetchDepartments();
+        } else {
+            setDepartments([]);
+        }
+    }, [selectedBranchId]);
+
+
+
+
+
+
+
 
 
     // Branch ekle
     const addBranch = async () => {
         if (!token) return showError('Authorization token not found.');
-        if (!selectedCompany?.id) return showError('Company not loaded.');
+        if (!selectedCompany?.id) {
+            await fetchCompanies();
+            const latestCompany = (await axios.get('http://localhost:9090/dev/v1/company/getMyCompany', {
+                headers: { Authorization: `Bearer ${token}` },
+            })).data;
+
+            setSelectedCompany(latestCompany);
+            return fetchBranches();
+        }
 
         if (!branchCode || !branchAddress || !branchPhoneNumber || !branchEmailAddress) {
             return showError('Please fill all branch fields.');
@@ -267,21 +295,25 @@ function CompanyPage() {
                 companyBranchEmailAddress: branchEmailAddress,
                 companyId: selectedCompany.id,
             };
+
             await axios.post('http://localhost:9090/dev/v1/companybranch/add', payload, {
                 headers: { Authorization: `Bearer ${token}` },
             });
+
             showMessage('Branch added successfully!');
             setBranchCode('');
             setBranchAddress('');
             setBranchPhoneNumber('');
             setBranchEmailAddress('');
-            fetchBranches();
+
+            await fetchBranches(); // branch ekledikten sonra yenile (ÇOK ÖNEMLİ)
         } catch {
             showError('Failed to add branch.');
         } finally {
             setLoading(false);
         }
     };
+
 
     const deleteBranch = async (id: number) => {
         if (!token) return showError('Authorization token not found.');
@@ -305,32 +337,30 @@ function CompanyPage() {
     // Department ekle
     const addDepartment = async () => {
         if (!token) return showError('Authorization token not found.');
-        if (!selectedCompany?.id) return showError('Company not loaded.');
+        if (!departmentCode || !departmentName) return showError('Please fill all fields.');
+        if (!selectedBranchId) return showError('Please select a branch first.');
 
-        if (!departmentCode || !departmentName) {
-            return showError('Please fill all department fields.');
-        }
-
-        setLoading(true);
         try {
-            const payload = {
-                departmentCode,
-                departmentName,
-                companyId: selectedCompany.id,
-            };
-            await axios.post('http://localhost:9090/dev/v1/department/add', payload, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            showMessage('Department added successfully!');
+            await axios.post(
+                'http://localhost:9090/dev/v1/department/add',
+                {
+                    departmentCode,
+                    departmentName,
+                    companyBranchId: selectedBranchId,
+                },
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+            showSuccess('Department added successfully.');
             setDepartmentCode('');
             setDepartmentName('');
-            fetchDepartments();
+           await fetchDepartments(); // listeyi güncelle
         } catch {
             showError('Failed to add department.');
-        } finally {
-            setLoading(false);
         }
     };
+
 
     const deleteDepartment = async (id: number) => {
         if (!token) return showError('Authorization token not found.');
@@ -352,12 +382,12 @@ function CompanyPage() {
     };
 
     // Branch filtreleme
-    const filteredBranches = branches.filter(
+    {/* const filteredBranches = branches.filter(
         (b) =>
             b.companyBranchPhoneNumber?.toLowerCase().includes(searchPhone.toLowerCase()) &&
             b.companyBranchEmailAddress?.toLowerCase().includes(searchEmail.toLowerCase()) &&
             b.companyBranchAddress?.toLowerCase().includes(searchAddress.toLowerCase())
-    );
+    );    */}
 
     // Burada render kısmı aynen kalabilir, sadece aktif tablara göre form ve liste gösterimi
 
@@ -453,31 +483,20 @@ function CompanyPage() {
 
                                 <h4>Branches List</h4>
 
-                                <div className="mb-2 d-flex gap-2 flex-wrap">
-                                    <input
-                                        type="text"
-                                        placeholder="Search Phone"
+                                <div className="form-group mt-3">
+                                    <label htmlFor="branchSelect">Select Branch</label>
+                                    <select
                                         className="form-control"
-                                        value={searchPhone}
-                                        onChange={(e) => setSearchPhone(e.target.value)}
-                                        style={{ maxWidth: 150 }}
-                                    />
-                                    <input
-                                        type="text"
-                                        placeholder="Search Email"
-                                        className="form-control"
-                                        value={searchEmail}
-                                        onChange={(e) => setSearchEmail(e.target.value)}
-                                        style={{ maxWidth: 150 }}
-                                    />
-                                    <input
-                                        type="text"
-                                        placeholder="Search Address"
-                                        className="form-control"
-                                        value={searchAddress}
-                                        onChange={(e) => setSearchAddress(e.target.value)}
-                                        style={{ maxWidth: 200 }}
-                                    />
+                                        value={selectedBranchId}
+                                        onChange={(e) => setSelectedBranchId(e.target.value)}
+                                    >
+                                        <option value="">-- Select a Branch --</option>
+                                        {branches.map((b) => (
+                                            <option key={b.id} value={b.id.toString()}>
+                                                {b.companyBranchCode} - {b.companyBranchAddress}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
 
                                 <table className="table table-striped">
@@ -491,14 +510,14 @@ function CompanyPage() {
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {filteredBranches.length === 0 && (
+                                    {branches.length === 0 && (
                                         <tr>
                                             <td colSpan={5} className="text-center">
                                                 No branches found.
                                             </td>
                                         </tr>
                                     )}
-                                    {filteredBranches.map((b) => (
+                                    {branches.map((b) => (
                                         <tr key={b.id}>
                                             <td>{b.companyBranchCode}</td>
                                             <td>{b.companyBranchAddress}</td>
@@ -518,66 +537,87 @@ function CompanyPage() {
                                 </table>
                             </div>
                         )}
-
                         {activeTab === 'department' && (
                             <div>
                                 <h3>Add Department</h3>
-                                <div className="mb-3">
-                                    <input
-                                        type="text"
-                                        placeholder="Department Code"
-                                        className="form-control mb-2"
-                                        value={departmentCode}
-                                        onChange={(e) => setDepartmentCode(e.target.value)}
-                                    />
-                                    <input
-                                        type="text"
-                                        placeholder="Department Name"
-                                        className="form-control mb-2"
-                                        value={departmentName}
-                                        onChange={(e) => setDepartmentName(e.target.value)}
-                                    />
-                                    <button className="btn btn-primary" onClick={addDepartment}>
-                                        Add Department
-                                    </button>
-                                </div>
+                                {selectedBranchId ? (
+                                    <>
+                                        <div className="alert alert-secondary mb-3">
+                                            <strong>Selected Branch:</strong>{' '}
+                                            {
+                                                branches.find((b) => b.id.toString() === selectedBranchId)?.companyBranchCode
+                                            } -{' '}
+                                            {
+                                                branches.find((b) => b.id.toString() === selectedBranchId)?.companyBranchAddress
+                                            }
+                                        </div>
 
-                                <h4>Departments List</h4>
+                                        <div className="mb-3">
+                                            <input
+                                                type="text"
+                                                placeholder="Department Code"
+                                                className="form-control mb-2"
+                                                value={departmentCode}
+                                                onChange={(e) => setDepartmentCode(e.target.value)}
+                                            />
+                                            <input
+                                                type="text"
+                                                placeholder="Department Name"
+                                                className="form-control mb-2"
+                                                value={departmentName}
+                                                onChange={(e) => setDepartmentName(e.target.value)}
+                                            />
+                                            <button className="btn btn-primary" onClick={addDepartment}>
+                                                Add Department
+                                            </button>
+                                        </div>
 
-                                <table className="table table-striped">
-                                    <thead>
-                                    <tr>
-                                        <th>Code</th>
-                                        <th>Name</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {departments.length === 0 && (
-                                        <tr>
-                                            <td colSpan={3} className="text-center">
-                                                No departments found.
-                                            </td>
-                                        </tr>
-                                    )}
-                                    {departments.map((d) => (
-                                        <tr key={d.id}>
-                                            <td>{d.departmentCode}</td>
-                                            <td>{d.departmentName}</td>
-                                            <td>
-                                                <button
-                                                    className="btn btn-danger btn-sm"
-                                                    onClick={() => deleteDepartment(d.id)}
-                                                >
-                                                    Delete
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                    </tbody>
-                                </table>
+                                        <h4>Departments List</h4>
+
+                                        <table className="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th>Code</th>
+                                                <th>Name</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {departments.length > 0 ? (
+                                                departments.map((d) => (
+                                                    <tr key={d.id}>
+                                                        <td>{d.departmentCode}</td>
+                                                        <td>{d.departmentName}</td>
+                                                        <td>
+                                                            <button
+                                                                className="btn btn-danger btn-sm"
+                                                                onClick={() => deleteDepartment(d.id)}
+                                                            >
+                                                                Delete
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            ) : (
+                                                <tr>
+                                                    <td colSpan={3} className="text-center">
+                                                        No departments found.
+                                                    </td>
+                                                </tr>
+                                            )}
+                                            </tbody>
+                                        </table>
+                                    </>
+                                ) : (
+                                    <div className="alert alert-warning">
+                                        Please select a branch in the Branches tab first.
+                                    </div>
+                                )}
+
                             </div>
                         )}
+
+
                     </div>
                 </>
             )}
