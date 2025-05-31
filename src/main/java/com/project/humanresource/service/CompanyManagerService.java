@@ -2,6 +2,7 @@ package com.project.humanresource.service;
 
 import com.project.humanresource.dto.request.AddCommentDto;
 import com.project.humanresource.dto.request.AddCompanyManagerDto;
+import com.project.humanresource.config.JwtUser;
 import com.project.humanresource.dto.request.AddRoleRequestDto;
 import com.project.humanresource.entity.Comment;
 import com.project.humanresource.entity.Employee;
@@ -61,17 +62,20 @@ public class CompanyManagerService {
 
 
     public void addComment(AddCommentDto dto) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        System.out.println("✅ Authenticated Email: " + email);
+        // JWT üzerinden giriş yapan kullanıcıyı al
+        JwtUser jwtUser = (JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long userId = jwtUser.getUserId();
 
+        // Yorumu yapılacak yöneticiyi bul
         Employee manager = employeeRepository.findById(dto.managerId())
                 .orElseThrow(() -> new IllegalArgumentException("Manager not found"));
 
+        // Comment nesnesini oluştur
         Comment comment = Comment.builder()
                 .managerId(manager.getId())
                 .managerName(manager.getFirstName() + " " + manager.getLastName())
                 .commentText(dto.commentText())
-                .photoUrl(dto.photoUrl())  // dışarıdan gelen foto url'si
+                .photoUrl(dto.photoUrl()) // kullanıcıdan gelen görsel URL'si
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -84,17 +88,22 @@ public class CompanyManagerService {
 
 
     @Transactional
-    public Comment updateComment(Long commentId, Long managerId, AddCommentDto dto) {
-
+    public Comment updateComment(Long commentId, AddCommentDto dto) {
         Optional<Comment> optionalComment = commentRepository.findById(commentId);
         if (optionalComment.isEmpty()) {
             throw new RuntimeException("Comment not found");
         }
-
         Comment comment = optionalComment.get();
 
+        // JWT üzerinden giriş yapan kullanıcıyı al
+        JwtUser jwtUser = (JwtUser) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+        Long currentUserId = jwtUser.getUserId();
+
         // Yorum sahibi manager mı kontrolü
-        if (!comment.getManagerId().equals(managerId)) {
+        if (!comment.getManagerId().equals(currentUserId)) {
             throw new RuntimeException("Unauthorized to update this comment");
         }
 
@@ -104,7 +113,6 @@ public class CompanyManagerService {
 
         return commentRepository.save(comment);
     }
-
 
 
 }
