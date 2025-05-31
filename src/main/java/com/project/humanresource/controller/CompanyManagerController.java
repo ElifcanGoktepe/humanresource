@@ -96,15 +96,27 @@ public class CompanyManagerController {
         return ResponseEntity.ok("Status updated.");
     }
 
-    @PostMapping("/addcomment")
-    public ResponseEntity<BaseResponseShort<Boolean>> addComment(@RequestBody AddCommentDto dto) {
-        companyManagerService.addComment(dto);
+    @PostMapping("/dev/v1/addcomment")
+    public ResponseEntity<BaseResponseShort<Boolean>> addComment(@RequestBody AddCommentDto dto, Authentication authentication) {
+        Long managerId = dto.managerId();
+
+        if (managerId == null) {
+            // Authentication'dan giriş yapan kullanıcının employee id'sini çek
+            Employee currentUser = employeeService.getCurrentEmployee(authentication);
+            managerId = currentUser.getId();
+        }
+
+        // Yeni DTO ile managerId set et (immutable record olduğu için yeni nesne oluştur)
+        AddCommentDto updatedDto = new AddCommentDto(managerId, dto.commentText(), dto.photoUrl());
+
+        companyManagerService.addComment(updatedDto);
         return ResponseEntity.ok(BaseResponseShort.<Boolean>builder()
                 .code(200)
                 .message("Comment added successfully")
                 .data(true)
                 .build());
     }
+
 
     @GetMapping("/comments")
     public ResponseEntity<List<Comment>> getAllComments() {

@@ -13,6 +13,7 @@ import com.project.humanresource.repository.UserRoleRepository;
 import com.project.humanresource.utility.UserStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -28,6 +29,7 @@ public class CompanyManagerService {
     private final EmailVerificationService emailVerificationService;
     private final CommentRepository commentRepository;
 
+    @Transactional
     public void appliedCompanyManager(AddCompanyManagerDto dto) {
 
         Employee manager = Employee.builder()
@@ -40,6 +42,12 @@ public class CompanyManagerService {
                 .isActivated(false)
                 .isApproved(false)
                 .build();
+
+        // İlk kaydet
+        manager = employeeRepository.save(manager);
+
+        // managerId olarak kendi id'sini set et
+        manager.setManagerId(manager.getId());
         employeeRepository.save(manager);
 
         UserRole managerRole = UserRole.builder()
@@ -51,7 +59,11 @@ public class CompanyManagerService {
         emailVerificationService.sendApprovalRequestToAdmin(manager);
     }
 
+
     public void addComment(AddCommentDto dto) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        System.out.println("✅ Authenticated Email: " + email);
+
         Employee manager = employeeRepository.findById(dto.managerId())
                 .orElseThrow(() -> new IllegalArgumentException("Manager not found"));
 

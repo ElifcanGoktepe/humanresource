@@ -72,7 +72,7 @@ const Profile: React.FC = () => {
                 });
         } else {
             // Yeni yorum (POST)
-            axios.post(`http://localhost:9090/addcomment`, payload, { headers: authHeader })
+            axios.post(`http://localhost:9090/dev/v1/addcomment`, payload, { headers: authHeader })
                 .then(res => {
                     setComment(res.data.data || res.data);
                     setMessage("Comment added successfully.");

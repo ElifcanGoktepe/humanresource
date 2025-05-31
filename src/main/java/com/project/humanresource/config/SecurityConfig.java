@@ -57,7 +57,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/dev/v1/companybranch/delete/**").hasAuthority("Manager")
                         .requestMatchers(HttpMethod.DELETE, "/dev/v1/department/delete/{id}").hasAuthority("Manager")
                         .requestMatchers(HttpMethod.PUT,  "/comment/{id}").hasAuthority("Manager")
-                        .requestMatchers(HttpMethod.POST,  "/addcomment").hasAuthority("Manager")
+                        .requestMatchers(HttpMethod.POST,  "/dev/v1/addcomment").hasAuthority("Manager")
                         .requestMatchers(HttpMethod.GET,  "/comments").hasAuthority("Manager")
                         .requestMatchers(HttpMethod.POST, "/dev/v1/department/add").hasAuthority("Manager")
                         .requestMatchers(HttpMethod.GET,"/dev/v1/department/listAllByBranchId/{id}").hasAuthority("Manager")

@@ -11,7 +11,9 @@ import com.project.humanresource.utility.UserStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -77,7 +79,11 @@ public class EmployeeService {
     public Optional<Employee> findByEmail(String email) {
         return employeeRepository.findByEmail(email);
     }
-
+    public Employee getCurrentEmployee(Authentication authentication) {
+        String email = authentication.getName();
+        return employeeRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Employee not found with email: " + email));
+    }
 
 //    private final EmployeeRepository employeeRepository;
 //
