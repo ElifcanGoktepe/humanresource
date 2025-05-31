@@ -21,22 +21,41 @@ import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import DeleteIcon from '@mui/icons-material/Delete';
 import './Settings.css';
 import * as React from "react";
+import { jwtDecode } from "jwt-decode";
 
 // API Configuration - Correct port 9090
 const API_BASE_URL = 'http://localhost:9090/api/users';
 
-const getCurrentUserId = () => {
-    // TODO: Replace with real authentication context or JWT decode
-    // Example: return authContext.user?.id;
-    // const token = localStorage.getItem('authToken');
-    // if (token) {
-    //   const decoded = jwtDecode(token);
-    //   return decoded.userId;
-    // }
-    return 1;
+// Define an interface for the expected token structure
+interface DecodedToken {
+    userId: number;
+    // roles: string[];
+    // email: string;
+    // firstName: string;
+    // lastName: string;
+    // titleName?: string;
+    // companyName?: string;
+    // exp: number;
+    // iat: number;
+}
+
+const getCurrentUserId = (): number | null => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+        try {
+            const decoded = jwtDecode<DecodedToken>(token);
+            return decoded.userId;
+        } catch (error) {
+            console.error("Failed to decode token or token is invalid/expired:", error);
+            // Optionally, remove the invalid token
+            // localStorage.removeItem('authToken');
+            return null;
+        }
+    }
+    return null;
 };
 
-const CURRENT_USER_ID = getCurrentUserId();
+// const CURRENT_USER_ID = getCurrentUserId(); // Removed
 
 type UserData = {
     firstName: string;
@@ -62,7 +81,7 @@ type FormErrors = {
     confirmPassword?: string;
 };
 
-const UserSettingsPage = () => {
+const Settings = () => {
     const navigate = useNavigate();
     const [user, setUser] = useState<UserData>({
         firstName: '',
@@ -82,11 +101,24 @@ const UserSettingsPage = () => {
     const [message, setMessage] = useState<{text: string; type: 'success' | 'error'} | null>(null);
     const [errors, setErrors] = useState<FormErrors>({});
     const [activeTab, setActiveTab] = useState<number>(0);
+    const [userId, setUserId] = useState<number | null>(null); // Added userId state
 
-    // Load user profile on component mount
     useEffect(() => {
-        fetchUserProfile();
-    }, []);
+        const id = getCurrentUserId();
+        setUserId(id);
+        if (!id) {
+            // Optional: Redirect to login if no user ID found
+            // navigate('/login'); // Or show a persistent error message
+            setMessage({ text: 'User not authenticated. Please log in.', type: 'error' });
+        }
+    }, [navigate]);
+
+    // Load user profile on component mount, if userId is available
+    useEffect(() => {
+        if (userId) {
+            fetchUserProfile();
+        }
+    }, [userId]); // Depends on userId now
 
     useEffect(() => {
         setFormData(user);
@@ -102,9 +134,50 @@ const UserSettingsPage = () => {
 
     // API call to fetch user profile
     const fetchUserProfile = async () => {
+        if (!userId) {
+            // This check might be redundant if useEffect dependency handles it, but good for safety
+            // setMessage({ text: 'User ID not found. Cannot fetch profile.', type: 'error' });
+            return;
+        }
         setIsLoading(true);
         try {
-            const response = await fetch(`${API_BASE_URL}/${CURRENT_USER_ID}/profile`);
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                setMessage({ text: 'Authentication token not found. Please log in.', type: 'error' });
+                setIsLoading(false);
+                navigate('/login');
+                return;
+            }
+
+            const response = await fetch(`${API_BASE_URL}/${userId}/profile`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    setMessage({ text: 'Authentication failed. Please log in again.', type: 'error' });
+                    navigate('/login'); // Redirect to login
+                    return;
+                }
+                if (response.status === 403) {
+                    setMessage({ text: 'You are not authorized to view this profile.', type: 'error' });
+                    return;
+                }
+                if (response.status === 404) {
+                    setMessage({ text: 'User profile not found.', type: 'error' });
+                    return;
+                }
+                try {
+                    const errorResult = await response.json();
+                    setMessage({ text: errorResult.message || `Error fetching profile: ${response.status}`, type: 'error' });
+                } catch (e) {
+                    setMessage({ text: `Error fetching profile: ${response.status}`, type: 'error' });
+                }
+                return;
+            }
+
             const result = await response.json();
 
             if (result.success && result.data) {
@@ -205,17 +278,51 @@ const UserSettingsPage = () => {
 
         if (!validateProfileForm()) return;
 
+        if (!userId) {
+            setMessage({ text: 'User ID not found. Please log in to update profile.', type: 'error' });
+            return;
+        }
+
         setIsLoading(true);
         setMessage(null);
 
         try {
-            const response = await fetch(`${API_BASE_URL}/${CURRENT_USER_ID}/profile`, {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                setMessage({ text: 'Authentication token not found. Please log in.', type: 'error' });
+                setIsLoading(false);
+                navigate('/login');
+                return;
+            }
+
+            const response = await fetch(`${API_BASE_URL}/${userId}/profile`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(formData),
             });
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    setMessage({ text: 'Authentication failed. Please log in again.', type: 'error' });
+                    navigate('/login');
+                    return;
+                }
+                if (response.status === 403) {
+                    setMessage({ text: 'You are not authorized to update this profile.', type: 'error' });
+                    return;
+                }
+                // 404 might not be typical here unless user was deleted mid-session
+                try {
+                    const errorResult = await response.json();
+                    setMessage({ text: errorResult.message || `Error updating profile: ${response.status}`, type: 'error' });
+                } catch (e) {
+                    setMessage({ text: `Error updating profile: ${response.status}`, type: 'error' });
+                }
+                return;
+            }
 
             const result = await response.json();
 
@@ -230,10 +337,12 @@ const UserSettingsPage = () => {
                 setUser(userData);
                 setMessage({ text: 'Profil bilgileriniz başarıyla güncellendi!', type: 'success' });
             } else {
-                setMessage({ text: result.message || 'Profil güncellenemedi', type: 'error' });
+                // This case handles backend's "success: false" responses
+                setMessage({ text: result.message || 'Profil güncellenemedi (backend error).', type: 'error' });
             }
-        } catch (error) {
-            setMessage({ text: 'Profil güncellenirken hata oluştu', type: 'error' });
+        } catch (error) { // Network errors or JSON parsing errors
+            console.error("handleSubmit error:", error);
+            setMessage({ text: 'Profil güncellenirken bir ağ hatası veya beklenmedik bir hata oluştu.', type: 'error' });
         } finally {
             setIsLoading(false);
         }
@@ -244,35 +353,67 @@ const UserSettingsPage = () => {
 
         if (!validatePasswordForm()) return;
 
+        if (!userId) {
+            setMessage({ text: 'User ID not found. Please log in to change password.', type: 'error' });
+            return;
+        }
+
         setIsLoading(true);
         setMessage(null);
 
         try {
-            const response = await fetch(`${API_BASE_URL}/${CURRENT_USER_ID}/password`, {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                setMessage({ text: 'Authentication token not found. Please log in.', type: 'error' });
+                setIsLoading(false);
+                navigate('/login');
+                return;
+            }
+
+            const response = await fetch(`${API_BASE_URL}/${userId}/password`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
                     currentPassword: passwordData.currentPassword,
-                    newPassword: passwordData.newPassword
+                    newPassword: passwordData.newPassword,
+                    // confirmPassword is not sent, backend handles newPassword directly
                 }),
             });
 
-            const result = await response.json();
+            if (!response.ok) {
+                if (response.status === 401) {
+                    setMessage({ text: 'Authentication failed. Please log in again.', type: 'error' });
+                    navigate('/login');
+                    return;
+                }
+                if (response.status === 403) {
+                    setMessage({ text: 'You are not authorized to change this password.', type: 'error' });
+                    return;
+                }
+                try {
+                    const errorResult = await response.json();
+                    // Backend might return specific messages for password mismatch (e.g., ErrorType.PASSWORD_MISMATCH)
+                    setMessage({ text: errorResult.message || `Error changing password: ${response.status}`, type: 'error' });
+                } catch (e) {
+                    setMessage({ text: `Error changing password: ${response.status}`, type: 'error' });
+                }
+                return;
+            }
+
+            const result = await response.json(); // Assuming backend sends { success: true, message: "..." }
 
             if (result.success) {
-                setPasswordData({
-                    currentPassword: '',
-                    newPassword: '',
-                    confirmPassword: ''
-                });
+                setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
                 setMessage({ text: 'Şifreniz başarıyla değiştirildi!', type: 'success' });
             } else {
-                setMessage({ text: result.message || 'Şifre değiştirilemedi', type: 'error' });
+                setMessage({ text: result.message || 'Şifre değiştirilemedi (backend error).', type: 'error' });
             }
-        } catch (error) {
-            setMessage({ text: 'Şifre değiştirilirken hata oluştu', type: 'error' });
+        } catch (error) { // Network errors or JSON parsing errors
+            console.error("handlePasswordSubmit error:", error);
+            setMessage({ text: 'Şifre değiştirilirken bir ağ hatası veya beklenmedik bir hata oluştu.', type: 'error' });
         } finally {
             setIsLoading(false);
         }
@@ -283,9 +424,14 @@ const UserSettingsPage = () => {
         const file = event.target.files?.[0];
         if (!file) return;
 
+        if (!userId) {
+            setMessage({ text: 'User ID not found. Please log in to upload image.', type: 'error' });
+            return;
+        }
+
         // Dosya boyutu kontrolü (5MB)
         if (file.size > 5 * 1024 * 1024) {
-            setMessage({ text: 'Dosya boyutu 5MB\'dan büyük olamaz', type: 'error' });
+            setMessage({ text: "Dosya boyutu 5MB'dan büyük olamaz", type: 'error' });
             return;
         }
 
@@ -303,10 +449,40 @@ const UserSettingsPage = () => {
             const formData = new FormData();
             formData.append('file', file);
 
-            const response = await fetch(`${API_BASE_URL}/${CURRENT_USER_ID}/profile-image`, {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                setMessage({ text: 'Authentication token not found. Please log in.', type: 'error' });
+                setUploadingImage(false);
+                navigate('/login');
+                return;
+            }
+
+            const response = await fetch(`${API_BASE_URL}/${userId}/profile-image`, {
                 method: 'POST',
+                headers: { // No Content-Type here, browser sets it for FormData
+                    'Authorization': `Bearer ${token}`
+                },
                 body: formData,
             });
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    setMessage({ text: 'Authentication failed. Please log in again.', type: 'error' });
+                    navigate('/login');
+                    return;
+                }
+                if (response.status === 403) {
+                    setMessage({ text: 'You are not authorized to upload an image here.', type: 'error' });
+                    return;
+                }
+                try {
+                    const errorResult = await response.json();
+                    setMessage({ text: errorResult.message || `Error uploading image: ${response.status}`, type: 'error' });
+                } catch (e) {
+                    setMessage({ text: `Error uploading image: ${response.status}`, type: 'error' });
+                }
+                return;
+            }
 
             const result = await response.json();
 
@@ -314,10 +490,11 @@ const UserSettingsPage = () => {
                 setUser(prev => ({ ...prev, profileImageUrl: result.data }));
                 setMessage({ text: 'Profil fotoğrafı başarıyla yüklendi!', type: 'success' });
             } else {
-                setMessage({ text: result.message || 'Profil fotoğrafı yüklenemedi', type: 'error' });
+                setMessage({ text: result.message || 'Profil fotoğrafı yüklenemedi (backend error).', type: 'error' });
             }
-        } catch (error) {
-            setMessage({ text: 'Profil fotoğrafı yüklenirken hata oluştu', type: 'error' });
+        } catch (error) { // Network errors or JSON parsing errors
+            console.error("handleImageUpload error:", error);
+            setMessage({ text: 'Profil fotoğrafı yüklenirken bir ağ hatası veya beklenmedik bir hata oluştu.', type: 'error' });
         } finally {
             setUploadingImage(false);
         }
@@ -325,24 +502,60 @@ const UserSettingsPage = () => {
 
     // Profil fotoğrafını silme
     const handleImageDelete = async () => {
+        if (!userId) {
+            setMessage({ text: 'User ID not found. Please log in to delete image.', type: 'error' });
+            return;
+        }
+
         setUploadingImage(true);
         setMessage(null);
 
         try {
-            const response = await fetch(`${API_BASE_URL}/${CURRENT_USER_ID}/profile-image`, {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                setMessage({ text: 'Authentication token not found. Please log in.', type: 'error' });
+                setUploadingImage(false);
+                navigate('/login');
+                return;
+            }
+
+            const response = await fetch(`${API_BASE_URL}/${userId}/profile-image`, {
                 method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             });
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    setMessage({ text: 'Authentication failed. Please log in again.', type: 'error' });
+                    navigate('/login');
+                    return;
+                }
+                if (response.status === 403) {
+                    setMessage({ text: 'You are not authorized to delete this image.', type: 'error' });
+                    return;
+                }
+                try {
+                    const errorResult = await response.json();
+                    setMessage({ text: errorResult.message || `Error deleting image: ${response.status}`, type: 'error' });
+                } catch (e) {
+                    setMessage({ text: `Error deleting image: ${response.status}`, type: 'error' });
+                }
+                return;
+            }
 
             const result = await response.json();
 
             if (result.success) {
-                setUser(prev => ({ ...prev, profileImageUrl: '' }));
+                setUser(prev => ({ ...prev, profileImageUrl: '' })); // Update UI
                 setMessage({ text: 'Profil fotoğrafı başarıyla silindi!', type: 'success' });
             } else {
-                setMessage({ text: result.message || 'Profil fotoğrafı silinemedi', type: 'error' });
+                setMessage({ text: result.message || 'Profil fotoğrafı silinemedi (backend error).', type: 'error' });
             }
-        } catch (error) {
-            setMessage({ text: 'Profil fotoğrafı silinirken hata oluştu', type: 'error' });
+        } catch (error) { // Network errors or JSON parsing errors
+            console.error("handleImageDelete error:", error);
+            setMessage({ text: 'Profil fotoğrafı silinirken bir ağ hatası veya beklenmedik bir hata oluştu.', type: 'error' });
         } finally {
             setUploadingImage(false);
         }
@@ -730,9 +943,7 @@ const UserSettingsPage = () => {
     );
 };
 
-export default UserSettingsPage;
-
-//TODO: Backend ile entegre edilecek
+export default Settings;
 
 
 
