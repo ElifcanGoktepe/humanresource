@@ -1,17 +1,13 @@
 package com.project.humanresource.service;
 
+import com.project.humanresource.config.JwtUser;
 import com.project.humanresource.dto.request.AddCompanyRequestDto;
 import com.project.humanresource.entity.Company;
-
 import com.project.humanresource.entity.Employee;
 import com.project.humanresource.repository.CompanyRepository;
-
 import com.project.humanresource.repository.EmployeeRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +21,6 @@ public class CompanyService {
 
     private final CompanyRepository companyRepository;
     private final EmployeeRepository employeeRepository;
-
 
     public List<AddCompanyRequestDto> getAllCompanies() {
         return companyRepository.findAll().stream()
@@ -44,14 +39,20 @@ public class CompanyService {
         Company company = toEntity(dto);
         Company saved = companyRepository.save(company);
 
-        // 2. Giriş yapan kullanıcıyı bul (id üzerinden)
-        String idStr = SecurityContextHolder.getContext().getAuthentication().getName();
-        Long userId = Long.parseLong(idStr);
-        Optional<Employee> employeeOpt = employeeRepository.findById(userId);
+        // 2. JWT üzerinden giriş yapan kullanıcıyı JwtUser olarak al
+        Object principal = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+        if (!(principal instanceof JwtUser)) {
+            throw new RuntimeException("Authentication principal is not of type JwtUser");
+        }
+        JwtUser jwtUser = (JwtUser) principal;
+        Long userId = jwtUser.getUserId();
 
+        // 3. Employee (manager) bulunup companyId güncellensin
+        Optional<Employee> employeeOpt = employeeRepository.findById(userId);
         if (employeeOpt.isPresent()) {
             Employee employee = employeeOpt.get();
-            // 3. employee'nin companyId'sini kaydedilen şirketin id'si ile güncelle
             employee.setCompanyId(saved.getId());
             employeeRepository.save(employee);
         } else {
@@ -61,7 +62,6 @@ public class CompanyService {
         // 4. DTO'yu geri döndür
         return toDto(saved);
     }
-
 
     public AddCompanyRequestDto updateCompany(Long id, AddCompanyRequestDto dto) {
         Optional<Company> companyOpt = companyRepository.findById(id);
@@ -104,10 +104,9 @@ public class CompanyService {
                 company.getCompanyPhoneNumber(),
                 company.getCompanyAddress(),
                 company.getCompanyEmail(),
-                company.getBranches()  // branches listesi de eklenmeli
+                company.getBranches()
         );
     }
-
 
     private Company toEntity(AddCompanyRequestDto dto) {
         return Company.builder()
@@ -119,21 +118,27 @@ public class CompanyService {
                 .build();
     }
 
-
+    /**
+     * JWT üzerinden o anda giriş yapan kullanıcının (manager) companyId'sini bulup
+     * ilgili Company nesnesini DTO'ya çevirerek döner. Eğer user veya company yoksa null döner.
+     */
     public AddCompanyRequestDto getMyCompany() {
-        Long userId = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
+        Object principal = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+        if (!(principal instanceof JwtUser)) {
+            return null;
+        }
+        JwtUser jwtUser = (JwtUser) principal;
+        Long userId = jwtUser.getUserId();
+
         Optional<Employee> employeeOpt = employeeRepository.findById(userId);
         if (employeeOpt.isEmpty() || employeeOpt.get().getCompanyId() == null) {
             return null;
         }
 
-        Optional<Company> companyOpt = companyRepository.findById(employeeOpt.get().getCompanyId());
-        if (companyOpt.isEmpty()) {
-            return null;
-        }
-
-        return toDto(companyOpt.get());
+        Long companyId = employeeOpt.get().getCompanyId();
+        Optional<Company> companyOpt = companyRepository.findById(companyId);
+        return companyOpt.map(this::toDto).orElse(null);
     }
-
-
-    }
+}
