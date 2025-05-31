@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,30 +23,29 @@ public class DepartmentService {
     private final CompanyRepository companyRepository;
     private final CompanyBranchRepository companyBranchRepository;
 
-    public Department addDepartment(@Valid AddDepartmentRequestDto dto) {
+    public Department addDepartment(AddDepartmentRequestDto dto) {
 
         Department department = Department.builder()
                 .departmentName(dto.departmentName())
                 .departmentCode(dto.departmentCode())
                 .build();
 
-        // Company id varsa ata
-        if(dto.companyId() != null){
+        // Eğer companyId varsa entity set et
+        if (dto.companyId() != null) {
             Company company = companyRepository.findById(dto.companyId())
-                    .orElseThrow(() -> new EntityNotFoundException("Company not found with id: " + dto.companyId()));
+                    .orElseThrow(() -> new RuntimeException("Company not found with id " + dto.companyId()));
             department.setCompany(company);
         }
 
-        // Branch id varsa ata
-        if(dto.companyBranchId() != null){
+        // Eğer companyBranchId varsa entity set et
+        if (dto.companyBranchId() != null) {
             CompanyBranch branch = companyBranchRepository.findById(dto.companyBranchId())
-                    .orElseThrow(() -> new EntityNotFoundException("Company branch not found with id: " + dto.companyBranchId()));
+                    .orElseThrow(() -> new RuntimeException("CompanyBranch not found with id " + dto.companyBranchId()));
             department.setCompanyBranch(branch);
         }
 
         return departmentRepository.save(department);
     }
-
     public Department findById(Long id){
         return departmentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Department not found with id: " + id));
@@ -68,4 +68,20 @@ public class DepartmentService {
         }
         return department;
     }
+
+    public List<AddDepartmentRequestDto> getDepartmentsByBranchId(Long branchId) {
+        return departmentRepository.findByCompanyBranchId(branchId)
+                .stream()
+                .map(d -> new AddDepartmentRequestDto(
+                        d.getDepartmentName(),
+                        d.getDepartmentCode(),
+                        d.getCompany() != null ? d.getCompany().getId() : null,
+                        d.getCompanyBranch() != null ? d.getCompanyBranch().getId() : null
+                ))
+                .toList();
+    }
+
 }
+
+
+

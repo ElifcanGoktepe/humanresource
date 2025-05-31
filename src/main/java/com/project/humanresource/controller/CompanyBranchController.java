@@ -24,7 +24,7 @@ public class CompanyBranchController {
 
     private final CompanyBranchService companyBranchService;
 
-    @PostMapping(ADDCOMPANYBRANCH)
+    @PostMapping("/dev/v1/companybranch/add")
     public ResponseEntity<BaseResponseShort<CompanyBranch>> addCompanyBranch(@RequestBody @Valid AddCompanyBranchRequestDto dto) {
         CompanyBranch branch = companyBranchService.addCompanyBranch(dto);
         return ResponseEntity.ok(BaseResponseShort.<CompanyBranch>builder()
@@ -34,7 +34,7 @@ public class CompanyBranchController {
                 .build());
     }
 
-    @DeleteMapping(DELETECOMPANYBRANCHBYID + "/{id}")
+    @DeleteMapping("/dev/v1/companybranch/delete/{id}")
     public ResponseEntity<BaseResponseShort<CompanyBranch>> deleteCompanyBranch(@PathVariable Long id) {
         CompanyBranch deletedBranch = companyBranchService.deleteCompanyBranch(id);
         return ResponseEntity.ok(BaseResponseShort.<CompanyBranch>builder()
@@ -44,7 +44,7 @@ public class CompanyBranchController {
                 .build());
     }
 
-    @GetMapping(LISTALLCOMPANYBRANCH)
+    @GetMapping("/dev/v1/companybranch/listAll/{id}")
     public ResponseEntity<BaseResponseShort<List<CompanyBranch>>> findAll() {
         List<CompanyBranch> branches = companyBranchService.findAll();
         return ResponseEntity.ok(BaseResponseShort.<List<CompanyBranch>>builder()
@@ -83,6 +83,8 @@ public class CompanyBranchController {
                 .message("Company branch found successfully")
                 .build());
     }
+
+
 }
 
 

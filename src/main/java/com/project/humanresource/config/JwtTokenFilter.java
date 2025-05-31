@@ -39,6 +39,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
             if (decoded.isPresent()) {
                 DecodedJWT jwt = decoded.get();
+                String email = jwt.getSubject(); // ✅ email burada
                 Long userId = jwt.getClaim("userId").asLong();
                 List<String> roles = jwt.getClaim("roles").asList(String.class);
 
@@ -49,14 +50,16 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 System.out.println("✅ ROLES: " + roles);
                 System.out.println("✅ AUTHORITIES: " + authorities);
 
+                // ✅ Artık principal olarak email atanıyor
                 UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(userId, null, authorities);
+                        new UsernamePasswordAuthenticationToken(email, null, authorities);
+
+                // Kullanıcıya dair başka verileri de request'e eklemek istersen:
+                request.setAttribute("userId", userId);
 
                 SecurityContextHolder.getContext().setAuthentication(authToken);
-
-                // Opsiyonel: userId'yi request attribute olarak da ekleyebilirsin
-                request.setAttribute("userId", userId);
             }
+
         }
 
         filterChain.doFilter(request, response);
