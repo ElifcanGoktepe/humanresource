@@ -129,18 +129,9 @@ public class CompanyManagerController {
             @PathVariable Long id,
             @RequestBody AddCommentDto dto) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName(); // login kullanıcının emaili
-
-        Employee manager = employeeService.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Manager not found"));
-
-        Long managerId = manager.getId();
-
-        Comment updatedComment = companyManagerService.updateComment(id, managerId, dto);
+        Comment updatedComment = companyManagerService.updateComment(id, dto);
         return ResponseEntity.ok(updatedComment);
     }
-
 
 
 

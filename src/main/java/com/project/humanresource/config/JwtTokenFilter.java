@@ -24,6 +24,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @Autowired
     private JwtManager jwtManager;
 
+    @Autowired
+    private JwtUserDetails jwtUserDetails;
+
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -51,11 +55,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 System.out.println("✅ AUTHORITIES: " + authorities);
 
                 // ✅ Artık principal olarak email atanıyor
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(email, null, authorities);
+                JwtUser jwtUser = (JwtUser) jwtUserDetails.loadUserById(userId);
 
-                // Kullanıcıya dair başka verileri de request'e eklemek istersen:
-                request.setAttribute("userId", userId);
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(jwtUser, null, jwtUser.getAuthorities());
 
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 public record AddDepartmentRequestDto(
-
+        Long id,
         @NotNull @NotBlank @NotEmpty
         String departmentName,
 

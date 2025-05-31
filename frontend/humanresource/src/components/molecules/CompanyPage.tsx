@@ -135,6 +135,8 @@ function CompanyPage() {
     const [branchPhoneNumber, setBranchPhoneNumber] = useState('');
     const [branchEmailAddress, setBranchEmailAddress] = useState('');
     const [selectedBranchId, setSelectedBranchId] = useState('');
+    const [selectedDepartmentId, setSelectedDepartmentId] = React.useState<string>('');
+
 
 
     // Department state
@@ -156,9 +158,6 @@ function CompanyPage() {
     const [activeTab, setActiveTab] = useState<'company' | 'branch' | 'department'>('company');
 
     const token = localStorage.getItem('token');
-    const showSuccess = (message: string) => {
-        alert(message);
-    };
 
     const showMessage = (msg: string, duration = 3000) => {
         setMessage(msg);
@@ -245,7 +244,12 @@ function CompanyPage() {
                     headers: { Authorization: `Bearer ${token}` },
                 }
             );
-            setDepartments(Array.isArray(res.data.data) ? res.data.data : []);
+            setDepartments(
+                Array.isArray(res.data.data)
+                    ? res.data.data.filter((d: Department) => d && d.id != null)
+                    : []
+            );
+
         } catch {
             showError('Failed to fetch departments.');
             setDepartments([]);
@@ -337,33 +341,45 @@ function CompanyPage() {
     // Department ekle
     const addDepartment = async () => {
         if (!token) return showError('Authorization token not found.');
-        if (!departmentCode || !departmentName) return showError('Please fill all fields.');
-        if (!selectedBranchId) return showError('Please select a branch first.');
 
+        if (!departmentCode || !departmentName) {
+            return showError('Please fill all fields.');
+        }
+
+        if (!selectedBranchId) {
+            return showError('Please select a branch first.');
+        }
+
+        setLoading(true);
         try {
-            await axios.post(
-                'http://localhost:9090/dev/v1/department/add',
-                {
-                    departmentCode,
-                    departmentName,
-                    companyBranchId: selectedBranchId,
-                },
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
-            );
-            showSuccess('Department added successfully.');
+            const payload = {
+                departmentCode,
+                departmentName,
+                companyBranchId: selectedBranchId,
+            };
+
+            await axios.post('http://localhost:9090/dev/v1/department/add', payload, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            showMessage('Department added successfully.');
             setDepartmentCode('');
             setDepartmentName('');
-           await fetchDepartments(); // listeyi güncelle
-        } catch {
+            // Yeni eklenen department listesine hemen fetch yap
+            fetchDepartments();
+        } catch (error) {
             showError('Failed to add department.');
+        } finally {
+            setLoading(false);
         }
     };
 
 
+
     const deleteDepartment = async (id: number) => {
+        console.log("Deleting department with id:", id); // id undefined mi kontrol et
         if (!token) return showError('Authorization token not found.');
+        if (!id) return showError('Invalid department id.');
 
         if (!window.confirm('Are you sure you want to delete this department?')) return;
 
@@ -380,6 +396,7 @@ function CompanyPage() {
             setLoading(false);
         }
     };
+
 
     // Branch filtreleme
     {/* const filteredBranches = branches.filter(
@@ -573,6 +590,26 @@ function CompanyPage() {
                                         </div>
 
                                         <h4>Departments List</h4>
+                                        <div className="form-group mt-3">
+                                            <label htmlFor="departmentSelect">Select Department</label>
+                                            <select
+                                                className="form-control"
+                                                value={selectedDepartmentId}
+                                                onChange={(e) => setSelectedDepartmentId(e.target.value)}
+                                            >
+                                                <option value="">-- Select a Department --</option>
+                                                {departments.map((d) => (
+                                                    d && d.id != null ? (
+                                                        <option key={d.id} value={d.id ? d.id.toString(): ''
+                                                            }>
+                                                            {d.departmentCode} - {d.departmentName}
+                                                        </option>
+                                                    ) : null
+                                                ))}
+
+                                            </select>
+                                        </div>
+
 
                                         <table className="table table-striped">
                                             <thead>
