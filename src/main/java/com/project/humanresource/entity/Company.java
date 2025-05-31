@@ -3,6 +3,9 @@ package com.project.humanresource.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "company")
 @Getter
@@ -20,5 +23,7 @@ public class Company {
     private String companyAddress;
     private String companyPhoneNumber;
     private String companyEmail;
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    public List<CompanyBranch> branches = new ArrayList<>();
 }
 

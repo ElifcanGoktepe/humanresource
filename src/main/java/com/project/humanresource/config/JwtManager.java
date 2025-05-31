@@ -44,8 +44,8 @@ public class JwtManager {
     }
 
 
-
-    public Optional<Long> validateToken(String token){
+// validatetoken ihtiyacı yok sistemde decoded token metodu alltta kullanılıyor silinebilir
+  /*  public Optional<Long> validateToken(String token){
         try{
             Algorithm algorithm = Algorithm.HMAC512(secretKey);
             JWTVerifier verifier =  JWT.require(algorithm).build();
@@ -58,7 +58,7 @@ public class JwtManager {
             return Optional.empty();
         }
     }
-
+*/
     public Optional<DecodedJWT> decodeToken(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC512(secretKey);

@@ -21,15 +21,30 @@ public class DepartmentController {
 
     private final DepartmentService departmentService;
 
-    @PostMapping(ADDDERPARTAMENT)
-    public ResponseEntity<BaseResponseShort<Department>> addDepartment(@RequestBody @Valid AddDepartmentRequestDto dto){
+    @PostMapping("/dev/v1/department/add")
+    public ResponseEntity<BaseResponseShort<AddDepartmentRequestDto>> addDepartment(
+            @RequestBody @Valid AddDepartmentRequestDto dto) {
+
+        // Department entity'yi servis üzerinden kaydet
         Department savedDepartment = departmentService.addDepartment(dto);
-        return ResponseEntity.ok(BaseResponseShort.<Department>builder()
-                .data(savedDepartment)
+
+        // Entity'den DTO oluştur (ID içermeyen versiyon, sadece client’a göstermek için)
+        AddDepartmentRequestDto responseDto = new AddDepartmentRequestDto(
+                savedDepartment.getId(),
+                savedDepartment.getDepartmentName(),
+                savedDepartment.getDepartmentCode(),
+                savedDepartment.getCompany() != null ? savedDepartment.getCompany().getId() : null,
+                savedDepartment.getCompanyBranch() != null ? savedDepartment.getCompanyBranch().getId() : null
+        );
+
+        // ResponseEntity olarak DTO'yu dön
+        return ResponseEntity.ok(BaseResponseShort.<AddDepartmentRequestDto>builder()
+                .data(responseDto)
                 .code(200)
                 .message("Department added successfully.")
                 .build());
     }
+
 
     @GetMapping(FINDDEPARTMENTBYID + "/{id}")
     public ResponseEntity<BaseResponseShort<Department>> findDepartmentById(@PathVariable Long id){
@@ -41,17 +56,18 @@ public class DepartmentController {
                 .build());
     }
 
-    @GetMapping(LISTALLDEPARTMENTS)
-    public ResponseEntity<BaseResponseShort<List<Department>>> findAllDepartments(){
-        List<Department> departments = departmentService.findAll();
+ /*   @GetMapping("dev/v1/department/listAll/{id}")
+    public ResponseEntity<BaseResponseShort<List<Department>>> findAllDepartments(@PathVariable Long id) {
+        // id ile ilgili işlem yap (örneğin companyId'ye göre filtreleme)
+        List<Department> departments = departmentService.findAllByCompanyId(id);
         return ResponseEntity.ok(BaseResponseShort.<List<Department>>builder()
                 .data(departments)
                 .code(200)
                 .message("Departments listed successfully.")
                 .build());
-    }
+    }  */
 
-    @DeleteMapping(DELETEDEPARTMENTBYID + "/{id}")
+    @DeleteMapping("/dev/v1/department/delete/{id}")
     public ResponseEntity<BaseResponseShort<Department>> deleteDepartment(@PathVariable Long id){
         Department deletedDepartment = departmentService.deleteDepartment(id);
         return ResponseEntity.ok(BaseResponseShort.<Department>builder()
@@ -68,6 +84,16 @@ public class DepartmentController {
                 .data(department)
                 .code(200)
                 .message("Department found successfully.")
+                .build());
+    }
+
+    @GetMapping("/dev/v1/department/listAllByBranchId/{id}")
+    public ResponseEntity<BaseResponseShort<List<AddDepartmentRequestDto>>> getDepartmentsByBranchId(@PathVariable Long id) {
+        List<AddDepartmentRequestDto> departments = departmentService.getDepartmentsByBranchId(id);
+        return ResponseEntity.ok(BaseResponseShort.<List<AddDepartmentRequestDto>>builder()
+                .code(200)
+                .message("Departments listed successfully.")
+                .data(departments)
                 .build());
     }
 

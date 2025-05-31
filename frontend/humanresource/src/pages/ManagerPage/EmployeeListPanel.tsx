@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
-import SearchBarComponents from "../../components/molecules/SearchBarComponents";
-import EmployeeTable from "../../components/organism/ManagerEmploye/EmployeeTable";
-import type { Employee } from "../../components/molecules/EmployeeRow";
-import MenuSideBarr from "../../components/organism/MenuSideBar";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import SearchBarComponents from '../../components/molecules/SearchBarComponents';
+import EmployeeTable from '../../components/organism/EmployeeTable';
+import type {Employee} from '../../pages/ManagerPage/Employee';
+
 
 const EmployeeListPanel: React.FC = () => {
     const ITEMS_PER_PAGE = 15;
@@ -11,64 +10,52 @@ const EmployeeListPanel: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [employees, setEmployees] = useState<Employee[]>([]);
 
-    const handleToggleStatus = async (id: number, isActive: boolean) => {
-        const token = localStorage.getItem("token");
-        const url = isActive
-            ? `http://localhost:9090/employee/deactive/${id}`
-            : `http://localhost:9090/employee/activate/${id}`;
-
+    const fetchEmployees = async () => {
         try {
-            await axios.put(url, {}, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-
-            setEmployees(prev =>
-                prev.map(emp =>
-                    emp.id === id ? { ...emp, active: !isActive } : emp
-                )
-            );
-        } catch (error) {
-            console.error("Status toggle failed", error);
-        }
-    };
-
-    const handleDelete = async (id: number) => {
-        const token = localStorage.getItem("token");
-        try {
-            await axios.delete(`http://localhost:9090/employee/delete/${id}`, {
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:9090/employee/get-all', {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${token}`
                 }
             });
 
-            setEmployees(prev => prev.filter(emp => emp.id !== id));
+            if (!response.ok) throw new Error('Failed to fetch');
+            const data = await response.json();
+            setEmployees(data.data);
         } catch (error) {
-            console.error("Failed to delete employee", error);
+            console.error("Failed to fetch employees", error);
         }
     };
 
     useEffect(() => {
-        const fetchEmployees = async () => {
-            try {
-                const token = localStorage.getItem("token");
-                console.log("JWT TOKEN:", token); // ➕ Bunu ekleyerek console'da görebilirsin
-                const response = await axios.get("http://localhost:9090/employee/get-all", {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-                setEmployees(response.data.data);
-            } catch (error) {
-                console.error("Failed to fetch employees", error);
-            }
-        };
-
         fetchEmployees();
     }, []);
 
+    const handleToggleStatus = async (id: number, currentStatus: boolean) => {
+        const token = localStorage.getItem("token");
+        const endpoint = currentStatus ? "deactive" : "activate";
+
+        await fetch(`http://localhost:9090/employee/${endpoint}/${id}`, {
+            method: 'PUT',
+            headers: { Authorization: `Bearer ${token}` }
+        });
+
+        fetchEmployees();
+    };
+
+    const handleDelete = async (id: number) => {
+        const token = localStorage.getItem("token");
+        await fetch(`http://localhost:9090/employee/delete/${id}`, {
+            method: 'DELETE',
+            headers: { Authorization: `Bearer ${token}` }
+        });
+
+        fetchEmployees();
+    };
+
     const filtered = employees.filter(emp =>
         emp.fullName.toLowerCase().includes(query.toLowerCase()) ||
-        emp.Email.toLowerCase().includes(query.toLowerCase())
+        emp.email.toLowerCase().includes(query.toLowerCase())
     );
 
     const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
@@ -76,38 +63,33 @@ const EmployeeListPanel: React.FC = () => {
     const currentEmployees = filtered.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
     return (
-        <div className="row m-0" style={{ minHeight: '100vh', backgroundColor: '#f8f9fa' }}>
-            <MenuSideBarr />
-            <div className="col-10 p-4">
-                <div className="d-flex justify-content-end mb-3">
-                    <SearchBarComponents query={query} onChange={(q) => {
-                        setQuery(q);
-                        setCurrentPage(1);
-                    }} />
-                </div>
-                <div key={currentPage} className="card shadow-sm p-3 bg-white rounded">
-                    <EmployeeTable
-                        employees={currentEmployees}
-                        onToggleStatus={handleToggleStatus}
-                        onDelete={handleDelete}
-                    />
-                    <div className="d-flex justify-content-center mt-3">
-                        <nav>
-                            <ul className="pagination">
-                                {Array.from({ length: totalPages }, (_, i) => (
-                                    <li key={i} className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}>
-                                        <button className="page-link" onClick={() => setCurrentPage(i + 1)}>
-                                            {i + 1}
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
-                        </nav>
-                    </div>
-                </div>
+        <div className="p-4">
+            <div className="mb-3">
+                <SearchBarComponents query={query} onChange={q => {
+                    setQuery(q);
+                    setCurrentPage(1);
+                }} />
+            </div>
+            <EmployeeTable
+                employees={currentEmployees}
+                onToggleStatus={handleToggleStatus}
+                onDelete={handleDelete}
+                startIndex={startIndex}
+            />
+            <div className="d-flex justify-content-center mt-3">
+                <ul className="pagination">
+                    {Array.from({ length: totalPages }, (_, i) => (
+                        <li key={i} className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}>
+                            <button className="page-link" onClick={() => setCurrentPage(i + 1)}>
+                                {i + 1}
+                            </button>
+                        </li>
+                    ))}
+                </ul>
             </div>
         </div>
     );
+
 };
 
 export default EmployeeListPanel;

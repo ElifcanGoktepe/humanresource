@@ -1,7 +1,9 @@
 package com.project.humanresource.controller;
 
+import com.project.humanresource.dto.request.AddCommentDto;
 import com.project.humanresource.dto.request.AddCompanyManagerDto;
 import com.project.humanresource.dto.response.BaseResponseShort;
+import com.project.humanresource.entity.Comment;
 import com.project.humanresource.entity.EmailVerification;
 import com.project.humanresource.entity.Employee;
 import com.project.humanresource.repository.EmployeeRepository;
@@ -13,6 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -91,6 +96,42 @@ public class CompanyManagerController {
         return ResponseEntity.ok("Status updated.");
     }
 
+    @PostMapping("/dev/v1/addcomment")
+    public ResponseEntity<BaseResponseShort<Boolean>> addComment(@RequestBody AddCommentDto dto, Authentication authentication) {
+        Long managerId = dto.managerId();
+
+        if (managerId == null) {
+            // Authentication'dan giriş yapan kullanıcının employee id'sini çek
+            Employee currentUser = employeeService.getCurrentEmployee(authentication);
+            managerId = currentUser.getId();
+        }
+
+        // Yeni DTO ile managerId set et (immutable record olduğu için yeni nesne oluştur)
+        AddCommentDto updatedDto = new AddCommentDto(managerId, dto.commentText(), dto.photoUrl());
+
+        companyManagerService.addComment(updatedDto);
+        return ResponseEntity.ok(BaseResponseShort.<Boolean>builder()
+                .code(200)
+                .message("Comment added successfully")
+                .data(true)
+                .build());
+    }
+
+
+    @GetMapping("/comments")
+    public ResponseEntity<List<Comment>> getAllComments() {
+        return ResponseEntity.ok(companyManagerService.getAllComments());
+    }
+
+
+    @PutMapping("/comment/{id}")
+    public ResponseEntity<Comment> updateComment(
+            @PathVariable Long id,
+            @RequestBody AddCommentDto dto) {
+
+        Comment updatedComment = companyManagerService.updateComment(id, dto);
+        return ResponseEntity.ok(updatedComment);
+    }
 
 
 

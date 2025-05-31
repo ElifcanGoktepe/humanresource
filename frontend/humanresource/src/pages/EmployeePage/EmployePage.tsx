@@ -106,6 +106,36 @@ function EmployeePage() {
             }
         }
     }, []);
+    type Shift = {
+        id: number;
+        name: string;
+        startTime: string;
+        endTime: string;
+        description: string;
+        employeeIds: number[];
+        shiftBreakIds: number[];
+    };
+
+    const [shifts, setShifts] = useState<Shift[]>([]);
+
+
+    useEffect(() => {
+        const fetchShifts = async () => {
+            const token = localStorage.getItem("token");
+            try {
+                const response = await axios.get("http://localhost:9090/list-shift", {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                setShifts(response.data.data);
+            } catch (error) {
+                console.error("Error fetching shifts", error);
+            }
+        };
+
+        fetchShifts();
+    }, []);
 
 
     return (
@@ -170,7 +200,7 @@ function EmployeePage() {
                                     </div>
                                 </div>
                                 <div className="box1-dashboard p-3">
-                                    <p> Employee Number : 20 </p>
+                                    <p> Manager Name : {} </p>
                                 </div>
                             </div>
                             <div className="col-3 box-dashboard">
@@ -199,22 +229,17 @@ function EmployeePage() {
                                     </div>
                                     <div className="row">
                                         <div className="col-7 fontstyle-shiftnames mb-2">
-                                            <p>Monday</p>
-                                            <p>Tuesday</p>
-                                            <p>Wednesday</p>
-                                            <p>Thursday</p>
-                                            <p>Friday</p>
-                                            <p>Saturday</p>
-                                            <p>Sunday</p>
-                                        </div>
-                                        <div className="col-5 fontstyle-shifthours mb-2">
-                                            <p>08:00-12:00</p>
-                                            <p>08:00-12:00</p>
-                                            <p>13:00-17:00</p>
-                                            <p>13:00-17:00</p>
-                                            <p>18:00-22:00</p>
-                                            <p>18:00-22:00</p>
-                                            <p>---</p>
+                                            {shifts.length === 0 ? (
+                                                <p>No shifts assigned.</p>
+                                            ) : (
+                                                shifts.map((shift) => (
+                                                    <div key={shift.id} style={{ marginBottom: "10px" }}>
+                                                        <strong>{shift.name}</strong><br />
+                                                        {new Date(shift.startTime).toLocaleString()} - {new Date(shift.endTime).toLocaleString()}
+                                                        <hr />
+                                                    </div>
+                                                ))
+                                            )}
                                         </div>
                                     </div>
 

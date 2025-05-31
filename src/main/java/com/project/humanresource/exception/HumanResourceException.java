@@ -10,4 +10,9 @@ public class HumanResourceException extends RuntimeException{
         this.errorType = errorType;
     }
 
+    // New constructor
+    public HumanResourceException(ErrorType errorType, String customMessage){
+        super(customMessage);
+        this.errorType = errorType;
+    }
 }
