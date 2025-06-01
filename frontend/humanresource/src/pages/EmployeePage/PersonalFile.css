@@ -1,0 +1,149 @@
+/* src/components/PersonalFile.css */
+
+/* --- Genel Renk Tanımları --- */
+/* Sidebar'da kullandığınız turkuaz/yeşil tonlarını burada değişken gibi tanımladık */
+:root {
+    --teal: #2ac1bc;       /* Sidebar menüdeki ikon ve yazı rengi (örneğin #2ac1bc) */
+    --teal-dark: #259a97;  /* Biraz daha koyu ton, hover vb. için */
+    --sidebar-bg: #f8f9fa; /* Sol menünün arka planı (Bootstrap light yerine hafif gri ton) */
+    --card-bg: #ffffff;    /* Kart arka planını beyaz tuttuk */
+    --border-light: #e9ecef; /* Kart ve form etrafındaki ince border */
+}
+
+/* --- Sidebar Stilleri --- */
+.bg-sidebar-light {
+    background: var(--sidebar-bg);
+}
+.sidebar-text {
+    color: var(--teal);
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+.fixed-bar-buttons {
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    display: flex;
+    align-items: center;
+    transition: background 0.2s ease;
+}
+.fixed-bar-buttons:hover {
+    background: rgba(42, 193, 188, 0.1);
+}
+.small-image-fixed-bar {
+    width: 20px;
+    height: 20px;
+}
+
+/* Ayırıcı (divider) rengini de sidebar uyumlu yaptık */
+.sidebar-divider {
+    border-top: 1px solid var(--border-light);
+}
+
+/* --- Buton Stilleri (Düzenle / Kaydet / İptal) --- */
+
+/* Düzenle Butonu */
+.btn-edit {
+    background-color: var(--teal);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.55rem 1.5rem;
+    font-size: 0.95rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    box-shadow: 0 2px 4px rgba(42, 193, 188, 0.25);
+    min-width: 140px;
+}
+
+.btn-edit:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(37, 154, 151, 0.25);
+    background-color: var(--teal-dark);
+}
+
+.btn-edit:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.25rem rgba(42, 193, 188, 0.5);
+}
+
+/* Kaydet Butonu */
+.btn-save {
+    background-color: #28a745; /* Bootstrap success tonu */
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.55rem 1.5rem;
+    font-size: 0.95rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.25);
+    min-width: 120px;
+}
+
+.btn-save:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(22, 119, 38, 0.25);
+    background-color: #218838; /* Hover’da biraz koyultulmuş */
+}
+
+.btn-save:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.5);
+}
+
+/* İptal Butonu */
+.btn-cancel {
+    background-color: #6c757d; /* Bootstrap secondary tonu */
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.55rem 1.5rem;
+    font-size: 0.95rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    box-shadow: 0 2px 4px rgba(108, 117, 125, 0.25);
+    min-width: 120px;
+}
+
+.btn-cancel:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(92, 99, 106, 0.25);
+    background-color: #5a6268; /* Hover’da biraz koyultulmuş */
+}
+
+.btn-cancel:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.25rem rgba(108, 117, 125, 0.5);
+}
+
+/* --- Kart Başlık, İkon ve Yazı Renkleri --- */
+.text-teal {
+    color: var(--teal);
+}
+.bg-teal {
+    background-color: var(--teal) !important;
+}
+.badge.bg-teal {
+    background-color: var(--teal) !important;
+    color: white !important;
+}
+
+/* Kart ve Form Çevresi İnce Border Rengi */
+.card-header,
+.card-body {
+    border-color: var(--border-light) !important;
+}
+
+/* Genel olarak body arka planını da çok hafif gri yaptık */
+body {
+    background-color: #f5f7fa;
+}
