@@ -6,12 +6,13 @@ import { useEffect, useState } from "react";
 
 import Dashboard from  "../../components/molecules/Dashboard.tsx";
 import CompanyPage from  "../../components/molecules/CompanyPage.tsx";
-import Employee from  "../../components/molecules/Employee.tsx";
+//import Employee from  "../../components/molecules/Employee.tsx";
 import Salary from  "../../components/molecules/Salary.tsx";
 import Shift from  "../../components/molecules/Shift.tsx";
 import Assignment from  "../../components/molecules/Assignment.tsx";
 import Settings from  "../../components/molecules/Settings.tsx";
 import Profile from  "../../components/molecules/Profile.tsx";
+import EmployeeListPanel from "./EmployeeListPanel.tsx";
 
 
 function ManagerPage() {
@@ -53,7 +54,7 @@ function ManagerPage() {
             case 'Company Page':
                 return <CompanyPage />;
             case 'Employee':
-                return <Employee />;
+                return <EmployeeListPanel />;
             case 'Salary':
                 return <Salary />;
             case 'Shift':

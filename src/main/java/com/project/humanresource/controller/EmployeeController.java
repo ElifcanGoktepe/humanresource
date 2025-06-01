@@ -62,7 +62,7 @@ public class EmployeeController {
                 .build());
     }*/
 
-   /* @GetMapping("/employee/get-all")
+    @GetMapping("/employee/get-all")
     public ResponseEntity<BaseResponseShort<List<EmployeeResponseDto>>> getAllEmployeesForManager() {
 //        String email = SecurityContextHolder.getContext().getAuthentication().getName();
 //        System.out.println("Emai,l : "+email);
@@ -74,21 +74,10 @@ public class EmployeeController {
                 .message("Employees listed")
                 .data(employees)
                 .build());
-    }*/
+    }
 
 
 
-//
-////    //@PreAuthorize("hasAuthority('COMPANY_ADMIN')")
-////    @PostMapping("/assign-title")
-////    public ResponseEntity<BaseResponseShort<Boolean>> assignTitleToemployee(@RequestBody AssignTitleToEmployeeRequestDto dto){
-////        employeeService.assignTitleToEmployee(dto);
-////
-////        return ResponseEntity.ok(BaseResponseShort.<Boolean>builder()
-////                .code(200)
-////                .data(true)
-////                .message("Unvan çalışana başarıyla atandı")
-////                .build());
-////    }
+
 
 }
