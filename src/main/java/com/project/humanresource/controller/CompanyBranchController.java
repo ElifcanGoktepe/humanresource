@@ -54,35 +54,6 @@ public class CompanyBranchController {
                 .build());
     }
 
-    @GetMapping(FINDCOMPANYBRANCHBYADDRESS)
-    public ResponseEntity<BaseResponseShort<CompanyBranch>> findByAddress(@RequestParam String address) {
-        CompanyBranch branch = companyBranchService.findByCompanyBranchAddress(address);
-        return ResponseEntity.ok(BaseResponseShort.<CompanyBranch>builder()
-                .data(branch)
-                .code(200)
-                .message("Company branch found successfully")
-                .build());
-    }
-
-    @GetMapping(FINDCOMPANYBRANCHBYEMAILADDRESS)
-    public ResponseEntity<BaseResponseShort<CompanyBranch>> findByEmail(@RequestParam String email) {
-        CompanyBranch branch = companyBranchService.findByCompanyBranchEmailAddress(email);
-        return ResponseEntity.ok(BaseResponseShort.<CompanyBranch>builder()
-                .data(branch)
-                .code(200)
-                .message("Company branch found successfully")
-                .build());
-    }
-
-    @GetMapping(FINDCOMPANYBRANCHBYPHONENUMBER)
-    public ResponseEntity<BaseResponseShort<CompanyBranch>> findByPhone(@RequestParam String phoneNumber) {
-        CompanyBranch branch = companyBranchService.findByCompanyBranchPhoneNumber(phoneNumber);
-        return ResponseEntity.ok(BaseResponseShort.<CompanyBranch>builder()
-                .data(branch)
-                .code(200)
-                .message("Company branch found successfully")
-                .build());
-    }
 
 
 }

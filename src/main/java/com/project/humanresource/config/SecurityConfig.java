@@ -49,8 +49,10 @@ public class SecurityConfig {
                                 "/api/auth/**","/api/public/**",
                                 "/register"
                         ).permitAll()
+
                         .requestMatchers("/dev/v1/company/**").hasAuthority("Manager")
-                        .requestMatchers("/dev/v1/company/myCompany").hasAuthority("Manager")
+                        .requestMatchers(HttpMethod.POST, "/dev/v1/company/add").hasAuthority("Manager")
+                        .requestMatchers(HttpMethod.GET,"/dev/v1/company/myCompany").hasAuthority("Manager")
                         .requestMatchers("/dev/v1/companybranch/listAll/{id}").hasAuthority("Manager")
                         .requestMatchers("/dev/v1/department/listAll/{id}").hasAuthority("Manager")
                         .requestMatchers("dev/v1/companybranch/**").hasAuthority("Manager")
@@ -61,13 +63,15 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,  "/comments").hasAuthority("Manager")
                         .requestMatchers(HttpMethod.POST, "/dev/v1/department/add").hasAuthority("Manager")
                         .requestMatchers(HttpMethod.GET,"/dev/v1/department/listAllByBranchId/{id}").hasAuthority("Manager")
-                        .requestMatchers("/admin/**").hasAuthority("Admin")
+                        .requestMatchers("/dev/v1/admin/company/pending-applications").hasAuthority("Admin")
+                        .requestMatchers("/dev/v1/admin/company/update/{id}").hasAuthority("Admin")
                         .requestMatchers("/add-employee").hasAuthority("Manager")
                         .requestMatchers("/company-manager/approve/{employeeId}").hasAuthority("Manager")
                         .requestMatchers("/employee/**").hasAuthority("Employee")
                         .requestMatchers("/api/users/**").permitAll()
                         .anyRequest().authenticated()
                 )
+
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .userDetailsService(jwtUserDetails)
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class).build();

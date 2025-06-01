@@ -1,6 +1,7 @@
 server:
   port: 9090
-
+  error:
+    include-stacktrace: always
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/humanresource
@@ -61,4 +62,9 @@ app:
     dir: uploads
     max-file-size: 5242880  # 5MB in bytes
 
+
+
+  mail:
+    username: serkan.klcdr@gmail.com
+    password: xlclftccllcqlnav
 

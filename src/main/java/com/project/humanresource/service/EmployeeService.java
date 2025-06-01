@@ -8,6 +8,7 @@ import com.project.humanresource.exception.ErrorType;
 import com.project.humanresource.exception.HumanResourceException;
 import com.project.humanresource.repository.*;
 import com.project.humanresource.utility.UserStatus;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -84,6 +85,10 @@ public class EmployeeService {
         return employeeRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Employee not found with email: " + email));
     }
+
+    public void deleteById(Long id) {
+    }
+
 
 //    private final EmployeeRepository employeeRepository;
 //

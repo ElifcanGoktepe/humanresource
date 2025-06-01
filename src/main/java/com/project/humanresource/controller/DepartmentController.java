@@ -46,15 +46,7 @@ public class DepartmentController {
     }
 
 
-    @GetMapping(FINDDEPARTMENTBYID + "/{id}")
-    public ResponseEntity<BaseResponseShort<Department>> findDepartmentById(@PathVariable Long id){
-        Department department = departmentService.findById(id);
-        return ResponseEntity.ok(BaseResponseShort.<Department>builder()
-                .data(department)
-                .code(200)
-                .message("Department found successfully.")
-                .build());
-    }
+
 
  /*   @GetMapping("dev/v1/department/listAll/{id}")
     public ResponseEntity<BaseResponseShort<List<Department>>> findAllDepartments(@PathVariable Long id) {
@@ -77,15 +69,6 @@ public class DepartmentController {
                 .build());
     }
 
-    @GetMapping(FINDDEPARTMENTBYCODE)
-    public ResponseEntity<BaseResponseShort<Department>> findByDepartmentCode(@RequestParam String code){
-        Department department = departmentService.findByDepartmentCode(code);
-        return ResponseEntity.ok(BaseResponseShort.<Department>builder()
-                .data(department)
-                .code(200)
-                .message("Department found successfully.")
-                .build());
-    }
 
     @GetMapping("/dev/v1/department/listAllByBranchId/{id}")
     public ResponseEntity<BaseResponseShort<List<AddDepartmentRequestDto>>> getDepartmentsByBranchId(@PathVariable Long id) {

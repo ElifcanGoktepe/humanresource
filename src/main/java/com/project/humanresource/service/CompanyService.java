@@ -82,10 +82,13 @@ public class CompanyService {
     }
 
     public List<AddCompanyRequestDto> searchCompaniesByName(String name) {
-        return companyRepository.findByCompanyNameContainingIgnoreCase(name).stream()
+        // Veritabanında companyName içinde "name" geçenleri, büyük/küçük harf duyarsız arar
+        List<Company> matchedCompanies = companyRepository.findByCompanyNameContainingIgnoreCase(name);
+        return matchedCompanies.stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }
+
 
     public AddCompanyRequestDto updateCompanyEmail(Long id, String email) {
         Optional<Company> companyOpt = companyRepository.findById(id);

@@ -278,7 +278,7 @@ function CompanyPage() {
         if (!token) return showError('Authorization token not found.');
         if (!selectedCompany?.id) {
             await fetchCompanies();
-            const latestCompany = (await axios.get('http://localhost:9090/dev/v1/company/getMyCompany', {
+            const latestCompany = (await axios.get('http://localhost:9090/dev/v1/company/myCompany', {
                 headers: { Authorization: `Bearer ${token}` },
             })).data;
 
@@ -500,6 +500,7 @@ function CompanyPage() {
 
                                 <h4>Branches List</h4>
 
+                                {/* Dropdown */}
                                 <div className="form-group mt-3">
                                     <label htmlFor="branchSelect">Select Branch</label>
                                     <select
@@ -516,44 +517,27 @@ function CompanyPage() {
                                     </select>
                                 </div>
 
-                                <table className="table table-striped">
-                                    <thead>
-                                    <tr>
-                                        <th>Code</th>
-                                        <th>Address</th>
-                                        <th>Phone</th>
-                                        <th>Email</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {branches.length === 0 && (
-                                        <tr>
-                                            <td colSpan={5} className="text-center">
-                                                No branches found.
-                                            </td>
-                                        </tr>
-                                    )}
+                                {/* Branch kartları */}
+                                <div className="branch-cards mt-4">
+                                    {branches.length === 0 && <p>No branches found.</p>}
                                     {branches.map((b) => (
-                                        <tr key={b.id}>
-                                            <td>{b.companyBranchCode}</td>
-                                            <td>{b.companyBranchAddress}</td>
-                                            <td>{b.companyBranchPhoneNumber}</td>
-                                            <td>{b.companyBranchEmailAddress}</td>
-                                            <td>
-                                                <button
-                                                    className="btn btn-danger btn-sm"
-                                                    onClick={() => deleteBranch(b.id)}
-                                                >
-                                                    Delete
-                                                </button>
-                                            </td>
-                                        </tr>
+                                        <div key={b.id} className="branch-card p-3 mb-3 border rounded">
+                                            <p><b>Code:</b> {b.companyBranchCode}</p>
+                                            <p><b>Address:</b> {b.companyBranchAddress}</p>
+                                            <p><b>Phone:</b> {b.companyBranchPhoneNumber}</p>
+                                            <p><b>Email:</b> {b.companyBranchEmailAddress}</p>
+                                            <button
+                                                className="btn btn-danger btn-sm"
+                                                onClick={() => deleteBranch(b.id)}
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
                                     ))}
-                                    </tbody>
-                                </table>
+                                </div>
                             </div>
                         )}
+
                         {activeTab === 'department' && (
                             <div>
                                 <h3>Add Department</h3>
@@ -590,6 +574,8 @@ function CompanyPage() {
                                         </div>
 
                                         <h4>Departments List</h4>
+
+                                        {/* Dropdown */}
                                         <div className="form-group mt-3">
                                             <label htmlFor="departmentSelect">Select Department</label>
                                             <select
@@ -598,61 +584,41 @@ function CompanyPage() {
                                                 onChange={(e) => setSelectedDepartmentId(e.target.value)}
                                             >
                                                 <option value="">-- Select a Department --</option>
-                                                {departments.map((d) => (
+                                                {departments.map((d) =>
                                                     d && d.id != null ? (
-                                                        <option key={d.id} value={d.id ? d.id.toString(): ''
-                                                            }>
+                                                        <option key={d.id} value={d.id ? d.id.toString() : ''}>
                                                             {d.departmentCode} - {d.departmentName}
                                                         </option>
                                                     ) : null
-                                                ))}
-
+                                                )}
                                             </select>
                                         </div>
 
-
-                                        <table className="table table-striped">
-                                            <thead>
-                                            <tr>
-                                                <th>Code</th>
-                                                <th>Name</th>
-                                                <th>Actions</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            {departments.length > 0 ? (
-                                                departments.map((d) => (
-                                                    <tr key={d.id}>
-                                                        <td>{d.departmentCode}</td>
-                                                        <td>{d.departmentName}</td>
-                                                        <td>
-                                                            <button
-                                                                className="btn btn-danger btn-sm"
-                                                                onClick={() => deleteDepartment(d.id)}
-                                                            >
-                                                                Delete
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                ))
-                                            ) : (
-                                                <tr>
-                                                    <td colSpan={3} className="text-center">
-                                                        No departments found.
-                                                    </td>
-                                                </tr>
-                                            )}
-                                            </tbody>
-                                        </table>
+                                        {/* Department kartları */}
+                                        <div className="department-cards mt-4">
+                                            {departments.length === 0 && <p>No departments found.</p>}
+                                            {departments.map((d) => (
+                                                <div key={d.id} className="department-card p-3 mb-3 border rounded">
+                                                    <p><b>Code:</b> {d.departmentCode}</p>
+                                                    <p><b>Name:</b> {d.departmentName}</p>
+                                                    <button
+                                                        className="btn btn-danger btn-sm"
+                                                        onClick={() => deleteDepartment(d.id)}
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
                                     </>
                                 ) : (
                                     <div className="alert alert-warning">
                                         Please select a branch in the Branches tab first.
                                     </div>
                                 )}
-
                             </div>
                         )}
+dev
 
 
                     </div>
