@@ -69,7 +69,7 @@ public class AdminController {
 
             case "reject":
                 emailVerificationService.sendRejectionEmail(employee.getEmail(), employee);
-                // Kayıtları sil
+
                 userRoleRepository.deleteByUserId(employee.getId());
                 userRepository.deleteById(employee.getId());
                 employeeService.deleteById(employee.getId());
@@ -89,7 +89,7 @@ public class AdminController {
 
         List<AddCompanyRequestDto> result;
         if (name == null || name.isBlank()) {
-            // İsim boşsa tüm şirketleri döndür veya boş liste dön
+
             result = companyService.getAllCompanies();
         } else {
             result = companyService.searchCompaniesByName(name.trim());
@@ -97,34 +97,34 @@ public class AdminController {
         return ResponseEntity.ok(result);
     }
 
-    // Şirket e-posta güncelle
+
     @PatchMapping("/updateCompanyEmail/{id}")
     public ResponseEntity<AddCompanyRequestDto> updateCompanyEmail(@PathVariable Long id, @RequestParam String email) {
         AddCompanyRequestDto updated = companyService.updateCompanyEmail(id, email);
         return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
     }
 
-    // Tüm şirketleri getir
+
     @GetMapping("/getAllCompanies")
     public ResponseEntity<List<AddCompanyRequestDto>> getAllCompanies() {
         return ResponseEntity.ok(companyService.getAllCompanies());
     }
 
-    // ID'ye göre şirket getir
+
     @GetMapping("/getCompanyById/{id}")
     public ResponseEntity<AddCompanyRequestDto> getCompanyById(@PathVariable Long id) {
         AddCompanyRequestDto company = companyService.getCompanyById(id);
         return company != null ? ResponseEntity.ok(company) : ResponseEntity.notFound().build();
     }
 
-    // Şirket güncelle
+
     @PutMapping("/updateCompany/{id}")
     public ResponseEntity<AddCompanyRequestDto> updateCompany(@PathVariable Long id, @RequestBody AddCompanyRequestDto dto) {
         AddCompanyRequestDto updatedCompany = companyService.updateCompany(id, dto);
         return updatedCompany != null ? ResponseEntity.ok(updatedCompany) : ResponseEntity.notFound().build();
     }
 
-    // Şirket sil
+
     @DeleteMapping("/deleteCompany/{id}")
     public ResponseEntity<Void> deleteCompany(@PathVariable Long id) {
         companyService.deleteCompany(id);
@@ -151,27 +151,39 @@ public class AdminController {
                 .build());
     }
 
-    @GetMapping("/department/findByCode")
-    public ResponseEntity<BaseResponseShort<Department>> findByDepartmentCode(@RequestParam String code){
-        Department department = departmentService.findByDepartmentCode(code);
-        return ResponseEntity.ok(BaseResponseShort.<Department>builder()
-                .data(department)
+
+
+
+    @GetMapping("/get_all_company_branches_of_selected_company/")
+    public ResponseEntity<BaseResponseShort<List<CompanyBranch>>> getAllCompanyBranchesOfSelectedCompany(@RequestParam Long id) {
+        List<CompanyBranch> companyBranches = companyBranchService.findAllCompanyBranchesOfSelectedCompany(id);
+        return ResponseEntity.ok(BaseResponseShort.<List<CompanyBranch>>builder()
+                .data(companyBranches)
                 .code(200)
-                .message("Department found successfully.")
+                .message("Company Branches Found Successfully")
                 .build());
     }
 
 
-  /*  @GetMapping
-    public ResponseEntity<BaseResponseShort<CompanyBranch>> getAllCompanyBranchesOfSelectedCompany(@RequestParam Long id){
-        AdminService companyBranch=companyBranchService.findAllCompanyBranchesOfSelectedCompany();
-        return ResponseEntity.ok(BaseResponseShort.<CompanyBranch>builder()
-                .data(companyBranch)
-                .code(200)
-                .message("Company Branches Found Successfully")
-                .build());
-    } */
 
 
+
+    @GetMapping("/get_all_company_branches")
+    public ResponseEntity<BaseResponseShort<List<CompanyBranch>>> getAllCompanyBranches() {
+        List<CompanyBranch> branches = companyBranchService.findAllCompanyBranches();
+
+        return ResponseEntity.ok(
+                BaseResponseShort.<List<CompanyBranch>>builder()
+                        .data(branches)
+                        .code(200)
+                        .message("All Company Branches fetched successfully")
+                        .build()
+        );
+    }
 
 }
+
+
+
+
+

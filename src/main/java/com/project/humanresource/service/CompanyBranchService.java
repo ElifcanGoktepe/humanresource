@@ -95,7 +95,23 @@ public class CompanyBranchService {
     }
 
 
-  /*  public AdminService findAllCompanyBranchesOfSelectedCompany() {
-        return;
-    } */
+    public List<CompanyBranch> findAllCompanyBranchesOfSelectedCompany(Long companyId) {
+        // companyId, Controller'dan geliyor
+
+        List<CompanyBranch> branches = companyBranchRepository.findByCompanyId(companyId);
+
+        if (branches.isEmpty()) {
+            throw new RuntimeException("Company branches not found with company id: " + companyId);
+        }
+
+        return branches;
+    }
+
+
+
+
+    public List<CompanyBranch> findAllCompanyBranches() {
+        return companyBranchRepository.findAll();
+    }
+
 }

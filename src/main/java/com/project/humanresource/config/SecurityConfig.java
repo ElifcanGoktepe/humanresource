@@ -65,6 +65,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,"/dev/v1/department/listAllByBranchId/{id}").hasAuthority("Manager")
                         .requestMatchers("/dev/v1/admin/company/pending-applications").hasAuthority("Admin")
                         .requestMatchers("/dev/v1/admin/company/update/{id}").hasAuthority("Admin")
+                        .requestMatchers("/dev/v1/admin/**").hasAuthority("Admin")
+                        .requestMatchers(HttpMethod.GET," /dev/v1/admin/company/get_all_company_branches_of_selected_company/{id}").hasAuthority("Admin")
+                        .requestMatchers(HttpMethod.GET," /dev/v1/admin/company/get_all_company_branches").hasAuthority("Admin")
+
                         .requestMatchers("/add-employee").hasAuthority("Manager")
                         .requestMatchers("/company-manager/approve/{employeeId}").hasAuthority("Manager")
                         .requestMatchers("/employee/**").hasAuthority("Employee")
