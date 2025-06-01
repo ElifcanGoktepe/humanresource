@@ -6,6 +6,7 @@ import jakarta.validation.constraints.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,17 +14,8 @@ import java.util.Optional;
 public interface CompanyBranchRepository extends JpaRepository<CompanyBranch, Long> {
 
 
+    List<CompanyBranch> findByCompanyBranchCodeIgnoreCase(String companyBranchCode);
 
-    boolean existsByCompanyBranchAddress(String address);
-
-    CompanyBranch findByCompanyBranchAddress(String address);
-
-    Optional<CompanyBranch> findByCompanyBranchEmailAddress(String email);
-
-    boolean existsByCompanyBranchPhoneNumber(String phoneNumber);
-
-    CompanyBranch findByCompanyBranchPhoneNumber(String phoneNumber);
-
-    CompanyBranch findByCompanyBranchCode(String code);
+    List<CompanyBranch> findByCompanyId(Long companyId);
 
 }

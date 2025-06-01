@@ -1,7 +1,13 @@
 import  { useEffect, useState } from 'react';
 import './UserStoriesRevisionForPage.css';
 
-function UserStoriesRevisionForPage() {
+interface Props {
+    username: string;
+    commentText: string;
+    photoUrl?: string | null;
+}
+
+function UserStoriesRevisionForPage({ username, commentText, photoUrl }: Props) {
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
@@ -12,14 +18,15 @@ function UserStoriesRevisionForPage() {
     return (
         <div className={`story-row ${isVisible ? 'visible' : ''}`}>
             <div className="story-profile">
-                <img src="/img/AdminProfilePhoto.png" alt="User" className="story-image" />
+                <img
+                    src={photoUrl || "/img/AdminProfilePhoto.png"}
+                    alt={username}
+                    className="story-image"
+                />
             </div>
             <div className="story-comment">
-                <h4 className="story-username">Username</h4>
-                <p className="story-comment-text">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla fermentum, nisl a
-                    ultricies aliquet, justo sapien convallis lacus, nec gravida odio ipsum eget purus.
-                </p>
+                <h4 className="story-username">{username}</h4>
+                <p className="story-comment-text">{commentText}</p>
             </div>
         </div>
     );

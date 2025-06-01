@@ -82,7 +82,7 @@ public class CompanyService {
     }
 
     public List<AddCompanyRequestDto> searchCompaniesByName(String name) {
-        // Veritabanında companyName içinde "name" geçenleri, büyük/küçük harf duyarsız arar
+
         List<Company> matchedCompanies = companyRepository.findByCompanyNameContainingIgnoreCase(name);
         return matchedCompanies.stream()
                 .map(this::toDto)
@@ -121,10 +121,7 @@ public class CompanyService {
                 .build();
     }
 
-    /**
-     * JWT üzerinden o anda giriş yapan kullanıcının (manager) companyId'sini bulup
-     * ilgili Company nesnesini DTO'ya çevirerek döner. Eğer user veya company yoksa null döner.
-     */
+
     public AddCompanyRequestDto getMyCompany() {
         Object principal = SecurityContextHolder.getContext()
                 .getAuthentication()
