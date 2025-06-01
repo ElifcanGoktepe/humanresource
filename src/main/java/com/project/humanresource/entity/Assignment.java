@@ -3,20 +3,18 @@ package com.project.humanresource.entity;
 import com.project.humanresource.utility.AssignmentCategory;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
-
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @Table(name = "tblassignment")
-public class Assignment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+@EqualsAndHashCode(callSuper = true)
+public class Assignment extends BaseEntity {
     private String description;
     private AssignmentCategory category;
     private String serialNumber;
