@@ -22,7 +22,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     Optional<Employee> findByEmail(String Email);
 
-    Optional<User> findOptionalByEmailAndPassword(String email, String password);
+    Optional<Employee> findOptionalByEmailAndPassword(String email, String password);
 
     @Query("SELECT e.id FROM Employee e WHERE e.managerId = :managerId")
     List<Long> findEmployeeIdsByManagerId(@Param("managerId") Long managerId);
