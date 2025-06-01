@@ -1,0 +1,92 @@
+:root {
+    --teal: #2ac1bc;
+    --teal-dark: #259a97;
+    --border-light: #e9ecef;
+}
+
+/* 2. Wrapper padding adjustments to prevent overflow */
+.harcama-wrapper {
+    margin-top: 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+/* 3. Table container to allow responsiveness without horizontal scroll */
+.table-responsive {
+    overflow-x: auto;
+}
+
+/* 4. Header icons and text color */
+.text-teal {
+    color: var(--teal) !important;
+}
+
+/* 5. Modern "Save" button style */
+.btn-save-modern {
+    background-color: var(--teal);
+    color: white;
+    border: 1px solid var(--teal-dark);
+    border-radius: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    box-shadow: 0 2px 6px rgba(42, 193, 188, 0.2);
+}
+
+.btn-save-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 154, 151, 0.2);
+    background-color: var(--teal-dark);
+    border-color: var(--teal);
+}
+
+.btn-save-modern:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.3rem rgba(42, 193, 188, 0.4);
+}
+
+/* 6. Table hover effect */
+.table-hover tbody tr:hover {
+    background-color: rgba(42, 193, 188, 0.05);
+}
+
+/* 7. Detail button slightly larger */
+.btn-detail {
+    font-size: 0.9rem;
+}
+
+/* 8. Card border colors */
+.card-header,
+.card-body {
+    border-color: var(--border-light) !important;
+}
+
+/* 9. Mobile font adjust */
+@media (max-width: 576px) {
+    .table thead th,
+    .table tbody td {
+        font-size: 0.85rem;
+    }
+    .btn-save-modern {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* 10. Collapse any leftover horizontal overflow */
+.container-fluid.overflow-hidden {
+    overflow-x: hidden;
+}
+
+.row.gx-0 {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.harcama-wrapper .card {
+    width: 100%;
+}
