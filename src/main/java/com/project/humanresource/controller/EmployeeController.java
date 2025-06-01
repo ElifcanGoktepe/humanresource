@@ -11,6 +11,7 @@ import com.project.humanresource.repository.CompanyRepository;
 import com.project.humanresource.repository.UserRepository;
 import com.project.humanresource.service.EmployeeService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -62,22 +63,33 @@ public class EmployeeController {
                 .build());
     }*/
 
-    @GetMapping("/employee/get-all")
-    public ResponseEntity<BaseResponseShort<List<EmployeeResponseDto>>> getAllEmployeesForManager() {
-//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-//        System.out.println("Emai,l : "+email);
+    @GetMapping("/active-employees")
+    @SecurityRequirement(name = "bearerAuth")
+    public ResponseEntity<BaseResponseShort<List<EmployeeResponseDto>>> getAllEmployeesForManager(
+            @RequestHeader("Authorization") String authHeader
+    ) {
+        // authHeader = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9…"
+        String token = authHeader.startsWith("Bearer ")
+                ? authHeader.substring(7)
+                : authHeader;
 
-        List<EmployeeResponseDto> employees = employeeService.getAllEmployeesForManager();
+        // Service katmanını token parametreli olarak çağır:
+        List<EmployeeResponseDto> employees = employeeService.getAllEmployeesByToken(token);
 
-        return ResponseEntity.ok(BaseResponseShort.<List<EmployeeResponseDto>>builder()
+
+
+        BaseResponseShort<List<EmployeeResponseDto>> response = BaseResponseShort.<List<EmployeeResponseDto>>builder()
+                .data(employees)
                 .code(200)
                 .message("Employees listed")
-                .data(employees)
-                .build());
+                .build();
+
+        return ResponseEntity.ok(response);
     }
-
-
-
-
-
 }
+
+
+
+
+
+

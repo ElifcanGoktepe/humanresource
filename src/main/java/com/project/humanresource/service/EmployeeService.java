@@ -1,5 +1,6 @@
 package com.project.humanresource.service;
 
+import com.project.humanresource.config.JwtManager;
 import com.project.humanresource.config.SecurityUtil;
 import com.project.humanresource.dto.request.AddEmployeeForRoleRequirementDto;
 import com.project.humanresource.dto.request.AddEmployeeRequestDto;
@@ -37,6 +38,7 @@ public class EmployeeService {
     private final UserRoleService userRoleService;
     private final CompanyRepository companyRepository;
     private final EmployeeMapper employeeMapper;
+    private final JwtManager jwtManager;
 
     public Optional<Employee> findById(Long employeeId) {
         return employeeRepository.findById(employeeId);
@@ -46,7 +48,7 @@ public class EmployeeService {
         employeeRepository.save(employee);
     }
 
-    public void addEmployeeForManager(AddEmployeeForRoleRequirementDto dto,  HttpServletRequest request) { //manager tarafından eklenen employee
+    public void addEmployeeForManager(AddEmployeeForRoleRequirementDto dto, HttpServletRequest request) { //manager tarafından eklenen employee
         Long managerId = (Long) request.getAttribute("userId");
 
         if (managerId == null) {
@@ -86,6 +88,7 @@ public class EmployeeService {
     public Optional<Employee> findByEmail(String email) {
         return employeeRepository.findByEmail(email);
     }
+
     public Employee getCurrentEmployee(Authentication authentication) {
         String email = authentication.getName();
         return employeeRepository.findByEmail(email)
@@ -95,16 +98,18 @@ public class EmployeeService {
     public void deleteById(Long id) {
     }
 
-    public List<EmployeeResponseDto> getAllEmployeesForManager() {
-        Long managerId = SecurityUtil.getCurrentUserId();
 
-        return employeeRepository.findAllByIsActivatedTrueAndManagerId(managerId)
-                .stream()
+    public List<EmployeeResponseDto> getAllEmployeesByToken(String token) {
+        Long managerId = jwtManager.extractUserId(token);
+        // (Projede JwtManager.createToken() metodu .withClaim("userId", userId) koyuyor.)
+
+        List<Employee> employees = employeeRepository.findAllByIsActivatedTrueAndManagerId(managerId);
+
+        return employees.stream()
                 .map(employeeMapper::toEmployeeResponseDto)
                 .collect(Collectors.toList());
-
-
     }
+
 
 //    private final EmployeeRepository employeeRepository;
 //
@@ -216,5 +221,5 @@ public class EmployeeService {
 //        employee.setTitleId(dto.titleId());
 //        employeeRepository.save(employee);
 //    }
-
 }
+

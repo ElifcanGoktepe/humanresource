@@ -69,5 +69,13 @@ public class JwtManager {
         }
     }
 
+    // Token’dan userId’yi okuyan yardımcı metod:
+    public Long extractUserId(String token) {
+        DecodedJWT jwt = JWT.require(Algorithm.HMAC512(secretKey))
+                .build()
+                .verify(token);
+        return jwt.getClaim("userId").asLong();
+    }
+
 
 }

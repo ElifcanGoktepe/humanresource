@@ -4,6 +4,7 @@ import EmployeeTable from '../../components/organism/EmployeeTable';
 import type {Employee} from '../../pages/ManagerPage/Employee';
 
 
+
 const EmployeeListPanel: React.FC = () => {
     const ITEMS_PER_PAGE = 15;
     const [query, setQuery] = useState('');
@@ -13,10 +14,12 @@ const EmployeeListPanel: React.FC = () => {
     const fetchEmployees = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:9090/employee/get-all', {
+            const response = await fetch('http://localhost:9090/active-employees', {
+                method: "GET",
                 headers: {
-                    Authorization: `Bearer ${token}`
-                }
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
             });
 
             if (!response.ok) throw new Error('Failed to fetch');
