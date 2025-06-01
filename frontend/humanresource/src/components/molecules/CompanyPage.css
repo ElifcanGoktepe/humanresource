@@ -29,9 +29,9 @@ body {
 .form-box, .department-form-box {
     flex: 1 1 32%;
     padding: 14px 12px;
-    border: 1px solid #d1d3d4;
+    border: 1px solid #F2F3F4; /* Açık gri sınır */
     border-radius: 10px;
-    background: #F2F3F4; /* Hafif gri tonu */
+    background: #FEFEFA; /* Çok açık beyaz */
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
     min-width: 280px;
 }
@@ -43,47 +43,24 @@ h2, h3, h4 {
     color: #343a40;
 }
 
-/* Input alanları */
-.form-control {
-    width: 100%;
-    padding: 7px 10px;
-    margin-bottom: 8px;
-    font-size: 0.9rem;
-    border: 1px solid #adb5bd;
-    border-radius: 6px;
-    background-color: #ffffff;
-    color: #212529;
-    transition: all 0.2s ease-in-out;
-}
-
-.form-control:focus {
-    border-color: #495057;
-    outline: none;
-    box-shadow: 0 0 5px rgba(108, 117, 125, 0.3);
-}
-
-/* Butonlar */
+/* Butonlar - tüm butonlar delete tarzında olacak */
 .btn {
-    padding: 7px 14px;
-    font-size: 0.9rem;
+    padding: 6px 12px;
+    font-size: 0.85rem;
     font-weight: 600;
-    border-radius: 20px;
+    border-radius: 5px;
     cursor: pointer;
     border: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 10px rgba(108, 117, 125, 0.25);
+    transition: background-color 0.25s ease, box-shadow 0.25s ease;
+    box-shadow: 0 2px 6px rgba(156, 37, 77, 0.2);
+    background-color: #FFF0F5; /* Çok açık pembe-mor */
+    color: #9c254d;
 }
 
-.btn-primary {
-    background-color: #F5FFFA; /* Mint white */
-    color: #212529;
-    border: 1px solid #ced4da;
-}
-
-.btn-primary:hover:not(:disabled) {
-    background-color: #FFFAFA; /* Soft pink hover */
-    transform: scale(1.03);
-    box-shadow: 0 6px 14px rgba(73, 80, 87, 0.25);
+.btn:hover:not(:disabled) {
+    background-color: #F0FFFF; /* Açık cyan hover */
+    color: #6b1b36;
+    box-shadow: 0 4px 10px rgba(107, 27, 54, 0.4);
 }
 
 /* Liste başlığı */
@@ -98,14 +75,14 @@ h3 {
     padding-left: 0;
     margin-bottom: 0;
     list-style: none;
-    border: 1px solid #ced4da;
+    border: 1px solid #F2F3F4;
     border-radius: 5px;
-    background: #ffffff;
+    background: #FEFEFA;
 }
 
 .list-group-item {
     padding: 10px 15px;
-    border-bottom: 1px solid #dee2e6;
+    border-bottom: 1px solid #F0F8FF;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -155,16 +132,63 @@ h3 {
     background-color: #FFFAFA; /* Hafif pembemsi */
 }
 
+/* Sayfa arka planı */
 .page-background {
-    background-color: #f8f9fa;
+    background-color: #F0F8FF; /* Alice Blue */
     min-height: 100vh;
     padding-top: 20px;
 }
 
+/* Form kutusu */
 .form-box {
-    background-color: #ffffff;
+    background-color: #FEFEFA; /* Çok açık beyaz */
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* Department kart */
+.department-card {
+    background-color: #F5FFFA; /* Mint cream */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 12px;
+}
+
+.department-card p {
+    margin: 0.2rem 0;
+}
+
+/* Branch kart */
+.branch-card {
+    background-color: #F5FFFA; /* Mint cream */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 12px;
+}
+
+.branch-card p {
+    margin: 0.2rem 0;
+}
+
+/* Input alanları */
+.form-control {
+    width: 100%;
+    padding: 7px 10px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    border: 2px solid #c0c6ca; /* Daha koyu, belirgin sınır */
+    border-radius: 6px;
+    background-color: #FFF0F5; /* Çok hafif pembe ton */
+    color: #212529;
+    transition: all 0.2s ease-in-out;
+}
+
+.form-control:focus {
+    border-color: #00bcd4; /* Canlı cyan */
+    outline: none;
+    box-shadow: 0 0 8px rgba(0, 188, 212, 0.6); /* Daha belirgin ışık efekti */
+    background-color: #FEFEFA; /* Odakda daha açık */
+}

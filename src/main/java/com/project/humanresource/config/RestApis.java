@@ -8,13 +8,6 @@ public class RestApis {
 
 
 
-    public static final String FINDDEPARTMENTBYID = "/department/findById";
-
-    public static final String DELETEDEPARTMENTBYID = "/department/delete";
-    public static final String FINDDEPARTMENTBYCODE = "/department/findByCode";
-
-
-
     public static final String EMPLOYEE = BASE_URL + "/employee";
     public static final String EXPENSES = BASE_URL + "/expenses";
     public static final String LEAVE = BASE_URL + "/leave";
@@ -39,19 +32,11 @@ public class RestApis {
 
 
 
-    public static final String FINDCOMPANYBRANCHBYADDRESS =BASE_URL + "/companybranch/findByAddress";
-    public static final String FINDCOMPANYBRANCHBYEMAILADDRESS =BASE_URL + "/companybranch/findByEmail";
-    public static final String FINDCOMPANYBRANCHBYPHONENUMBER = BASE_URL +"/companybranch/findByPhoneNumber";
 
 
-    public static final String COMPANY = BASE_URL + "/company";
 
-    public static final String ADD_COMPANY = COMPANY + "/add";
-    public static final String GET_ALL_COMPANIES = COMPANY + "/listAll";
-    public static final String GET_COMPANY_BY_ID = COMPANY + "/findById/{id}";
-    public static final String UPDATE_COMPANY = COMPANY + "/update/{id}";
-    public static final String DELETE_COMPANY = COMPANY + "/delete/{id}";
-    public static final String SEARCH_COMPANY_BY_NAME = COMPANY + "/findByName";
-    public static final String UPDATE_COMPANY_EMAIL = COMPANY + "/updateEmail/{id}";
-    public static final String MY_COMPANY = COMPANY + "/myCompany";
+
+
+
+
 }

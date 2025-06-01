@@ -69,32 +69,7 @@ public class CompanyManagerController {
 
 
 
-    @PutMapping("/dev/v1/updateapplicationstatus/{id}")
-    @PreAuthorize("hasAuthority('Admin')")// 26/05 pazartesi 08:19 eklendi  SERKAN
-    public ResponseEntity<String> updateStatus(@PathVariable Long id, @RequestParam String status) {
-        Optional<Employee> optEmployee = employeeService.findById(id);
-        if (optEmployee.isEmpty()) return ResponseEntity.notFound().build();
 
-        Employee employee = optEmployee.get();
-
-        switch (status.toLowerCase()) {
-            case "accept":
-                employee.setApproved(true);
-                emailVerificationService.sendVerificationEmail(employee.getEmail());
-                break;
-            case "rejected":
-                employee.setApproved(false); // gerekirse ayrı rejected alanı ekleyebilirsin
-                break;
-            case "pending":
-                employee.setApproved(false);
-                break;
-            default:
-                return ResponseEntity.badRequest().body("Invalid status");
-        }
-
-        employeeService.save(employee);
-        return ResponseEntity.ok("Status updated.");
-    }
 
     @PostMapping("/dev/v1/addcomment")
     public ResponseEntity<BaseResponseShort<Boolean>> addComment(@RequestBody AddCommentDto dto, Authentication authentication) {

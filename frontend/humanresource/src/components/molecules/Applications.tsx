@@ -32,7 +32,7 @@ function Applications() {
             }
 
             const response = await axios.get<Application[]>(
-                'http://localhost:9090/dev/v1/pendingapplications',
+                'http://localhost:9090/dev/v1/admin/company/pending-applications',
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -47,7 +47,7 @@ function Applications() {
         }
     }
 
-    async function updateStatus(id: number, status: 'accept' | 'reject') {
+    async function updateStatus(id: number, status: 'accept' | 'reject' | 'pending') {
         try {
             const token = localStorage.getItem('token');
             if (!token) {
@@ -56,7 +56,7 @@ function Applications() {
             }
 
             await axios.put(
-                `http://localhost:9090/dev/v1/updateapplicationstatus/${id}?status=${status}`,
+                `http://localhost:9090/dev/v1/admin/company/update/${id}?status=${status}`,
                 {},
                 {
                     headers: {
@@ -102,7 +102,11 @@ function Applications() {
                                 <button className="btn btn-danger" onClick={() => updateStatus(app.id, 'reject')}>
                                     Reject
                                 </button>
+                                <button className="btn btn-warning" onClick={() => updateStatus(app.id, 'pending')}>
+                                    Pending
+                                </button>
                             </div>
+
                         </div>
                     ))}
                 </div>
