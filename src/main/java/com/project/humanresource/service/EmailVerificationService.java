@@ -20,7 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class EmailVerificationService {
 
-    @Value("${spring.mail.username}")
+    @Value("${app.admin.email}")
     private String fromEmail;
 
     @Value("${spring.mail.password}")
@@ -106,7 +106,7 @@ public class EmailVerificationService {
         return true;
     }
 
-    public void sendApprovalRequestToAdmin(Employee manager, String token) {
+    public void sendApprovalRequestToAdmin(String toEmail,Employee manager, String token) {
         String subject = "New Company Manager Application";
         String approvalLink =  "http://localhost:9090/approve/" + manager.getId() + "?token=" + token;
         String body =  "<p>Hello Admin,</p>" +
@@ -122,7 +122,7 @@ public class EmailVerificationService {
                 "<p><br/>Best Regards,<br/>Humin Team</p>";
 
 
-        sendSimpleEmail("elifcangoktepe@gmail.com", subject, body);
+        sendSimpleEmail(toEmail, subject, body);
     }
 
     public void sendSetPasswordEmail(String toEmail, String token, Employee employee) {

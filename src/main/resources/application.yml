@@ -25,14 +25,15 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: serkan.klcdr@gmail.com
-    password: xlclftccllcqlnav
+    username: applicoationtest.aaa@gmail.com
+    password: ihnzdeqbkengzdvb
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
+
 
   servlet:
     multipart:
@@ -61,10 +62,7 @@ app:
   upload:
     dir: uploads
     max-file-size: 5242880  # 5MB in bytes
+  admin:
+    email: applicoationtest.aaa@gmail.com
 
-
-
-  mail:
-    username: serkan.klcdr@gmail.com
-    password: xlclftccllcqlnav
 

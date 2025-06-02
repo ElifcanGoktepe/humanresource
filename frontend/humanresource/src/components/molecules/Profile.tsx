@@ -11,7 +11,7 @@ interface Comment {
 }
 
 const Profile: React.FC = () => {
-    const [comments, setComments] = useState<Comment[]>([]);
+    const [comment, setComment] = useState<Comment[]>([]);
     const [editingComment, setEditingComment] = useState<Comment | null>(null);
     const [text, setText] = useState("");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -31,9 +31,9 @@ const Profile: React.FC = () => {
             .get(`http://localhost:9090/comments`, { headers: authHeader })
             .then((res) => {
                 const data = res.data?.data || res.data;
-                setComments(Array.isArray(data) ? data : data ? [data] : []);
+                setComment(Array.isArray(data) ? data : data ? [data] : []);
             })
-            .catch(() => setComments([]))
+            .catch(() => setComment([]))
             .finally(() => setLoading(false));
     }, [token]);
 
@@ -66,7 +66,7 @@ const Profile: React.FC = () => {
         setLoading(true);
         try {
             await axios.delete(`http://localhost:9090/${id}`, { headers: authHeader });
-            setComments((prev) => prev.filter((c) => c.id !== id));
+            setComment((prev) => prev.filter((c) => c.id !== id));
             if (editingComment?.id === id) cancelEditing();
             setMessage("Comment deleted successfully.");
         } catch {
@@ -97,7 +97,7 @@ const Profile: React.FC = () => {
                     { headers: authHeader }
                 );
                 const updatedComment = res.data.data || res.data;
-                setComments((prev) =>
+                setComment((prev) =>
                     prev.map((c) => (c.id === updatedComment.id ? updatedComment : c))
                 );
                 commentId = updatedComment.id;
@@ -109,7 +109,7 @@ const Profile: React.FC = () => {
                     { headers: authHeader }
                 );
                 const newComment = res.data.data || res.data;
-                setComments((prev) => [newComment, ...prev]);
+                setComment((prev) => [newComment, ...prev]);
                 commentId = newComment.id;
             }
 
@@ -130,7 +130,7 @@ const Profile: React.FC = () => {
                 const photoUrl = uploadRes.data?.url || uploadRes.data;
                 console.log("Upload response:", uploadRes.data);
 
-                setComments((prev) =>
+                setComment((prev) =>
                     prev.map((c) =>
                         c.id === commentId ? { ...c, photoUrl } : c
                     )
@@ -150,10 +150,10 @@ const Profile: React.FC = () => {
         <div className="profile-comment-container">
             <h3>Your Comments on the Application</h3>
             {loading && <p>Loading...</p>}
-            {!loading && comments.length === 0 && <p>No comments yet.</p>}
+            {!loading && comment.length === 0 && <p>No comments yet.</p>}
 
             <ul className="comment-list">
-                {comments.map((comment, index) => (
+                {comment.map((comment, index) => (
                     <li key={comment.id ?? `comment-${index}`} className="comment-item">
 
                     <p>
