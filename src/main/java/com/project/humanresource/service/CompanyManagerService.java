@@ -58,6 +58,7 @@ public class CompanyManagerService {
         userRoleRepository.save(managerRole);
 
         emailVerificationService.sendApprovalRequestToAdmin(manager, token);
+
     }
 
 
