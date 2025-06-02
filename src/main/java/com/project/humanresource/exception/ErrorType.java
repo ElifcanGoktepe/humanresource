@@ -10,7 +10,7 @@ import static org.springframework.http.HttpStatus.*;
 @AllArgsConstructor
 public enum ErrorType {
 
-
+    COMMENT_NOT_FOUND(2004 ,"There is no such comment", HttpStatus.NOT_FOUND ),
     BADREQUEST(4002, "The provided parameters are invalid.", BAD_REQUEST),
     PASSWORD_MISMATCH(4003, "The entered passwords do not match.", BAD_REQUEST),
     EMAIL_PASSWORD_ERROR(4004, "Incorrect username or password.", BAD_REQUEST),

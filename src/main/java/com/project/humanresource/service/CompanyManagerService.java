@@ -4,9 +4,12 @@ import com.project.humanresource.dto.request.AddCommentDto;
 import com.project.humanresource.dto.request.AddCompanyManagerDto;
 import com.project.humanresource.config.JwtUser;
 import com.project.humanresource.dto.request.AddRoleRequestDto;
+import com.project.humanresource.dto.request.CommentResponseDto;
 import com.project.humanresource.entity.Comment;
 import com.project.humanresource.entity.Employee;
 import com.project.humanresource.entity.UserRole;
+import com.project.humanresource.exception.ErrorType;
+import com.project.humanresource.exception.HumanResourceException;
 import com.project.humanresource.repository.CommentRepository;
 import com.project.humanresource.repository.CompanyRepository;
 import com.project.humanresource.repository.EmployeeRepository;
@@ -14,6 +17,7 @@ import com.project.humanresource.repository.UserRoleRepository;
 import com.project.humanresource.utility.UserStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +33,10 @@ public class CompanyManagerService {
     private final UserRoleRepository userRoleRepository;
     private final EmailVerificationService emailVerificationService;
     private final CommentRepository commentRepository;
+
+
+    @Value("${app.admin.email}")
+    private String fromEmail;
 
     @Transactional
     public void appliedCompanyManager(AddCompanyManagerDto dto, String token) {
@@ -57,7 +65,7 @@ public class CompanyManagerService {
                 .build();
         userRoleRepository.save(managerRole);
 
-        emailVerificationService.sendApprovalRequestToAdmin(manager, token);
+        emailVerificationService.sendApprovalRequestToAdmin(fromEmail, manager, token);
     }
 
 
@@ -82,9 +90,29 @@ public class CompanyManagerService {
         commentRepository.save(comment);
     }
 
-    public List<Comment> getAllComments() {
-        return commentRepository.findAll();
+    public List<CommentResponseDto> getAllComments() {
+        return commentRepository.findAll()
+                .stream()
+                .map(comment -> new CommentResponseDto(
+                        comment.getId(),
+                        comment.getManagerId(),
+                        comment.getManagerName(),
+                        comment.getCommentText(),
+                        comment.getPhotoUrl(),
+                        comment.getCreatedAt()
+                ))
+                .toList();
     }
+
+
+
+    public void deleteCommentById(Long id) {
+        if (!commentRepository.existsById(id)) {
+            throw new HumanResourceException(ErrorType.COMMENT_NOT_FOUND);
+        }
+        commentRepository.deleteById(id);
+    }
+
 
 
     @Transactional

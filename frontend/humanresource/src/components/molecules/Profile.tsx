@@ -1,50 +1,82 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "./Profile.css";
+import './Profile.css';
 
 interface Comment {
     id: number;
     commentText: string;
     photoUrl?: string | null;
     managerName: string;
-    createdAt: string;
+
 }
 
 const Profile: React.FC = () => {
-    const [comment, setComment] = useState<Comment | null>(null);
+    const [comments, setComments] = useState<Comment[]>([]);
+    const [editingComment, setEditingComment] = useState<Comment | null>(null);
     const [text, setText] = useState("");
-    const [photoUrl, setPhotoUrl] = useState("");
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
 
     const token = localStorage.getItem("token");
     const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
 
+
     useEffect(() => {
         if (!token) return;
 
         setLoading(true);
-        axios.get(`http://localhost:9090/comments`, { headers: authHeader })
-            .then(res => {
-                if (res.data && res.data.data) {
-                    setComment(res.data.data);
-                    setText(res.data.data.commentText || "");
-                    setPhotoUrl(res.data.data.photoUrl || "");
-                } else if (res.data) {
-                    setComment(res.data);
-                    setText(res.data.commentText || "");
-                    setPhotoUrl(res.data.photoUrl || "");
-                }
-                setLoading(false);
+        axios
+            .get(`http://localhost:9090/comments`, { headers: authHeader })
+            .then((res) => {
+                const data = res.data?.data || res.data;
+                setComments(Array.isArray(data) ? data : data ? [data] : []);
             })
-            .catch(() => {
-                setLoading(false);
-                setComment(null);
-            });
-
+            .catch(() => setComments([]))
+            .finally(() => setLoading(false));
     }, [token]);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setSelectedFile(file);
+            setPreviewUrl(URL.createObjectURL(file));
+        }
+    };
+
+    const startEditing = (comment: Comment) => {
+        setEditingComment(comment);
+        setText(comment.commentText);
+        setPreviewUrl(comment.photoUrl || null);
+        setSelectedFile(null);
+        setMessage("");
+    };
+
+    const cancelEditing = () => {
+        setEditingComment(null);
+        setText("");
+        setSelectedFile(null);
+        setPreviewUrl(null);
+        setMessage("");
+    };
+
+    const handleDelete = async (id: number) => {
+        if (!window.confirm("Are you sure you want to delete this comment?")) return;
+        setLoading(true);
+        try {
+            await axios.delete(`http://localhost:9090/${id}`, { headers: authHeader });
+            setComments((prev) => prev.filter((c) => c.id !== id));
+            if (editingComment?.id === id) cancelEditing();
+            setMessage("Comment deleted successfully.");
+        } catch {
+            setMessage("Failed to delete comment.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!text.trim()) {
@@ -53,74 +85,137 @@ const Profile: React.FC = () => {
         }
 
         setLoading(true);
-        const payload = {
-            commentText: text.trim(),
-            photoUrl: photoUrl.trim() === "" ? null : photoUrl.trim(),
-        };
+        setMessage("");
+        let commentId: number | undefined;
 
-        if (comment && comment.id) {
-            // Güncelleme (PUT) sadece id varsa yapılacak
-            axios.put(`http://localhost:9090/comment/${comment.id}`, payload, { headers: authHeader })
-                .then(res => {
-                    setComment(res.data.data || res.data); // backend'in data sarmalayıcı varsa
-                    setMessage("Comment updated successfully.");
-                    setLoading(false);
-                })
-                .catch(() => {
-                    setMessage("Error updating comment.");
-                    setLoading(false);
-                });
-        } else {
-            // Yeni yorum (POST)
-            axios.post(`http://localhost:9090/dev/v1/addcomment`, payload, { headers: authHeader })
-                .then(res => {
-                    setComment(res.data.data || res.data);
-                    setMessage("Comment added successfully.");
-                    setLoading(false);
-                })
-                .catch(() => {
-                    setMessage("Error adding comment.");
-                    setLoading(false);
-                });
+        try {
+            if (editingComment) {
+                const payload = { commentText: text.trim() };
+                const res = await axios.put(
+                    `http://localhost:9090/comment/${editingComment.id}`,
+                    payload,
+                    { headers: authHeader }
+                );
+                const updatedComment = res.data.data || res.data;
+                setComments((prev) =>
+                    prev.map((c) => (c.id === updatedComment.id ? updatedComment : c))
+                );
+                commentId = updatedComment.id;
+            } else {
+                const payload = { commentText: text.trim(), photoUrl: null };
+                const res = await axios.post(
+                    `http://localhost:9090/dev/v1/addcomment`,
+                    payload,
+                    { headers: authHeader }
+                );
+                const newComment = res.data.data || res.data;
+                setComments((prev) => [newComment, ...prev]);
+                commentId = newComment.id;
+            }
+
+            if (selectedFile && commentId) {
+                const formData = new FormData();
+                formData.append("file", selectedFile);
+
+                const uploadRes = await axios.post(
+                    `http://localhost:9090/${commentId}/upload-profile`,
+                    formData,
+                    {
+                        headers: {
+                            ...authHeader,
+                            "Content-Type": "multipart/form-data",
+                        },
+                    }
+                );
+                const photoUrl = uploadRes.data?.url || uploadRes.data;
+                console.log("Upload response:", uploadRes.data);
+
+                setComments((prev) =>
+                    prev.map((c) =>
+                        c.id === commentId ? { ...c, photoUrl } : c
+                    )
+                );
+            }
+
+            setMessage(editingComment ? "Comment updated successfully." : "Comment added successfully.");
+            cancelEditing();
+        } catch {
+            setMessage("Error saving comment or uploading photo.");
+        } finally {
+            setLoading(false);
         }
     };
 
-
     return (
         <div className="profile-comment-container">
-            <h3>Your Comment on the Application</h3>
+            <h3>Your Comments on the Application</h3>
             {loading && <p>Loading...</p>}
+            {!loading && comments.length === 0 && <p>No comments yet.</p>}
+
+            <ul className="comment-list">
+                {comments.map((comment, index) => (
+                    <li key={comment.id ?? `comment-${index}`} className="comment-item">
+
+                    <p>
+                            <strong>{comment.managerName}</strong> -{" "}
+
+                        </p>
+                        <p>{comment.commentText}</p>
+                        {comment.photoUrl && (
+                            <img
+                                src={comment.photoUrl}
+                                alt="Comment"
+                                style={{ maxWidth: "100px", maxHeight: "100px", borderRadius: "6px" }}
+                            />
+                        )}
+                        <button onClick={() => startEditing(comment)} className="edit-button">
+                            Düzenle
+                        </button>
+                        <button
+                            onClick={() => handleDelete(comment.id)}
+                            className="delete-button"
+                            style={{ marginLeft: "10px", color: "red" }}
+                        >
+                            Sil
+                        </button>
+                    </li>
+                ))}
+            </ul>
 
             <form onSubmit={handleSubmit} className="profile-comment-form">
-                <div>
-                    <textarea
-                        placeholder="Write your comment here..."
-                        value={text}
-                        onChange={(e) => setText(e.target.value)}
-                        rows={4}
-                    />
-                </div>
-                <div>
-                    <input
-                        type="text"
-                        placeholder="Photo URL (optional)"
-                        value={photoUrl}
-                        onChange={(e) => setPhotoUrl(e.target.value)}
-                    />
-                </div>
-                <button type="submit" disabled={loading}>
-                    {comment ? "Update Comment" : "Add Comment"}
+                <textarea
+                    placeholder="Write your comment here..."
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                    rows={4}
+                />
+                <label className="custom-file-upload" style={{ marginLeft: "15px", marginRight: "15px" }}>
+                    <input type="file" accept="image/*" onChange={handleFileChange} />
+                    Dosya Seç
+                </label>
+                <button type="submit" disabled={loading} style={{ marginLeft: "15px" }}>
+                    {editingComment ? "Update Comment" : "Add Comment"}
                 </button>
+                {editingComment && (
+                    <button
+                        type="button"
+                        onClick={cancelEditing}
+                        className="cancel-button"
+                        style={{ marginLeft: "10px" }}
+                    >
+                        İptal
+                    </button>
+                )}
             </form>
 
             {message && <p className="profile-message">{message}</p>}
 
-            {comment && comment.photoUrl && (
+            {previewUrl && (
                 <div className="profile-photo-preview">
                     <h4>Photo Preview:</h4>
                     <img
-                        src={comment.photoUrl}
-                        alt="Manager or Company Logo"
+                        src={previewUrl}
+                        alt="Preview"
                         style={{ maxWidth: "150px", maxHeight: "150px", borderRadius: "8px" }}
                     />
                 </div>

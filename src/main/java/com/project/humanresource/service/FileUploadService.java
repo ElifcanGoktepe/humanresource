@@ -34,10 +34,13 @@ public class FileUploadService {
     /**
      * Profil fotoğrafı yükleme
      */
-    public String uploadProfileImage(MultipartFile file, Long employeeId) {
+    public String uploadProfileImage(MultipartFile file, Long employeeId, String oldImageUrl) {
         validateFile(file);
-        
+
         try {
+            // Önce eski dosyayı sil
+            deleteProfileImage(oldImageUrl);
+
             // Upload dizinini oluştur
             Path uploadPath = Paths.get(uploadDir, "profile-images");
             if (!Files.exists(uploadPath)) {
@@ -47,19 +50,20 @@ public class FileUploadService {
             // Dosya adını oluştur
             String originalFilename = file.getOriginalFilename();
             String fileExtension = getFileExtension(originalFilename);
-            String fileName = "profile_" + employeeId + "_" + UUID.randomUUID().toString() + "." + fileExtension;
-            
+            String fileName = "profile_" + employeeId + "_" + UUID.randomUUID() + "." + fileExtension;
+
             // Dosyayı kaydet
             Path filePath = uploadPath.resolve(fileName);
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-            
+
             // URL'i döndür
             return "/uploads/profile-images/" + fileName;
-            
+
         } catch (IOException e) {
             throw new HumanResourceException(ErrorType.FILE_UPLOAD_ERROR);
         }
     }
+
 
     /**
      * Dosya validasyonu
