@@ -191,4 +191,30 @@ public class EmailVerificationService {
     public Optional<EmailVerification> findByToken(String token) {
         return repository.findByToken(token);
     }
+
+    public void sendPendingNotificationEmailWithForm(String toEmail, Employee employee) {
+        String subject = "Complete Your Company Application & Select Membership";
+
+        String formLink = "http://localhost:3000/company-form?employeeId=" + employee.getId();  // Frontend linki
+        String body = "<p>Dear " + employee.getFirstName() + ",</p>" +
+                "<p>Your application is under review. To continue, please complete the following steps:</p>" +
+                "<ol>" +
+                "<li><strong>Fill out your company information:</strong> Click the link below to open the form.</li>" +
+                "<li><strong>Select your membership plan:</strong> Choose one of the available subscription packages.</li>" +
+                "</ol>" +
+                "<p><a href=\"" + formLink + "\" style=\"display:inline-block; padding:10px 20px; background-color:#1976D2; color:white; text-decoration:none; border-radius:5px;\">Complete Company Form</a></p>" +
+                "<br/>" +
+                "<h4>Available Membership Plans:</h4>" +
+                "<ul>" +
+                "<li><b>Free Plan:</b> Basic features, limited team members, no priority support.</li>" +
+                "<li><b>Standard Plan:</b> Extended features, up to 10 users, standard support.</li>" +
+                "<li><b>Premium Plan:</b> All features, unlimited users, priority support, analytics tools.</li>" +
+                "</ul>" +
+                "<p>You can select your plan directly in the form.</p>" +
+                "<p><br/>Best regards,<br/>Humin Team</p>";
+
+
+        sendSimpleEmail(toEmail, subject, body);
+    }
+
 }
