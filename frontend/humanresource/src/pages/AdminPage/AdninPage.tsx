@@ -1,3 +1,4 @@
+
 import CompanyArea from "../../components/molecules/CompanyArea.tsx";
 import BranchArea from "../../components/molecules/BranchArea.tsx";
 import DepartmentArea from "../../components/molecules/DepartmentArea..tsx";

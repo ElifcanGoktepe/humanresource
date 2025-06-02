@@ -1,3 +1,4 @@
+
 package com.project.humanresource.entity;
 
 import jakarta.persistence.Entity;

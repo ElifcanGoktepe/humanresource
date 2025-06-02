@@ -4,6 +4,7 @@ import './UserStoriesRevisionForPage.css';
 interface Props {
     username: string;
     commentText: string;
+
     photoUrl?: string | null;
 }
 
@@ -19,10 +20,11 @@ function UserStoriesRevisionForPage({ username, commentText, photoUrl }: Props) 
         <div className={`story-row ${isVisible ? 'visible' : ''}`}>
             <div className="story-profile">
                 <img
-                    src={photoUrl || "/img/AdminProfilePhoto.png"}
-                    alt={username}
+                    src={photoUrl && photoUrl.startsWith("http") ? photoUrl : "/img/employee.png"}
+                    alt={username || "User"}
                     className="story-image"
                 />
+
             </div>
             <div className="story-comment">
                 <h4 className="story-username">{username}</h4>

@@ -1,3 +1,4 @@
+
 server:
   port: 9090
   error:
@@ -22,17 +23,19 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
+
   mail:
     host: smtp.gmail.com
     port: 587
-    username: elifcangoktepe@gmail.com
-    password: jynohncfzxegpmrz
+    username: applicoationtest.aaa@gmail.com
+    password: ihnzdeqbkengzdvb
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
+
 
   servlet:
     multipart:
@@ -61,10 +64,7 @@ app:
   upload:
     dir: uploads
     max-file-size: 5242880  # 5MB in bytes
+  admin:
+    email: applicoationtest.aaa@gmail.com
 
-
-
-  mail:
-    username: elifcangoktepe@gmail.com
-    password: jynohncfzxegpmrz
 

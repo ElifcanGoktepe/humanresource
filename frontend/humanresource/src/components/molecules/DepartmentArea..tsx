@@ -23,6 +23,7 @@ interface Company {
     companyPhoneNumber: string;
     companyAddress: string;
     companyEmail: string;
+
     branches: Branch[];
 }
 

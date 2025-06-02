@@ -25,6 +25,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -136,14 +138,22 @@ public class CompanyManagerController {
         Employee employee = employeeService.findById(id)
                 .orElseThrow(() -> new HumanResourceException(ErrorType.EMPLOYEE_NOT_FOUND));
 
-        // Yeni resmi yükle, eskiyi de aynı anda sil
-        String imageUrl = fileUploadService.uploadProfileImage(file, id, employee.getProfileImageUrl());
+        // Eski resmi silip yeniyi yükle
+        String imageRelativeUrl = fileUploadService.uploadProfileImage(file, id, employee.getProfileImageUrl());
 
-        employee.setProfileImageUrl(imageUrl);
+        // Tam URL'yi oluştur
+        String fullUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path(imageRelativeUrl)
+                .toUriString();
+
+        // Veritabanına relative path kaydedebilirsin
+        employee.setProfileImageUrl(imageRelativeUrl);
         employeeService.save(employee);
 
-        return ResponseEntity.ok(Map.of("url", imageUrl));
+        // Frontend'e tam URL gönder
+        return ResponseEntity.ok(Map.of("url", fullUrl));
     }
+
 
 
 }
