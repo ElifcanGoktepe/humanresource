@@ -26,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.project.humanresource.config.RestApis.CREATEUSER;
 import static com.project.humanresource.config.RestApis.LOGIN;
@@ -65,15 +64,22 @@ public class UserController {
      */
     @PostMapping(LOGIN)
     public ResponseEntity<BaseResponseShort<String>> login(@RequestBody @Valid LoginRequestDto dto) {
-        Optional<Employee> employeeOpt = userService.findByEmailPassword(dto);
-        if (employeeOpt.isEmpty()) {
+        Optional<Employee> optionalEmployee = userService.findByEmailPassword(dto);
+        System.out.println("optionalEmployee present? " + optionalEmployee.isPresent());
+        if (optionalEmployee.isEmpty()) {
+            System.out.println("DEBUG - User not found, throwing exception");
             throw new HumanResourceException(ErrorType.EMAIL_PASSWORD_ERROR);
         }
-        Employee employee = employeeOpt.get();
+
+        Employee employee = optionalEmployee.get();
+
+        // Roller çekiliyor
         List<UserRole> userRoles = userRoleService.findAllRole(employee.getId());
         List<String> roles = userRoles.stream()
-                                      .map(role -> role.getUserStatus().name())
-                                      .collect(Collectors.toList());
+                .map(role -> role.getUserStatus().name())
+                .toList();
+
+        // Token oluştur
         String token = jwtManager.createToken(
                 employee.getEmail(),
                 employee.getId(),
@@ -83,6 +89,7 @@ public class UserController {
                 employee.getTitleName(),
                 employee.getCompanyName()
         );
+
         return ResponseEntity.ok(BaseResponseShort.<String>builder()
                 .code(200)
                 .data(token)
@@ -96,9 +103,11 @@ public class UserController {
     @GetMapping("/by-email")
     public ResponseEntity<BaseResponse<User>> getUserByEmail(@RequestParam LoginRequestDto loginRequestDto) {
         User user = userService.findByEmail(loginRequestDto.email()).orElse(null);
+
         if (user == null) {
             return ResponseEntity.ok(new BaseResponse<>(false, "User not found", null));
         }
+
         return ResponseEntity.ok(new BaseResponse<>(true, "User found", user));
     }
 

@@ -49,7 +49,7 @@ public class UserService {
     private final EmployeeRepository employeeRepository;
     private final UserRoleService userRoleService;
 
-    public Optional<User> findByEmailAndPassword(String email, String password) {
+    public Optional<User> findByEmailAndPassword(String email  ,String password) {
         return userRepository.findOptionalByEmailAndPassword(email, password);
     }
 
@@ -79,11 +79,13 @@ public class UserService {
                 );
             }
 
+            // Existing Admin creation logic
             Employee admin = Employee.builder()
-                    .email(dto.email())
+                    .email(dto.email()) // ya da email
                     .password(dto.password())
                     .firstName(dto.firstName())
                     .lastName(dto.lastName())
+                    .userRole(UserStatus.Admin)
                     .isActive(true)
                     .isApproved(true)
                     .isActivated(true)
@@ -106,6 +108,7 @@ public class UserService {
                     .titleId(dto.titleId())
                     .personalFiledId(dto.personalFiledId())
                     .managerId(managerId)
+                    .userRole(dto.role())
                     .build();
 
             Employee savedEmployee = employeeRepository.save(employee);
@@ -122,10 +125,6 @@ public class UserService {
 
     public Optional<Employee> findByEmailPassword(@Valid LoginRequestDto dto) {
         return employeeRepository.findOptionalByEmailAndPassword(dto.email(), dto.password());
-    }
-
-    public Optional<Employee> findEmployeeByEmail(@Email @NotEmpty @NotNull String email) {
-        return employeeRepository.findByEmail(email);
     }
 
     public Optional<User> findByEmail(@Email @NotEmpty @NotNull String email) {
@@ -166,7 +165,8 @@ public class UserService {
                 throw new HumanResourceException(ErrorType.EMAIL_ALREADY_EXISTS);
             }
             employee.setEmail(dto.email());
-            employee.setActivated(false);
+            // Consider email re-verification logic here in a real-world scenario
+            // For example, set employee.setIsActivated(false) and trigger verification email
         }
         
         return employeeRepository.save(employee);
@@ -181,12 +181,12 @@ public class UserService {
 
         // Verify current password (plain text comparison)
         if (!employee.getPassword().equals(dto.currentPassword())) {
-            throw new HumanResourceException(ErrorType.PASSWORD_MISMATCH, "Invalid current password.");
+            throw new HumanResourceException(ErrorType.PASSWORD_MISMATCH);
         }
         
         // Verify new password confirmation
         if (!dto.newPassword().equals(dto.confirmPassword())) {
-            throw new HumanResourceException(ErrorType.PASSWORD_MISMATCH, "New passwords do not match.");
+            throw new HumanResourceException(ErrorType.PASSWORD_MISMATCH);
         }
         
         // Update password (plain text)

@@ -34,16 +34,7 @@ public class UserRoleService {
         return userRoleRepository.save(userRole);
     }
 
-    public void save(UserStatus userStatus, Long userId) {
-        if (userStatus == null || userId == null) {
-            // Or throw an IllegalArgumentException
-            System.err.println("UserStatus or UserId cannot be null when saving UserRole.");
-            return;
-        }
-        UserRole userRole = UserRole.builder()
-                .userStatus(userStatus)
-                .userId(userId)
-                .build();
-        userRoleRepository.save(userRole);
+    public void save(UserStatus userStatus, Long id) {
+
     }
 }

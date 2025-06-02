@@ -3,28 +3,29 @@ package com.project.humanresource.entity;
 import com.project.humanresource.utility.UserStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import lombok.EqualsAndHashCode;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @SuperBuilder(toBuilder = true)
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode(callSuper = true)
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "tbl_user") // 26/05 güncellendi serkan 09:40
-public abstract class User extends BaseEntity {
-    @Column(name="email" ,unique = true, nullable = false)
+public abstract class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name="email" ,unique = true, nullable = false) // 26/05 13:34 eklendi serkan kılıçdere
     private String email;
-    @Column(name = "password")
+@Column(name = "password")
     private String password;
-    // @Enumerated(EnumType.STRING) // Removed as UserRole entity is the source of truth
-    // UserStatus userRole; // Removed as UserRole entity is the source of truth
+
+
+    @Enumerated(EnumType.STRING)
+     UserStatus userRole;
 }
