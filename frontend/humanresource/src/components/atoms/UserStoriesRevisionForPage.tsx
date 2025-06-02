@@ -4,6 +4,7 @@ import './UserStoriesRevisionForPage.css';
 interface Props {
     username: string;
     commentText: string;
+
     photoUrl?: string | null;
 }
 

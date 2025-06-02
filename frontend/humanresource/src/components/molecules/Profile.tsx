@@ -10,6 +10,7 @@ interface Comment {
 
 }
 
+
 const Profile: React.FC = () => {
     const [comment, setComment] = useState<Comment[]>([]);
     const [editingComment, setEditingComment] = useState<Comment | null>(null);

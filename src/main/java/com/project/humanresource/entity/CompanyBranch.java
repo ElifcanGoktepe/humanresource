@@ -1,3 +1,4 @@
+
 package com.project.humanresource.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;

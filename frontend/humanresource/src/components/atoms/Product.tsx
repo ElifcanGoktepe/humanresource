@@ -2,6 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './Product.css';
 import {useEffect, useRef, useState} from "react";
 
+
 function Product(){
 
     const titleRef = useRef(null);
