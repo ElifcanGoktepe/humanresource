@@ -47,11 +47,21 @@ public class EmailVerificationService {
         verification.setEmployeeId(employee.getId());
         repository.save(verification);
 
+        String verifyLink = "http://localhost:9090/api/verify?token=" + token;
         String subject = "Email Verification";
-        String body = "Hello " + employee.getFirstName() + ",\n\n" +
-                "Click the link below to verify your email:\n" +
-                "http://localhost:9090/api/verify?token=" + token + "\n\n" +
-                "Best Regards,\nHumin Team";
+        String body = "<p>Hello " + employee.getFirstName() + ",</p>" +
+                "<p>Click the button below to verify your email:</p>" +
+                "<a href=\"" + verifyLink + "\" style=\"" +
+                "display: inline-block;" +
+                "padding: 10px 20px;" +
+                "background-color: #00796B;" +
+                "color: white;" +
+                "text-decoration: none;" +
+                "border-radius: 5px;" +
+                "font-weight: bold;" +
+                "margin-top: 10px;\">" +
+                "Verify Email</a>" +
+                "<p style=\"margin-top: 20px;\">Best Regards,<br>Humin Team</p>";
 
         sendSimpleEmail(toEmail, subject, body);
     }
@@ -96,30 +106,40 @@ public class EmailVerificationService {
         return true;
     }
 
-    public void sendApprovalRequestToAdmin(Employee manager) {
+    public void sendApprovalRequestToAdmin(Employee manager, String token) {
         String subject = "New Company Manager Application";
-        String approvalLink = "http://localhost:9090/approve/" + manager.getId();
-        String body = "Hello Admin,\n\n" +
-                "There is a new company application:\n\n" +
-                "Name: " + manager.getFirstName() + " " + manager.getLastName() + "\n" +
-                "Email: " + manager.getEmail() + "\n\n" +
-                "Company: " + manager.getCompanyName() + "\n" +
-                "Title : CEO\n\n" +
-                "Click to approve:\n" + approvalLink + "\n\n" +
-                "Best Regards,\nHumin Team";
+        String approvalLink =  "http://localhost:9090/approve/" + manager.getId() + "?token=" + token;
+        String body =  "<p>Hello Admin,</p>" +
+                "<p>There is a new company manager application:</p>" +
+                "<ul>" +
+                "<li><strong>Name:</strong> " + manager.getFirstName() + " " + manager.getLastName() + "</li>" +
+                "<li><strong>Email:</strong> " + manager.getEmail() + "</li>" +
+                "<li><strong>Company:</strong> " + manager.getCompanyName() + "</li>" +
+                "<li><strong>Title:</strong> CEO</li>" +
+                "</ul>" +
+                "<p>Click the button below to approve:</p>" +
+                "<a href=\"" + approvalLink + "\" style=\"display:inline-block; padding:10px 20px; background-color:#00796B; color:white; text-decoration:none; border-radius:5px;\">Approve</a>" +
+                "<p><br/>Best Regards,<br/>Humin Team</p>";
 
 
-        sendSimpleEmail("serkan.klcdr@gmail.com", subject, body);
+        sendSimpleEmail("elifcangoktepe@gmail.com", subject, body);
     }
 
     public void sendSetPasswordEmail(String toEmail, String token, Employee employee) {
         String subject = "Create Password";
         String link = "http://localhost:5173/create-password?token=" + token;
-        String body = "Hello " + employee.getFirstName() + ",\n\n" +
-                "Click the link below to set your password:\n" +
-                link + "\n\n" +
-                "Best Regards,\nHumin Team";
-
+        String body =  "<p>Hello " + employee.getFirstName() + ",</p>" +
+                "<p>Click the button below to set your password:</p>" +
+                "<a href=\"" + link + "\" style=\"" +
+                "display: inline-block;" +
+                "padding: 10px 20px;" +
+                "background-color: #00796B;" +
+                "color: white;" +
+                "text-decoration: none;" +
+                "border-radius: 5px;" +
+                "font-weight: bold;\">" +
+                "Set Password</a>" +
+                "<p style=\"margin-top: 20px;\">Best Regards,<br>Humin Team</p>";
         sendSimpleEmail(toEmail, subject, body);
     }
 

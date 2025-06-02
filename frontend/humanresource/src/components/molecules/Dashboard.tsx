@@ -24,16 +24,17 @@ function Dashboard() {
     const [titleName, setTitleName] = useState("");
     const [companyName, setCompanyName] = useState("");
 
+
+    const token = localStorage.getItem("token");
+    const payload = token ? parseJwt(token) : null;
+    const managerId = payload?.userId;
+
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            const payload = parseJwt(token);
-            if (payload) {
-                setManagerFirstName(payload.firstName || "");
-                setManagerLastName(payload.lastName || "");
-                setTitleName(payload.titleName || "");
-                setCompanyName(payload.companyName || "");
-            }
+        if (payload) {
+            setManagerFirstName(payload.firstName || "");
+            setManagerLastName(payload.lastName || "");
+            setTitleName(payload.titleName || "");
+            setCompanyName(payload.companyName || "");
         }
     }, []);
 
@@ -44,6 +45,7 @@ function Dashboard() {
         phoneNumber: string;
         companyName: string;
         titleName: string;
+        managerId: number;
     }) => {
         const token = localStorage.getItem("token");
         console.log("Token:", token);
@@ -261,13 +263,18 @@ function Dashboard() {
                 <AddEmployeeModal
                     onClose={() => setShowModal(false)}
                     onSubmit={(formData) => {
+                        if (!managerId) {
+                            alert("Manager ID not found.");
+                            return;
+                        }
                         const adaptedData = {
                             firstName: formData.firstName,
                             lastName: formData.lastName,
                             email: formData.email,          // burada uyarlıyoruz
                             phoneNumber: formData.phoneNumber,    // burada da
                             companyName: formData.companyName,
-                            titleName: formData.titleName
+                            titleName: formData.titleName,
+                            managerId: managerId
                         };
                         handleAddEmployee(adaptedData);
                         setShowModal(false);

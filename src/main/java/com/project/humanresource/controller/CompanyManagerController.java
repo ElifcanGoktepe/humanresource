@@ -11,6 +11,7 @@ import com.project.humanresource.service.CompanyManagerService;
 import com.project.humanresource.service.EmailVerificationService;
 import com.project.humanresource.service.EmployeeService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,8 +41,9 @@ public class CompanyManagerController {
 
     // başvuruyu employee tablosuna manager olarak kaydeder, isActivated = false, isApproved = false
     @PostMapping(REGISTER)
-    public ResponseEntity<BaseResponseShort<Boolean>> appliedCompanyManager(@RequestBody AddCompanyManagerDto dto) {
-        companyManagerService.appliedCompanyManager(dto);
+    public ResponseEntity<BaseResponseShort<Boolean>> appliedCompanyManager(@RequestBody AddCompanyManagerDto dto, HttpServletRequest request) {
+        String token = extractTokenFromRequest(request);
+        companyManagerService.appliedCompanyManager(dto, token);
         return ResponseEntity.ok(BaseResponseShort.<Boolean>builder()
                         .code(200)
                         .message("Company manager applied")
@@ -108,7 +110,13 @@ public class CompanyManagerController {
         return ResponseEntity.ok(updatedComment);
     }
 
-
+    public String extractTokenFromRequest(HttpServletRequest request) {
+        String header = request.getHeader("Authorization");
+        if (header != null && header.startsWith("Bearer ")) {
+            return header.substring(7);
+        }
+        return null;
+    }
 
 }
 
