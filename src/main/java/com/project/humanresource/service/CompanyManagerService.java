@@ -35,8 +35,7 @@ public class CompanyManagerService {
     private final CommentRepository commentRepository;
 
 
-    @Value("${app.admin.email}")
-    private String fromEmail;
+
 
     @Transactional
     public void appliedCompanyManager(AddCompanyManagerDto dto, String token) {
@@ -65,7 +64,7 @@ public class CompanyManagerService {
                 .build();
         userRoleRepository.save(managerRole);
 
-        emailVerificationService.sendApprovalRequestToAdmin(fromEmail, manager, token);
+        emailVerificationService.sendApprovalRequestToAdmin(manager, token);
     }
 
 
