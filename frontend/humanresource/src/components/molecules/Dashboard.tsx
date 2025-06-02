@@ -4,6 +4,7 @@ import './Dashboard.css';
 import { useEffect, useState } from "react";
 import axios from "axios";
 import AddEmployeeModal from "../../components/organism/AddEmployeeModal.tsx";
+import AssignLeavePanel from "../../components/atoms/AssignLeavePanel";
 
 function Dashboard() {
     function parseJwt(token: string) {
@@ -19,7 +20,7 @@ function Dashboard() {
         }
     }
 
-    const [employeeList, setEmployeeList] = useState<string[]>([]);
+    const [employeeList, setEmployeeList] = useState<{ fullName: string; title: string }[]>([]);
     const [managerFirstName, setManagerFirstName] = useState("");
     const [managerLastName, setManagerLastName] = useState("");
     const [titleName, setTitleName] = useState("");
@@ -46,7 +47,6 @@ function Dashboard() {
         phoneNumber: string;
         companyName: string;
         titleName: string;
-        managerId: number;
     }) => {
         const token = localStorage.getItem("token");
         console.log("Token:", token);
@@ -60,7 +60,10 @@ function Dashboard() {
 
             alert(response.data.message);
             // Yeni eklenen çalışanı listeye ekle
-            setEmployeeList(prev => [...prev, `${employeeData.firstName} ${employeeData.lastName}`]);
+            setEmployeeList(prev => [...prev, {
+                fullName: `${employeeData.firstName} ${employeeData.lastName}`,
+                title: employeeData.titleName
+            }]);
         } catch (error) {
             console.error("Error adding employee:", error);
             alert("Failed to add employee.");
@@ -195,6 +198,9 @@ function Dashboard() {
                             </ul>
                         )}
                     </div>
+                    <div className="col-md-3 box-dashboard">
+                        <AssignLeavePanel />
+                    </div>
                 </div>
 
 
@@ -241,7 +247,9 @@ function Dashboard() {
                                     {employeeList.length === 0 ? (
                                         <p>No employees yet.</p>
                                     ) : (
-                                        employeeList.map((name, index) => <p key={index}>{name}</p>)
+                                        employeeList.map((emp, index) => (
+                                            <p key={index}>{emp.fullName} - {emp.title}</p>
+                                        ))
                                     )}
                                 </div>
                             </div>
@@ -275,7 +283,6 @@ function Dashboard() {
                             phoneNumber: formData.phoneNumber,    // burada da
                             companyName: formData.companyName,
                             titleName: formData.titleName,
-                            managerId: managerId
                         };
                         handleAddEmployee(adaptedData);
                         setShowModal(false);

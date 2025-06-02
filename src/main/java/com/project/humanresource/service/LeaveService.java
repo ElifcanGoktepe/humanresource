@@ -1,6 +1,8 @@
 package com.project.humanresource.service;
 
+import com.project.humanresource.config.JwtManager;
 import com.project.humanresource.dto.request.LeaveRequestDto;
+import com.project.humanresource.entity.Employee;
 import com.project.humanresource.entity.Leave;
 import com.project.humanresource.repository.EmployeeRepository;
 import com.project.humanresource.repository.LeaveRepository;
@@ -10,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,16 +22,19 @@ public class LeaveService {
     private final HttpServletRequest request;
     private final EmployeeRepository employeeRepository;
     private final EmployeeService employeeService;
+    private final JwtManager jwtManager;
 
     public Leave createLeave(LeaveRequestDto dto) {
-        if (dto.startDate().isAfter(dto.endDate())) {
-            throw new IllegalArgumentException("Start date cannot be after end date.");
+        Long userId = jwtManager.extractUserIdFromToken(request); // ✅ token’dan çek
+
+        if (userId == null) {
+            throw new IllegalStateException("User ID not found in token.");
         }
 
-        // ✅ JwtTokenFilter tarafından set edilen userId burada alınır
-        Long userId = (Long) request.getAttribute("userId");
-        if (userId == null) {
-            throw new IllegalStateException("User ID not found in request.");
+        Long assigned = leaveRepository.getAssignedLeaveDays(userId);
+
+        if (assigned == null || assigned == 0) {
+            throw new IllegalStateException("You don't have any assigned leave days.");
         }
 
         Leave leave = Leave.builder()
@@ -96,4 +102,28 @@ public class LeaveService {
         leave.setState(status);
         leaveRepository.save(leave);
     }
+
+
+    public void assignLeaveToEmployee(Long employeeId) {
+        Optional<Employee> employee = employeeRepository.findById(employeeId);
+        if (employee.isEmpty()) {
+            throw new RuntimeException("Employee not found.");
+        }
+
+        // Örnek olarak 20 izin günü veriyoruz
+        List<Leave> leaves = leaveRepository.findAllByEmployeeId(employeeId);
+        if (!leaves.isEmpty()) {
+            // Daha önceden atanmişsa tekrar atama
+            return;
+        }
+
+        Leave leave = Leave.builder()
+                .leaveAssigned(20L)
+                .employeeId(employeeId)
+                .state(StateTypes.Approved) // Önceden atanacak izinler kullanılabilir olarak sayılır
+                .build();
+
+        leaveRepository.save(leave);
+    }
+
 }

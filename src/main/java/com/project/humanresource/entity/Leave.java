@@ -20,6 +20,7 @@ public class Leave {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+    Long leaveAssigned;
     LocalDateTime startDate;
     LocalDateTime endDate;
     String description;

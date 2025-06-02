@@ -30,5 +30,5 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     List<Employee> findAllByIsActivatedTrueAndManagerId(Long managerId);
 
 
-
-}
+     List<Employee> findByManagerIdAndIsActiveTrue(Long managerId);
+ }

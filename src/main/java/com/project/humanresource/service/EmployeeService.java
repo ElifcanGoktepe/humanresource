@@ -1,5 +1,8 @@
 package com.project.humanresource.service;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.project.humanresource.config.JwtManager;
 import com.project.humanresource.config.SecurityUtil;
 import com.project.humanresource.dto.request.AddEmployeeForRoleRequirementDto;
@@ -33,10 +36,7 @@ public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final UserRoleRepository userRoleRepository;
     private final EmailVerificationService emailVerificationService;
-    private final PersonelFileRepository personelFileRepository;
     private final UserRepository userRepository;
-    private final UserRoleService userRoleService;
-    private final CompanyRepository companyRepository;
     private final EmployeeMapper employeeMapper;
     private final JwtManager jwtManager;
 
@@ -48,12 +48,13 @@ public class EmployeeService {
         employeeRepository.save(employee);
     }
 
-    public void addEmployeeForManager(AddEmployeeForRoleRequirementDto dto, HttpServletRequest request) { //manager tarafından eklenen employee
-        Long managerId = (Long) request.getAttribute("userId");
+    public void addEmployeeForManager(AddEmployeeForRoleRequirementDto dto, HttpServletRequest request) {
+        Long managerId = jwtManager.extractUserIdFromToken(request); // ✅ token’dan çek
 
         if (managerId == null) {
-            throw new IllegalStateException("Manager ID not found in request.");
+            throw new IllegalStateException("Manager ID not found in token.");
         }
+
         Employee employee = Employee.builder()
                 .firstName(dto.firstName())
                 .lastName(dto.lastName())
@@ -61,9 +62,10 @@ public class EmployeeService {
                 .phoneNumber(dto.phoneNumber())
                 .companyName(dto.companyName())
                 .titleName(dto.titleName())
-                .managerId(dto.managerId())
+                .managerId(managerId)
                 .isApproved(true)
                 .build();
+
         employeeRepository.save(employee);
 
         UserRole employeeRole = UserRole.builder()
@@ -73,8 +75,8 @@ public class EmployeeService {
         userRoleRepository.save(employeeRole);
 
         emailVerificationService.sendVerificationEmail(employee.getEmail());
-
     }
+
 
     public Employee findEmployeeByUserId(Long userId) {
         User user = userRepository.findById(userId)

@@ -1,5 +1,6 @@
 package com.project.humanresource.service;
 
+import com.project.humanresource.config.JwtManager;
 import com.project.humanresource.config.JwtUserDetails;
 import com.project.humanresource.dto.request.AddShiftRequestDto;
 import com.project.humanresource.entity.Employee;
@@ -26,14 +27,17 @@ public class ShiftService {
     public final ShiftRepository shiftRepository;
     private final ShiftBreakRepository shiftBreakRepository;
     private final HttpServletRequest request;
+    private final JwtManager jwtManager;
+
+
     public Shift addShift(AddShiftRequestDto dto) {
 
         // ✅ JwtTokenFilter tarafından set edilen userId burada alınır
-        Long userId = (Long) request.getAttribute("userId");
-        if (userId == null) {
-            throw new IllegalStateException("User ID not found in request.");
-        }
+        Long userId = jwtManager.extractUserIdFromToken(request); // ✅ token’dan çek
 
+        if (userId == null) {
+            throw new IllegalStateException("User ID not found in token.");
+        }
         List<ShiftBreak> savedBreaks = dto.shiftBreaks().stream()
                 .map(b -> shiftBreakRepository.save(ShiftBreak.builder()
                         .startTime(b.startTime())

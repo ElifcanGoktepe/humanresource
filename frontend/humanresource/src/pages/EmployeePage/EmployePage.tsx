@@ -118,25 +118,17 @@ function EmployeePage() {
 
     const [shifts, setShifts] = useState<Shift[]>([]);
 
-
     useEffect(() => {
         const fetchShifts = async () => {
-            const token = localStorage.getItem("token");
             try {
-                const response = await axios.get("http://localhost:9090/list-shift", {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
+                const response = await axios.get("http://localhost:9090/list-shift");
                 setShifts(response.data.data);
             } catch (error) {
                 console.error("Error fetching shifts", error);
             }
         };
-
         fetchShifts();
     }, []);
-
 
     return (
         <div className="row">
