@@ -2,14 +2,18 @@ package com.project.humanresource.controller;
 
 import com.project.humanresource.dto.request.AddCommentDto;
 import com.project.humanresource.dto.request.AddCompanyManagerDto;
+import com.project.humanresource.dto.request.CommentResponseDto;
 import com.project.humanresource.dto.response.BaseResponseShort;
 import com.project.humanresource.entity.Comment;
 import com.project.humanresource.entity.EmailVerification;
 import com.project.humanresource.entity.Employee;
+import com.project.humanresource.exception.ErrorType;
+import com.project.humanresource.exception.HumanResourceException;
 import com.project.humanresource.repository.EmployeeRepository;
 import com.project.humanresource.service.CompanyManagerService;
 import com.project.humanresource.service.EmailVerificationService;
 import com.project.humanresource.service.EmployeeService;
+import com.project.humanresource.service.FileUploadService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +24,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.project.humanresource.config.RestApis.*;
@@ -38,6 +44,7 @@ public class CompanyManagerController {
     private final CompanyManagerService companyManagerService;
     private final EmailVerificationService emailVerificationService;
     private final EmployeeService employeeService;
+    private final FileUploadService fileUploadService;
 
     // başvuruyu employee tablosuna manager olarak kaydeder, isActivated = false, isApproved = false
     @PostMapping(REGISTER)
@@ -96,10 +103,14 @@ public class CompanyManagerController {
 
 
     @GetMapping("/comments")
-    public ResponseEntity<List<Comment>> getAllComments() {
-        return ResponseEntity.ok(companyManagerService.getAllComments());
+    public List<CommentResponseDto> getComments() {
+        return companyManagerService.getAllComments();
     }
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteComment(@PathVariable Long id) {
+        companyManagerService.deleteCommentById(id);
+        return ResponseEntity.noContent().build();
+    }
 
     @PutMapping("/comment/{id}")
     public ResponseEntity<Comment> updateComment(
@@ -117,6 +128,23 @@ public class CompanyManagerController {
         }
         return null;
     }
+
+
+    @PostMapping("/{id}/upload-profile")
+    public ResponseEntity<?> uploadEmployeeProfileImage(@PathVariable Long id,
+                                                        @RequestParam("file") MultipartFile file) {
+        Employee employee = employeeService.findById(id)
+                .orElseThrow(() -> new HumanResourceException(ErrorType.EMPLOYEE_NOT_FOUND));
+
+        // Yeni resmi yükle, eskiyi de aynı anda sil
+        String imageUrl = fileUploadService.uploadProfileImage(file, id, employee.getProfileImageUrl());
+
+        employee.setProfileImageUrl(imageUrl);
+        employeeService.save(employee);
+
+        return ResponseEntity.ok(Map.of("url", imageUrl));
+    }
+
 
 }
 

@@ -51,6 +51,7 @@ public class SecurityConfig {
                         ).permitAll()
 
                         .requestMatchers("/dev/v1/company/**").hasAuthority("Manager")
+                        .requestMatchers("/{id}/upload-profile").hasAuthority("Manager")
                         .requestMatchers(HttpMethod.POST, "/dev/v1/company/add").hasAuthority("Manager")
                         .requestMatchers(HttpMethod.GET,"/dev/v1/company/myCompany").hasAuthority("Manager")
                         .requestMatchers("/dev/v1/companybranch/listAll/{id}").hasAuthority("Manager")
@@ -61,6 +62,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT,  "/comment/{id}").hasAuthority("Manager")
                         .requestMatchers(HttpMethod.POST,  "/dev/v1/addcomment").hasAuthority("Manager")
                         .requestMatchers(HttpMethod.GET,  "/comments").hasAuthority("Manager")
+                        .requestMatchers(HttpMethod.GET,  "/{id}").hasAuthority("Manager")
+
                         .requestMatchers(HttpMethod.POST, "/dev/v1/department/add").hasAuthority("Manager")
                         .requestMatchers(HttpMethod.GET,"/dev/v1/department/listAllByBranchId/{id}").hasAuthority("Manager")
                         .requestMatchers("/dev/v1/admin/company/pending-applications").hasAuthority("Admin")

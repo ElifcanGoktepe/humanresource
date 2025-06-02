@@ -1,35 +1,79 @@
 .profile-comment-container {
     max-width: 600px;
-    margin: 20px auto;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    background-color: #fafafa;
+    margin: 30px auto;
+    padding: 24px;
+    border: 1px solid #e3e3e3;
+    border-radius: 16px;
+    background-color: #FEFEFA;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
 }
 
-.profile-comment-form textarea {
-    width: 100%;
-    padding: 8px;
-    resize: vertical;
-    font-size: 1rem;
-}
-
+/* Form Alanları */
+.profile-comment-form textarea,
 .profile-comment-form input[type="text"] {
     width: 100%;
-    padding: 8px;
-    margin-top: 10px;
+    padding: 12px 16px;
+    margin-top: 12px;
     font-size: 1rem;
+    border: 2px solid #d2d6d9;
+    border-radius: 10px;
+    background-color: #FFFAFA;
+    resize: vertical;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.profile-comment-form button {
-    margin-top: 15px;
-    padding: 10px 20px;
-    background-color: #007bff;
-    border: none;
-    color: white;
-    font-weight: bold;
+.profile-comment-form textarea:focus,
+.profile-comment-form input[type="text"]:focus {
+    border-color: #00bcd4;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 188, 212, 0.3);
+    outline: none;
+}
+
+/* Dosya Yükleme Butonu */
+.custom-file-upload {
+    display: inline-block;
+    margin-top: 12px;
+    margin-right: 16px;
+    padding: 12px 24px;
+    border-radius: 10px;
+    background-color: #F0FFFF;
+    border: 2px solid #00bcd4;
+    color: #007bff;
+    font-weight: 500;
+    text-align: center;
     cursor: pointer;
-    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.custom-file-upload:hover {
+    background-color: #d6f5f5;
+    border-color: #00acc1;
+}
+
+/* Gizli Dosya Giriş */
+.profile-comment-form input[type="file"] {
+    display: none;
+}
+
+/* Gönder Butonu */
+.profile-comment-form button {
+    margin-top: 20px;
+    margin-left: 8px;
+    padding: 12px 24px;
+    background-color: #00bcd4;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.profile-comment-form button:hover:not(:disabled) {
+    background-color: #0097a7;
+    transform: translateY(-2px);
 }
 
 .profile-comment-form button:disabled {
@@ -37,8 +81,11 @@
     cursor: not-allowed;
 }
 
+/* Başarı Mesajı */
 .profile-message {
-    margin-top: 10px;
+    margin-top: 15px;
     font-weight: 500;
-    color: green;
+    font-size: 1rem;
+    color: #2e7d32;
+    text-align: center;
 }
