@@ -71,11 +71,14 @@ public class SecurityConfig {
                         .requestMatchers("/dev/v1/admin/**").hasAuthority("Admin")
                         .requestMatchers(HttpMethod.GET," /dev/v1/admin/company/get_all_company_branches_of_selected_company/{id}").hasAuthority("Admin")
                         .requestMatchers(HttpMethod.GET," /dev/v1/admin/company/get_all_company_branches").hasAuthority("Admin")
-
+                        .requestMatchers("/active-employees/**").hasAuthority("Manager")
+                        .requestMatchers(HttpMethod.PUT,"/employee/deactivate/**").hasAuthority("Manager")
+                        .requestMatchers(HttpMethod.PUT,"/employee/activate/**").hasAuthority("Manager")
                         .requestMatchers("/add-employee").hasAuthority("Manager")
                         .requestMatchers("/company-manager/approve/{employeeId}").hasAuthority("Manager")
                         .requestMatchers("/employee/**").hasAuthority("Employee")
-                        .requestMatchers("/actives-employees").hasAuthority("Manager")
+
+
                         .requestMatchers("/api/users/**").permitAll()
                         .anyRequest().authenticated()
                 )

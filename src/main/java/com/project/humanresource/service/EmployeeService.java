@@ -112,6 +112,18 @@ public class EmployeeService {
                 .collect(Collectors.toList());
     }
 
+    public void setEmployeeActiveStatus(Long employeeId, boolean isActive) {
+        // 1) Çalışanı veritabanından getir:
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new HumanResourceException(ErrorType.EMPLOYEE_NOT_FOUND));
+
+        // 2) isActive alanını güncelle:
+        employee.setActive(isActive);
+
+        // 3) Geri kaydet:
+        employeeRepository.save(employee);
+    }
+
 
 //    private final EmployeeRepository employeeRepository;
 //

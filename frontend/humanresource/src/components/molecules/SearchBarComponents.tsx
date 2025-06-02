@@ -1,30 +1,35 @@
-import React from 'react' ;
+import React, {type ChangeEvent } from "react";
+import { InputGroup, Form } from "react-bootstrap";
+import { Search } from "lucide-react";
 
-interface SearchBarProps{
+interface SearchBarProps {
     query: string;
-    onChange: (value: string)=>void;
+    onChange: (q: string) => void;
+    placeholder?: string;
 }
 
-const SearchBarComponent : React.FC<SearchBarProps> = ({ query, onChange}) =>{
+const SearchBarComponents: React.FC<SearchBarProps> = ({
+                                                           query,
+                                                           onChange,
+                                                           placeholder = "Search...",
+                                                       }) => {
     return (
-        <div className="mb-4 w-100 d-flex mt-2 ">
-            <input
+        <InputGroup>
+            <InputGroup.Text
+                className="bg-light border-0"
+                style={{ color: "var(--teal)" }}
+            >
+                <Search size={18} />
+            </InputGroup.Text>
+            <Form.Control
                 type="text"
+                placeholder={placeholder}
                 value={query}
-                onChange={e => onChange(e.target.value)}
-                placeholder="Search by name or email"
-                className="form-control rounded shadow-sm"
-                style={{
-                    maxWidth: '600px',
-                    marginTop: '10px',
-                    padding: '10px 16px',
-                    fontSize: '1rem',
-                    border: '1px solid #ddd',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.05)'
-                }}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
+                className="search-input"
             />
-        </div>
-    )
-}
+        </InputGroup>
+    );
+};
 
-export default SearchBarComponent
+export default SearchBarComponents;
