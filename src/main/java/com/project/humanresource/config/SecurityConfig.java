@@ -18,6 +18,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import static com.project.humanresource.config.RestApis.*;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -50,7 +52,11 @@ public class SecurityConfig {
                                 "/api/auth/**","/api/public/**",
                                 "/register"
                         ).permitAll()
-
+                        .requestMatchers(ADDSHIFT).hasAuthority("Manager")
+                        .requestMatchers(UPDATE_SHIFT).hasAuthority("Manager")
+                        .requestMatchers(LIST_SHIFT).hasAuthority("Manager")
+                        .requestMatchers(ADD_EMPLOYEE).hasAuthority("Manager")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/employees/with-shifts").hasAuthority("Manager")
                         .requestMatchers("/dev/v1/company/**").hasAuthority("Manager")
                         .requestMatchers("/{id}/upload-profile").hasAuthority("Manager")
                         .requestMatchers(HttpMethod.POST, "/dev/v1/company/add").hasAuthority("Manager")

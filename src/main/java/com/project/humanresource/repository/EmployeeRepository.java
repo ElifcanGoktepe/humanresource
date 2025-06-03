@@ -31,4 +31,12 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
 
      List<Employee> findByManagerIdAndIsActiveTrue(Long managerId);
+
+     @Query(value = """
+    SELECT e.first_name, e.last_name, s.start_time, s.end_time
+    FROM tblemployee e
+    JOIN tblshift s ON e.shift_id = s.id
+    WHERE e.manager_id = :managerId
+""", nativeQuery = true)
+     List<Object[]> findEmployeesWithShifts(@Param("managerId") Long managerId);
  }

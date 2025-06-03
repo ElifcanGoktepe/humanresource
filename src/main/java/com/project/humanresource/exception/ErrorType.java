@@ -33,7 +33,8 @@ public enum ErrorType {
     INTERNAL_SERVER(5000, "An unexpected error occurred on the server.", INTERNAL_SERVER_ERROR),
     EMPLOYEE_NOT_FOUND(5001, "Employee not found.", BAD_REQUEST),
     CURRENT_PASSWORD_INCORRECT(4012, "Current password is incorrect.", BAD_REQUEST),
-    
+    SHIFT_NOT_FOUND(4080, "Shift not found.", BAD_REQUEST),
+    UNAUTHORIZED_ACCESS(4081,"Unauthorized access", BAD_REQUEST),
     // File Upload Errors
     FILE_UPLOAD_ERROR(4013, "File upload failed.", BAD_REQUEST),
     FILE_NOT_FOUND(4014, "File not found or empty.", BAD_REQUEST),

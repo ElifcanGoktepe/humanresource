@@ -11,7 +11,7 @@
     z-index: 1000;
 }
 
-.modal-board1 {
+.modal-board2 {
     background: white;
     width: 650px;
     height: 300px;
@@ -23,18 +23,18 @@
     overflow-y: auto;
 }
 
-.modal-board1 h3 {
+.modal-board2 h3 {
     margin-bottom: 10px;
 }
 
-.modal-board1 label {
+.modal-board2 label {
     font-weight: bold;
     margin-bottom: 4px;
 }
 
-.modal-board1 input,
-.modal-board1 select,
-.modal-board1 textarea {
+.modal-board2 input,
+.modal-board2 select,
+.modal-board2 textarea {
     padding: 8px;
     border-radius: 6px;
     border: 1px solid #ccc;

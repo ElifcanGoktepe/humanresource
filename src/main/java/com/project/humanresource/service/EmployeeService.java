@@ -49,11 +49,13 @@ public class EmployeeService {
     }
 
     public void addEmployeeForManager(AddEmployeeForRoleRequirementDto dto, HttpServletRequest request) {
-        Long managerId = jwtManager.extractUserIdFromToken(request); // ✅ token’dan çek
-
+        Long managerId = jwtManager.extractUserIdFromToken(request);
         if (managerId == null) {
             throw new IllegalStateException("Manager ID not found in token.");
         }
+
+        Employee manager = employeeRepository.findById(managerId)
+                .orElseThrow(() -> new HumanResourceException(ErrorType.EMPLOYEE_NOT_FOUND));
 
         Employee employee = Employee.builder()
                 .firstName(dto.firstName())
@@ -62,7 +64,10 @@ public class EmployeeService {
                 .phoneNumber(dto.phoneNumber())
                 .companyName(dto.companyName())
                 .titleName(dto.titleName())
+                .titleId(null) // istenirse DTO'ya eklenebilir
+                .shiftId(dto.shiftId()) // ✅ shift bilgisi ekleniyor
                 .managerId(managerId)
+                .companyId(manager.getCompanyId()) // ✅ manager’ın şirketiyle eşleşiyor
                 .isApproved(true)
                 .build();
 
@@ -76,6 +81,7 @@ public class EmployeeService {
 
         emailVerificationService.sendVerificationEmail(employee.getEmail());
     }
+
 
 
     public Employee findEmployeeByUserId(Long userId) {
