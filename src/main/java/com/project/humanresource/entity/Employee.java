@@ -24,6 +24,7 @@ public class Employee extends User {
     Long titleId;
     Long personalFiledId;
     Long managerId;
+    Long shiftId;
 
     String profileImageUrl;
     @Column(name = "company_id", nullable = true)
