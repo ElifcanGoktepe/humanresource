@@ -1,4 +1,3 @@
-
 package com.project.humanresource.entity;
 
 import jakarta.persistence.*;
@@ -25,6 +24,7 @@ public class Company {
     private String companyPhoneNumber;
     private String companyEmail;
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Builder.Default
     public List<CompanyBranch> branches = new ArrayList<>();
 }
 

@@ -1,10 +1,9 @@
-
 package com.project.humanresource.config;
 
 import com.project.humanresource.entity.Employee;
-import com.project.humanresource.entity.UserRole;
+// import com.project.humanresource.entity.UserRole; // Kaldırıldı
 import com.project.humanresource.service.EmployeeService;
-import com.project.humanresource.service.UserRoleService;
+// import com.project.humanresource.service.UserRoleService; // Kaldırıldı
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,21 +11,24 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections; // Tek rol için
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+// import java.util.stream.Collectors; // Artık stream'e gerek yok
 
 @Service
 @RequiredArgsConstructor
 public class JwtUserDetails implements UserDetailsService {
 
     private final EmployeeService employeeService;
-    private final UserRoleService userRoleService;
+    // private final UserRoleService userRoleService; // Kaldırıldı
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        throw new UnsupportedOperationException("Username login is not supported. Use loadUserById instead.");
-
+        // Projenizde email ile kullanıcı bulma varsa, burası implement edilebilir.
+        // Örn: Optional<Employee> employeeOpt = employeeService.findByEmail(username);
+        // Şimdilik ID ile yükleme destekleniyor.
+        throw new UnsupportedOperationException("Username login is not supported. Use loadUserById or loadUserByEmail instead.");
     }
 
     public UserDetails loadUserById(Long userId) {
@@ -38,16 +40,15 @@ public class JwtUserDetails implements UserDetailsService {
 
         Employee employee = employeeOpt.get();
 
-        List<UserRole> userRoles = userRoleService.findAllRole(userId);
-
-        List<SimpleGrantedAuthority> authorities = userRoles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getUserStatus().name()))
-                .collect(Collectors.toList());
+        // Roller doğrudan Employee entity'sinden alınıyor
+        List<SimpleGrantedAuthority> authorities = Collections.singletonList(
+            new SimpleGrantedAuthority(employee.getUserRole().name())
+        );
 
         return new JwtUser(
                 employee.getId(),
                 employee.getEmail(),
-                employee.getPassword(),
+                employee.getPassword(), // Şifre burada UserDetails için gerekli, DB'deki hashlenmiş hali olmalı
                 employee.getFirstName(),
                 employee.getLastName(),
                 employee.getTitleName(),
@@ -56,7 +57,7 @@ public class JwtUserDetails implements UserDetailsService {
                 true,  // isAccountNonExpired
                 true,  // isAccountNonLocked
                 true,  // isCredentialsNonExpired
-                true   // isEnabled (Aktiflik durumu için isActivated kullanabilirsiniz)
+                employee.isActivated() && employee.isActive() && employee.isApproved() // isEnabled durumu
         );
     }
 }
