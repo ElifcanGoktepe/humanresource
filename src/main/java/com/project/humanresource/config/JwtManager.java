@@ -28,6 +28,7 @@ public class JwtManager {
         Date expiration = new Date(now + expirationDate);
         Algorithm algorithm = Algorithm.HMAC512(secretKey);
 
+
         return JWT.create()
                 .withAudience()
                 .withIssuer(issuer)
