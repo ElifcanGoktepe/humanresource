@@ -74,7 +74,7 @@ public class UserController {
         Employee employee = optionalEmployee.get();
 
         // Roller çekiliyor
-        List<UserRole> userRoles = userRoleService.findAllRole(employee.getId());
+        List<UserRole> userRoles = userRoleService.findAllByUserId(employee.getId());
         List<String> roles = userRoles.stream()
                 .map(role -> role.getUserStatus().name())
                 .toList();
@@ -200,5 +200,18 @@ public class UserController {
         userService.deleteProfileImage(id);
         
         return ResponseEntity.ok(new BaseResponse<>(true, "Profile image deleted successfully", null));
+    }
+
+    @GetMapping("/{employeeId}/roles")
+    public ResponseEntity<List<String>> getUserRoles(@PathVariable Long employeeId) {
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new HumanResourceException(ErrorType.EMPLOYEE_NOT_FOUND));
+
+        List<UserRole> userRoles = userRoleService.findAllByUserId(employee.getId());
+        List<String> roleNames = userRoles.stream()
+                .map(userRole -> userRole.getUserStatus().name())
+                .toList();
+
+        return ResponseEntity.ok(roleNames);
     }
 }
