@@ -62,6 +62,8 @@ public class ShiftController {
                 .build());
     }
 
+
+
     @GetMapping("/api/v1/employees/with-shifts")
     public ResponseEntity<List<EmployeeWithShiftDto>> getEmployeesWithShifts(HttpServletRequest request) {
         return ResponseEntity.ok(shiftService.getEmployeesWithShifts(request));
