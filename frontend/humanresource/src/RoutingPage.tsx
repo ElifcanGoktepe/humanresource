@@ -9,6 +9,7 @@ import CreatePasswordPage from "./pages/CreatePasswordPage/CreatePasswordPage.ts
 import UserStoriesPage from "./pages/UserStoriesPage/UserStoriesPage.tsx";
 import ExpensesPanel from "./pages/EmployeePage/ExpensesPanel.tsx";
 import PersonalFile from "./pages/EmployeePage/PersonalFile.tsx";
+import AssignmentPage from './pages/AssignmentPage/AssignmentPage';
 
 
 
@@ -28,6 +29,7 @@ function RoutingPage() {
                 <Route path="/user-stories" element={<UserStoriesPage />} />
                 <Route path="/personalfile" element={<PersonalFile />} />
                 <Route path="/expenses" element={<ExpensesPanel />} />
+                <Route path='/assignments' element={<AssignmentPage />} />
             </Routes>
         </BrowserRouter>
     )

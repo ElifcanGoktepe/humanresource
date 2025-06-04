@@ -32,17 +32,21 @@ public enum ErrorType {
     INTERNAL_SERVER(5000, "An unexpected error occurred on the server.", INTERNAL_SERVER_ERROR),
     EMPLOYEE_NOT_FOUND(5001, "Employee not found.", BAD_REQUEST),
     CURRENT_PASSWORD_INCORRECT(4012, "Current password is incorrect.", BAD_REQUEST),
-    
+    SHIFT_NOT_FOUND(4080, "Shift not found.", BAD_REQUEST),
+    UNAUTHORIZED_ACCESS(4081,"Unauthorized access", BAD_REQUEST),
     // File Upload Errors
     FILE_UPLOAD_ERROR(4013, "File upload failed.", BAD_REQUEST),
     FILE_NOT_FOUND(4014, "File not found or empty.", BAD_REQUEST),
     FILE_SIZE_TOO_LARGE(4015, "File size exceeds maximum limit (5MB).", BAD_REQUEST),
     INVALID_FILE_TYPE(4016, "Invalid file type. Only JPG, JPEG, PNG, GIF are allowed.", BAD_REQUEST),
     INVALID_FILE_NAME(4017, "Invalid file name.", BAD_REQUEST),
-    INVALID_FILE_EXTENSION(4018, "Invalid file extension.", BAD_REQUEST);
-    // yenileri eklendi
+    INVALID_FILE_EXTENSION(4018, "Invalid file extension.", BAD_REQUEST),
+    ASSIGNMENT_NOT_FOUND(4019, "Assignment not found.", NOT_FOUND),
 
-
+    // New Error Types for Assignment Module Enhancements
+    RESOURCE_NOT_FOUND(4020, "The specified resource could not be found.", NOT_FOUND),
+    INVALID_RETURN_DATE(4021, "Invalid date configuration. Expected return date must be on or after the assignment date.", BAD_REQUEST),
+    FORBIDDEN_RESOURCE_ACCESS(4022, "You do not have permission to access or modify this resource.", FORBIDDEN);
 
 
     int code;
