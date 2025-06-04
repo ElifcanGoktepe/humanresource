@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -40,6 +41,9 @@ public class Shift {
     @CollectionTable(name = "shift_days_of_week", joinColumns = @JoinColumn(name = "shift_id"))
     @Column(name = "day_of_week")
     private List<Integer> daysOfWeek; // 1 = Pazartesi ... 7 = Pazar
+    public void setDaysOfWeek(List<Integer> daysOfWeek) {
+        this.daysOfWeek = new ArrayList<>(daysOfWeek);
+    }
 
     @ElementCollection
     @CollectionTable(name = "shift_employee_ids", joinColumns = @JoinColumn(name = "shift_id"))
