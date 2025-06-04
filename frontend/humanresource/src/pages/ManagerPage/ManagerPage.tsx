@@ -1,4 +1,3 @@
-
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './ManagerPage.css';
 
@@ -12,7 +11,7 @@ import Salary from  "../../components/molecules/Salary.tsx";
 import Shift from  "../../components/molecules/Shift.tsx";
 import Assignment from  "../../components/molecules/Assignment.tsx";
 import Settings from  "../../components/molecules/Settings.tsx";
-import Profile from  "../../components/molecules/Profile.tsx";
+import Opinions from "../../components/molecules/Opinions.tsx";
 import EmployeeListPanel from "./EmployeeListPanel.tsx";
 
 
@@ -64,8 +63,8 @@ function ManagerPage() {
                 return <Assignment />;
             case 'Settings' :
                 return <Settings/>
-            case 'Profile' :
-               return <Profile/>
+            case 'Opinions' :
+               return <Opinions/>
             default:
                 return <Dashboard />;
         }
@@ -107,9 +106,9 @@ function ManagerPage() {
 
                 <div className="bottom-bar">
                     <hr />
-                    <button className="fixed-bar-buttons" onClick={() => setSelectedTab('Profile')}>
+                    <button className="fixed-bar-buttons" onClick={() => setSelectedTab('Opinions')}>
                         <img className="small-image-fixed-bar" src="/img/profileicon.png" />
-                        Profile
+                        Opinions
                     </button>
                     <button className="fixed-bar-buttons" onClick={() => setSelectedTab('Settings')}>
                         <img className="small-image-fixed-bar" src="/img/settingsicon.png" alt="Settings" />

@@ -1,11 +1,10 @@
 package com.project.humanresource.dto.response;
 
 public record EmployeeResponseDto(
-        Long employeeId,
         String fullName,
-        String email,
-        String phoneNumber,
+        String Email,
+        String PhoneNumber,
         String title,
-        boolean isActive
+        boolean active
 ) {
 }

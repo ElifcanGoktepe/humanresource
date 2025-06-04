@@ -28,7 +28,6 @@ function Dashboard() {
     const [companyName, setCompanyName] = useState("");
     const [showShiftModal, setShowShiftModal] = useState(false);
 
-
     const token = localStorage.getItem("token");
     const payload = token ? parseJwt(token) : null;
     const managerId = payload?.userId;
@@ -69,8 +68,9 @@ function Dashboard() {
         shiftId: number;
     }) => {
         const token = localStorage.getItem("token");
+        console.log("Token:", token);
         try {
-            const response = await axios.post("http://localhost:9090/dev/v1/employee/add", employeeData, {
+            const response = await axios.post("http://localhost:9090/api/v1/employee/add", employeeData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json",
@@ -348,13 +348,12 @@ function Dashboard() {
                         </div>
                         <hr />
                         <div className="request-button-container">
-                            <button className="add-employee" onClick={() => setShowModal(true)}>Add Employee →</button>
+                            <button className="add-employee" onClick={() => setShowShiftModal(true)}>Create Shift →</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Add Employee Modal */}
             {showModal && (
                 <AddEmployeeModal
                     onClose={() => setShowModal(false)}

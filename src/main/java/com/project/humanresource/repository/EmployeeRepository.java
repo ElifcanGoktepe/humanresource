@@ -6,13 +6,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import com.project.humanresource.utility.UserStatus;
 
 import java.util.List;
 import java.util.Optional;
  // eklendi serkan 12:24  26/05
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
-    List<Employee> findByUserRoleAndIsApproved(UserStatus userRole, boolean isApproved);
     Optional<Employee> findByFirstNameAndLastName(String firstName, String lastName);
 
     List<Employee> findByCompanyId(Long companyId);     //      şirket çalışanları
@@ -32,13 +30,5 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     List<Employee> findAllByIsActivatedTrueAndManagerId(Long managerId);
 
 
-     List<Employee> findByManagerIdAndIsActiveTrue(Long managerId);
 
-     @Query(value = """
-    SELECT e.first_name, e.last_name, s.start_time, s.end_time
-    FROM tblemployee e
-    JOIN tblshift s ON e.shift_id = s.id
-    WHERE e.manager_id = :managerId
-""", nativeQuery = true)
-     List<Object[]> findEmployeesWithShifts(@Param("managerId") Long managerId);
- }
+}

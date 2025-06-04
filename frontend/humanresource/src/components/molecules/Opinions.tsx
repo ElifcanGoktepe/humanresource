@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import './Profile.css';
+import './Opinions.css';
 
 interface Comment {
     id: number;
     commentText: string;
     photoUrl?: string | null;
     managerName: string;
-
 }
 
+const getFullPhotoUrl = (url?: string | null) => {
+    return url ? (url.startsWith("http") ? url : `http://localhost:9090${url}`) : "/img/employee.png";
+};
 
-const Profile: React.FC = () => {
+const Opinions: React.FC = () => {
     const [comment, setComment] = useState<Comment[]>([]);
     const [editingComment, setEditingComment] = useState<Comment | null>(null);
     const [text, setText] = useState("");
@@ -23,19 +25,26 @@ const Profile: React.FC = () => {
     const token = localStorage.getItem("token");
     const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
 
-
     useEffect(() => {
         if (!token) return;
-
         setLoading(true);
-        axios
-            .get(`http://localhost:9090/comments`, { headers: authHeader })
+        axios.get("http://localhost:9090/dev/v1/comments", { headers: authHeader })
             .then((res) => {
-                const data = res.data?.data || res.data;
-                setComment(Array.isArray(data) ? data : data ? [data] : []);
+                const rawData = res.data?.data ?? res.data;
+                const safeData = Array.isArray(rawData) ? rawData.filter((c) => typeof c.id === "number") : [];
+                setComment(safeData);
             })
-            .catch(() => setComment([]))
-            .finally(() => setLoading(false));
+            .catch((error) => {
+                if (error.response?.status === 401) {
+                    setMessage("Oturum süresi dolmuş. Lütfen yeniden giriş yapın.");
+                } else {
+                    setMessage("Yorumlar alınamadı.");
+                }
+                setComment([]);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
     }, [token]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,16 +71,21 @@ const Profile: React.FC = () => {
         setMessage("");
     };
 
-    const handleDelete = async (id: number) => {
-        if (!window.confirm("Are you sure you want to delete this comment?")) return;
+    const handleDelete = async (id?: number) => {
+        if (!id || typeof id !== "number") {
+            setMessage("Geçersiz yorum ID’si.");
+            console.error("Hatalı silme çağrısı, ID:", id);
+            return;
+        }
+        if (!window.confirm("Bu yorumu silmek istediğinize emin misiniz?")) return;
         setLoading(true);
         try {
-            await axios.delete(`http://localhost:9090/${id}`, { headers: authHeader });
+            await axios.delete(`http://localhost:9090/dev/v1/comments/${id}`, { headers: authHeader });
             setComment((prev) => prev.filter((c) => c.id !== id));
             if (editingComment?.id === id) cancelEditing();
-            setMessage("Comment deleted successfully.");
+            setMessage("Yorum başarıyla silindi.");
         } catch {
-            setMessage("Failed to delete comment.");
+            setMessage("Yorum silinemedi.");
         } finally {
             setLoading(false);
         }
@@ -80,68 +94,36 @@ const Profile: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!text.trim()) {
-            setMessage("Comment text cannot be empty.");
+        if (!text?.trim?.()) {
+            setMessage("Yorum metni boş olamaz.");
             return;
         }
 
         setLoading(true);
         setMessage("");
-        let commentId: number | undefined;
 
         try {
-            if (editingComment) {
-                const payload = { commentText: text.trim() };
-                const res = await axios.put(
-                    `http://localhost:9090/comment/${editingComment.id}`,
-                    payload,
-                    { headers: authHeader }
-                );
-                const updatedComment = res.data.data || res.data;
-                setComment((prev) =>
-                    prev.map((c) => (c.id === updatedComment.id ? updatedComment : c))
-                );
-                commentId = updatedComment.id;
-            } else {
-                const payload = { commentText: text.trim(), photoUrl: null };
-                const res = await axios.post(
-                    `http://localhost:9090/dev/v1/addcomment`,
-                    payload,
-                    { headers: authHeader }
-                );
-                const newComment = res.data.data || res.data;
-                setComment((prev) => [newComment, ...prev]);
-                commentId = newComment.id;
-            }
+            const formData = new FormData();
+            formData.append("commentText", text.trim());
+            if (selectedFile) formData.append("file", selectedFile);
 
-            if (selectedFile && commentId) {
-                const formData = new FormData();
-                formData.append("file", selectedFile);
+            const res = await axios.post(
+                "http://localhost:9090/dev/v1/comments/with-photo",
+                formData,
+                {
+                    headers: {
+                        ...authHeader,
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
 
-                const uploadRes = await axios.post(
-                    `http://localhost:9090/${commentId}/upload-profile`,
-                    formData,
-                    {
-                        headers: {
-                            ...authHeader,
-                            "Content-Type": "multipart/form-data",
-                        },
-                    }
-                );
-                const photoUrl = uploadRes.data?.url || uploadRes.data;
-                console.log("Upload response:", uploadRes.data);
-
-                setComment((prev) =>
-                    prev.map((c) =>
-                        c.id === commentId ? { ...c, photoUrl } : c
-                    )
-                );
-            }
-
-            setMessage(editingComment ? "Comment updated successfully." : "Comment added successfully.");
+            const newComment = res.data.data;
+            setComment((prev) => [newComment, ...prev]);
+            setMessage("Yorum başarıyla eklendi.");
             cancelEditing();
         } catch {
-            setMessage("Error saving comment or uploading photo.");
+            setMessage("Yorum eklenemedi.");
         } finally {
             setLoading(false);
         }
@@ -156,24 +138,17 @@ const Profile: React.FC = () => {
             <ul className="comment-list">
                 {comment.map((comment, index) => (
                     <li key={comment.id ?? `comment-${index}`} className="comment-item">
-
-                    <p>
-                            <strong>{comment.managerName}</strong> -{" "}
-
-                        </p>
+                        <p><strong>{comment.managerName}</strong></p>
                         <p>{comment.commentText}</p>
-                        {comment.photoUrl && (
-                            <img
-                                src={comment.photoUrl}
-                                alt="Comment"
-                                style={{ maxWidth: "100px", maxHeight: "100px", borderRadius: "6px" }}
-                            />
-                        )}
-                        <button onClick={() => startEditing(comment)} className="edit-button">
-                            Düzenle
-                        </button>
+                        <img
+                            src={getFullPhotoUrl(comment.photoUrl)}
+                            alt="Comment"
+                            style={{ maxWidth: "100px", maxHeight: "100px", borderRadius: "6px" }}
+                        />
+                        <button onClick={() => startEditing(comment)} className="edit-button">Düzenle</button>
                         <button
                             onClick={() => handleDelete(comment.id)}
+                            disabled={!comment.id}
                             className="delete-button"
                             style={{ marginLeft: "10px", color: "red" }}
                         >
@@ -225,4 +200,4 @@ const Profile: React.FC = () => {
     );
 };
 
-export default Profile;
+export default Opinions;

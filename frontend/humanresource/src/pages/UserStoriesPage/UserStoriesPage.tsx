@@ -1,4 +1,3 @@
-
 import  { useEffect, useState } from "react";
 import axios from "axios";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -21,7 +20,7 @@ function UserStoriesPage() {
 
     useEffect(() => {
         setLoading(true);
-        axios.get("http://localhost:9090/comments", { headers: authHeader })
+        axios.get("http://localhost:9090/dev/v1/comments", { headers: authHeader })
             .then(res => {
                 // res.data muhtemelen Comment[] listesi
                 setComments(res.data);

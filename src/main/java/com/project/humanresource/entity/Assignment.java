@@ -3,7 +3,6 @@ package com.project.humanresource.entity;
 import com.project.humanresource.utility.AssignmentCategory;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 
@@ -12,10 +11,12 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
-@EqualsAndHashCode(callSuper = true)
+@Builder
 @Table(name = "tblassignment")
-public class Assignment extends BaseEntity {
+public class Assignment {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
     private String description;
     private AssignmentCategory category;
     private String serialNumber;

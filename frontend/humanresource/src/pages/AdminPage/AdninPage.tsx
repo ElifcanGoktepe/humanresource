@@ -1,4 +1,3 @@
-
 import CompanyArea from "../../components/molecules/CompanyArea.tsx";
 import BranchArea from "../../components/molecules/BranchArea.tsx";
 import DepartmentArea from "../../components/molecules/DepartmentArea..tsx";
@@ -77,8 +76,8 @@ function AdminPage() {
                 <div className="bottombar-adminpage-fixedsidebar">
                     <hr />
                     <button className="fixed-bar-buttons">
-                        <img className="small-image-fixed-bar" src="/img/profileicon.png" alt="Profile Icon" />
-                        Profile
+                        <img className="small-image-fixed-bar" src="/img/profileicon.png" alt="Opinions Icon" />
+                        Opinions
                     </button>
                     <button
                         className="fixed-bar-buttons"

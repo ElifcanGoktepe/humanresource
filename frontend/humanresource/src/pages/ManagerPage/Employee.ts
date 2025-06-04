@@ -1,9 +1,9 @@
 
 export interface Employee {
-    employeeId: number;
+    id:number;
     fullName: string;
     email: string;
     phoneNumber: string;
     title: string;
-    isActive: boolean;
+    active: boolean;
 }

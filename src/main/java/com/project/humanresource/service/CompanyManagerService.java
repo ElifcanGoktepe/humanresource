@@ -1,4 +1,3 @@
-
 package com.project.humanresource.service;
 
 import com.project.humanresource.dto.request.AddCommentDto;
@@ -36,7 +35,8 @@ public class CompanyManagerService {
     private final CommentRepository commentRepository;
 
 
-
+    @Value("${app.admin.email}")
+    private String fromEmail;
 
     @Transactional
     public void appliedCompanyManager(AddCompanyManagerDto dto, String token) {
@@ -65,30 +65,25 @@ public class CompanyManagerService {
                 .build();
         userRoleRepository.save(managerRole);
 
-        emailVerificationService.sendApprovalRequestToAdmin(manager, token);
+        emailVerificationService.sendApprovalRequestToAdmin(fromEmail, manager, token);
     }
 
 
-    public void addComment(AddCommentDto dto) {
-        // JWT üzerinden giriş yapan kullanıcıyı al
-        JwtUser jwtUser = (JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Long userId = jwtUser.getUserId();
-
-        // Yorumu yapılacak yöneticiyi bul
+    public Comment addComment(AddCommentDto dto) {
         Employee manager = employeeRepository.findById(dto.managerId())
                 .orElseThrow(() -> new IllegalArgumentException("Manager not found"));
 
-        // Comment nesnesini oluştur
         Comment comment = Comment.builder()
                 .managerId(manager.getId())
                 .managerName(manager.getFirstName() + " " + manager.getLastName())
                 .commentText(dto.commentText())
-                .photoUrl(dto.photoUrl()) // kullanıcıdan gelen görsel URL'si
+                .photoUrl(dto.photoUrl()) // başta null olabilir
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        commentRepository.save(comment);
+        return commentRepository.save(comment); // yorum nesnesi döndürülür
     }
+
 
     public List<CommentResponseDto> getAllComments() {
         return commentRepository.findAll()

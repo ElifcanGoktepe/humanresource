@@ -4,7 +4,6 @@ import './UserStoriesRevisionForPage.css';
 interface Props {
     username: string;
     commentText: string;
-
     photoUrl?: string | null;
 }
 
@@ -16,15 +15,18 @@ function UserStoriesRevisionForPage({ username, commentText, photoUrl }: Props) 
         return () => clearTimeout(timer);
     }, []);
 
+    const fullPhotoUrl = photoUrl
+        ? (photoUrl.startsWith("http") ? photoUrl : `http://localhost:9090${photoUrl}`)
+        : "/img/employee.png";
+
     return (
         <div className={`story-row ${isVisible ? 'visible' : ''}`}>
             <div className="story-profile">
                 <img
-                    src={photoUrl && photoUrl.startsWith("http") ? photoUrl : "/img/employee.png"}
+                    src={fullPhotoUrl}
                     alt={username || "User"}
                     className="story-image"
                 />
-
             </div>
             <div className="story-comment">
                 <h4 className="story-username">{username}</h4>

@@ -1,4 +1,3 @@
-
 package com.project.humanresource.config;
 
 import org.springframework.security.core.Authentication;
