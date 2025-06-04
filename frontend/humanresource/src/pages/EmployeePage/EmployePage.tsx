@@ -85,6 +85,9 @@ function EmployeePage() {
             return JSON.parse(jsonPayload);
         } catch (e) {
             return null;
+
+
+
         }
     }
     const [firstName, setFirstName] = useState("");

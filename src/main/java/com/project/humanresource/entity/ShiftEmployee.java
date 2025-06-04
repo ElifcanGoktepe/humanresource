@@ -21,4 +21,5 @@ public class ShiftEmployee {
     Long shiftId;
     Long employeeId;
     LocalDateTime assignmentDate;
+
 }

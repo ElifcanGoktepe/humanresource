@@ -47,6 +47,8 @@ public class JwtManager {
     }
 
 
+
+
 // validatetoken ihtiyacı yok sistemde decoded token metodu alltta kullanılıyor silinebilir
   /*  public Optional<Long> validateToken(String token){
         try{

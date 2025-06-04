@@ -10,5 +10,6 @@ public record LeaveRequestDto(
         String description,
         LeaveTypes leaveType
 
+
 ) {
 }

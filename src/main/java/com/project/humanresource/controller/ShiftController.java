@@ -21,6 +21,7 @@ import java.util.List;
 
 import static com.project.humanresource.config.RestApis.*;
 
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping
@@ -39,6 +40,8 @@ public class ShiftController {
                         .data(shiftService.addShift(dto))
                 .build());
     }
+
+
 
 
     @GetMapping(LIST_SHIFT)
