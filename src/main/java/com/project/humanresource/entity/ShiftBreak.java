@@ -19,5 +19,6 @@ public class ShiftBreak {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     LocalDateTime startTime;
+
     LocalDateTime endTime;
 }

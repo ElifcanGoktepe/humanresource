@@ -8,5 +8,6 @@ public record EmployeeWithShiftDto(
         String shiftStart,
         String shiftEnd
 
+
 ) {
 }

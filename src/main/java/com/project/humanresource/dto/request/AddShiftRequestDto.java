@@ -11,6 +11,7 @@ public record AddShiftRequestDto(
         List<ShiftBreakRequest> shiftBreaks,
         Boolean isRecurring,
 
+
         List<Integer> daysOfWeek
 ) {
     public record ShiftBreakRequest(

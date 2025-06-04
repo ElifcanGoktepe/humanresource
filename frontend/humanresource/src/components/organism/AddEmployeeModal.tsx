@@ -21,6 +21,9 @@ type Props = {
     }) => void;
 };
 
+
+
+
 function AddEmployeeModal({ onClose, onSubmit }: Props) {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");

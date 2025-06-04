@@ -18,6 +18,7 @@ import java.util.Optional;
 @Service
 public class JwtManager {
 
+
     @Value("${my-jwt.secret-key}")
     private String secretKey;
     private String issuer = "MuhammetHOCA";
@@ -45,6 +46,8 @@ public class JwtManager {
                 .withClaim("log", "date and hour " + new Date())
                 .sign(algorithm);
     }
+
+
 
 
 // validatetoken ihtiyacı yok sistemde decoded token metodu alltta kullanılıyor silinebilir

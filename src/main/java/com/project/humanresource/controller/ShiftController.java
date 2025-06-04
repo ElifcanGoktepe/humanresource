@@ -21,6 +21,7 @@ import java.util.List;
 
 import static com.project.humanresource.config.RestApis.*;
 
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping
@@ -41,6 +42,8 @@ public class ShiftController {
     }
 
 
+
+
     @GetMapping(LIST_SHIFT)
     public ResponseEntity<BaseResponseShort<List<Shift>>> getShiftList(){
         return ResponseEntity.ok(BaseResponseShort.<List<Shift>>builder()
@@ -58,6 +61,8 @@ public class ShiftController {
                 .data(shiftService.updateShift(dto))
                 .build());
     }
+
+
 
     @GetMapping("/api/v1/employees/with-shifts")
     public ResponseEntity<List<EmployeeWithShiftDto>> getEmployeesWithShifts(HttpServletRequest request) {
