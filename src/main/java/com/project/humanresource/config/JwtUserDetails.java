@@ -1,4 +1,3 @@
-
 package com.project.humanresource.config;
 
 import com.project.humanresource.entity.Employee;
@@ -38,7 +37,7 @@ public class JwtUserDetails implements UserDetailsService {
 
         Employee employee = employeeOpt.get();
 
-        List<UserRole> userRoles = userRoleService.findAllRole(userId);
+        List<UserRole> userRoles = userRoleService.findAllByUserId(userId);
 
         List<SimpleGrantedAuthority> authorities = userRoles.stream()
                 .map(role -> new SimpleGrantedAuthority(role.getUserStatus().name()))

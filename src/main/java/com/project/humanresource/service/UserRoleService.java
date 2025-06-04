@@ -22,7 +22,7 @@ public class UserRoleService {
         return userRoleRepository.findByUserStatus(userStatus);
     }
 
-    public List<UserRole> findAllRole(Long userId){
+    public List<UserRole> findAllByUserId(Long userId){
         return userRoleRepository.findByUserId(userId);
     }
 
@@ -34,7 +34,11 @@ public class UserRoleService {
         return userRoleRepository.save(userRole);
     }
 
-    public void save(UserStatus userStatus, Long id) {
-
+    public UserRole save(UserStatus userStatus, Long userId) {
+        UserRole userRole = UserRole.builder()
+                .userStatus(userStatus)
+                .userId(userId)
+                .build();
+        return userRoleRepository.save(userRole);
     }
 }
