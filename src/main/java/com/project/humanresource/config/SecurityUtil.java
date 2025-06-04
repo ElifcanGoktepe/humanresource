@@ -19,6 +19,7 @@ public class SecurityUtil {
             if (userIdClaim != null) {
                 return Long.parseLong(userIdClaim.toString());
             }
+
         }
         throw new RuntimeException("Unauthorized: UserId not found in token.");
     }

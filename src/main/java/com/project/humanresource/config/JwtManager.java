@@ -18,6 +18,7 @@ import java.util.Optional;
 @Service
 public class JwtManager {
 
+
     @Value("${my-jwt.secret-key}")
     private String secretKey;
     private String issuer = "MuhammetHOCA";

@@ -13,6 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Value("${app.upload.dir:uploads}")
     private String uploadDir;
 
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // Upload edilen dosyaları serve et

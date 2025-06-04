@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 @Component
 public class JwtTokenFilter extends OncePerRequestFilter {
 
+
     @Autowired
     private JwtManager jwtManager;
 

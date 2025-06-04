@@ -14,6 +14,7 @@ import java.util.Collection;
 @AllArgsConstructor
 public class JwtUser implements UserDetails {
 
+
     private Long userId;
     private String username; // email olarak kullanılıyor
     private String password;

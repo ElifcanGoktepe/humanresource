@@ -86,6 +86,7 @@ public class SecurityConfig {
                         .requestMatchers("/employee/**").hasAuthority("Employee")
 
 
+
                         .requestMatchers("/api/users/**").permitAll()
                         .anyRequest().authenticated()
                 )
