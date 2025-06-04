@@ -1,16 +1,16 @@
-
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './ManagerPage.css';
 
-
 import { useEffect, useState } from "react";
+// useNavigate importu kaldırıldı
 
 import Dashboard from  "../../components/molecules/Dashboard.tsx";
 import CompanyPage from  "../../components/molecules/CompanyPage.tsx";
 //import Employee from  "../../components/molecules/Employee.tsx";
 import Salary from  "../../components/molecules/Salary.tsx";
 import Shift from  "../../components/molecules/Shift.tsx";
-import Assignment from  "../../components/molecules/Assignment.tsx";
+// AssignmentPage yeni konumuyla import ediliyor
+import AssignmentPageDisplay from '../AssignmentPage/AssignmentPage'; 
 import Settings from  "../../components/molecules/Settings.tsx";
 import Profile from  "../../components/molecules/Profile.tsx";
 import EmployeeListPanel from "./EmployeeListPanel.tsx";
@@ -19,6 +19,7 @@ import EmployeeListPanel from "./EmployeeListPanel.tsx";
 function ManagerPage() {
     const [selectedTab, setSelectedTab] = useState('Dashboard');
     const [managerFirstName, setManagerFirstName] = useState("");
+    // navigate kaldırıldı
     const today = new Date();
     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const dayIndex = today.getDay();
@@ -60,12 +61,13 @@ function ManagerPage() {
                 return <Salary />;
             case 'Shift':
                 return <Shift />;
-            case 'Assignment':
-                return <Assignment />;
+            // Assignment case'i, AssignmentPageDisplay'i gösterecek şekilde güncellendi
+            case 'Assignment': 
+                return <AssignmentPageDisplay />;
             case 'Settings' :
-                return <Settings/>
+                return <Settings/>;
             case 'Profile' :
-               return <Profile/>
+               return <Profile/>;
             default:
                 return <Dashboard />;
         }
