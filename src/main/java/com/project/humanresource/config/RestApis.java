@@ -27,6 +27,9 @@ public class RestApis {
     public static final String UPDATE_SHIFT = SHIFT + "/update";
     public static final String LIST_SHIFT = SHIFT + "/list";
     public static final String ADD_EMPLOYEE = EMPLOYEE + "/add";
+    //yeni eklendi
+
+
 
 
 
