@@ -7,6 +7,6 @@ public record AddEmployeeForRoleRequirementDto(
         String phoneNumber,
         String companyName,
         String titleName,
-        Long shiftId // ✅ eklendi
+        Long managerId
 ) {
 }

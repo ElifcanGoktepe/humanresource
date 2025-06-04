@@ -1,8 +1,5 @@
 package com.project.humanresource.service;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.project.humanresource.config.JwtManager;
 import com.project.humanresource.config.SecurityUtil;
 import com.project.humanresource.dto.request.AddEmployeeForRoleRequirementDto;
@@ -36,7 +33,10 @@ public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final UserRoleRepository userRoleRepository;
     private final EmailVerificationService emailVerificationService;
+    private final PersonelFileRepository personelFileRepository;
     private final UserRepository userRepository;
+    private final UserRoleService userRoleService;
+    private final CompanyRepository companyRepository;
     private final EmployeeMapper employeeMapper;
     private final JwtManager jwtManager;
 
@@ -48,15 +48,12 @@ public class EmployeeService {
         employeeRepository.save(employee);
     }
 
-    public void addEmployeeForManager(AddEmployeeForRoleRequirementDto dto, HttpServletRequest request) {
-        Long managerId = jwtManager.extractUserIdFromToken(request);
+    public void addEmployeeForManager(AddEmployeeForRoleRequirementDto dto, HttpServletRequest request) { //manager tarafından eklenen employee
+        Long managerId = (Long) request.getAttribute("userId");
+
         if (managerId == null) {
-            throw new IllegalStateException("Manager ID not found in token.");
+            throw new IllegalStateException("Manager ID not found in request.");
         }
-
-        Employee manager = employeeRepository.findById(managerId)
-                .orElseThrow(() -> new HumanResourceException(ErrorType.EMPLOYEE_NOT_FOUND));
-
         Employee employee = Employee.builder()
                 .firstName(dto.firstName())
                 .lastName(dto.lastName())
@@ -64,13 +61,9 @@ public class EmployeeService {
                 .phoneNumber(dto.phoneNumber())
                 .companyName(dto.companyName())
                 .titleName(dto.titleName())
-                .titleId(null) // istenirse DTO'ya eklenebilir
-                .shiftId(dto.shiftId()) // ✅ shift bilgisi ekleniyor
-                .managerId(managerId)
-                .companyId(manager.getCompanyId()) // ✅ manager’ın şirketiyle eşleşiyor
+                .managerId(dto.managerId())
                 .isApproved(true)
                 .build();
-
         employeeRepository.save(employee);
 
         UserRole employeeRole = UserRole.builder()
@@ -80,9 +73,8 @@ public class EmployeeService {
         userRoleRepository.save(employeeRole);
 
         emailVerificationService.sendVerificationEmail(employee.getEmail());
+
     }
-
-
 
     public Employee findEmployeeByUserId(Long userId) {
         User user = userRepository.findById(userId)
@@ -116,18 +108,6 @@ public class EmployeeService {
         return employees.stream()
                 .map(employeeMapper::toEmployeeResponseDto)
                 .collect(Collectors.toList());
-    }
-
-    public void setEmployeeActiveStatus(Long employeeId, boolean isActive) {
-        // 1) Çalışanı veritabanından getir:
-        Employee employee = employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new HumanResourceException(ErrorType.EMPLOYEE_NOT_FOUND));
-
-        // 2) isActive alanını güncelle:
-        employee.setActive(isActive);
-
-        // 3) Geri kaydet:
-        employeeRepository.save(employee);
     }
 
 

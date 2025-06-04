@@ -22,7 +22,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-//@RequestMapping()
+@RequestMapping()
 @CrossOrigin("*")
 @SecurityRequirement(name = "bearerAuth")
 public class EmployeeController {
@@ -34,7 +34,7 @@ public class EmployeeController {
 
 
 
-   @PutMapping("/employee/activate/"+"{employeeId}")
+  /*  @PutMapping("/activate/{employeeId}")
     public ResponseEntity<BaseResponseShort<Boolean>> activateEmployee(@PathVariable Long employeeId){
         employeeService.setEmployeeActiveStatus(employeeId,true);
         return ResponseEntity.ok(BaseResponseShort.<Boolean>builder()
@@ -43,7 +43,7 @@ public class EmployeeController {
                         .data(true)
                 .build());
     }
-    @PutMapping("/employee/deactivate/{employeeId}")
+    @PutMapping("/deactive/{employeeId}")
     public ResponseEntity<BaseResponseShort<Boolean>> deactivaEmployee(@PathVariable Long employeeId){
         employeeService.setEmployeeActiveStatus(employeeId,false);
         return ResponseEntity.ok(BaseResponseShort.<Boolean>builder()
@@ -51,9 +51,9 @@ public class EmployeeController {
                         .message("Employee is deactivated.")
                         .data(true)
                 .build());
-    }
+    }*/
 
-   /*@DeleteMapping("/{employeeId}/delete")
+  /*  @DeleteMapping("/{employeeId}/delete")
     public ResponseEntity<BaseResponseShort<Boolean>> deleteEmployee(@PathVariable Long employeeId){
         employeeService.deleteEmployeeCompletely(employeeId);
         return ResponseEntity.ok(BaseResponseShort.<Boolean>builder()

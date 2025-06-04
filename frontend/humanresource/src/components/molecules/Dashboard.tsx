@@ -1,11 +1,8 @@
-import ShiftRequestModal from "../../components/organism/ShiftRequestModal";
-import type { ShiftRequest } from "../../components/organism/ShiftRequestModal";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Dashboard.css';
 import { useEffect, useState } from "react";
 import axios from "axios";
 import AddEmployeeModal from "../../components/organism/AddEmployeeModal.tsx";
-import AssignLeavePanel from "../../components/atoms/AssignLeavePanel";
 
 function Dashboard() {
     function parseJwt(token: string) {
@@ -21,12 +18,12 @@ function Dashboard() {
         }
     }
 
-    const [employeeList, setEmployeeList] = useState<{ fullName: string; title: string }[]>([]);
+    const [employeeList, setEmployeeList] = useState<string[]>([]);
     const [managerFirstName, setManagerFirstName] = useState("");
     const [managerLastName, setManagerLastName] = useState("");
     const [titleName, setTitleName] = useState("");
     const [companyName, setCompanyName] = useState("");
-    const [showShiftModal, setShowShiftModal] = useState(false);
+
 
     const token = localStorage.getItem("token");
     const payload = token ? parseJwt(token) : null;
@@ -48,11 +45,12 @@ function Dashboard() {
         phoneNumber: string;
         companyName: string;
         titleName: string;
-        shiftId: number;
+        managerId: number;
     }) => {
         const token = localStorage.getItem("token");
+        console.log("Token:", token);
         try {
-            const response = await axios.post("http://localhost:9090/api/v1/employee/add", employeeData, {
+            const response = await axios.post("http://localhost:9090/add-employee", employeeData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json",
@@ -60,10 +58,8 @@ function Dashboard() {
             });
 
             alert(response.data.message);
-            setEmployeeList(prev => [...prev, {
-                fullName: `${employeeData.firstName} ${employeeData.lastName}`,
-                title: employeeData.titleName
-            }]);
+            // Yeni eklenen çalışanı listeye ekle
+            setEmployeeList(prev => [...prev, `${employeeData.firstName} ${employeeData.lastName}`]);
         } catch (error) {
             console.error("Error adding employee:", error);
             alert("Failed to add employee.");
@@ -110,6 +106,7 @@ function Dashboard() {
             await axios.put(`http://localhost:9090/leaves/${id}/approve`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
+            // Sayfayı güncelle
             setPendingLeaves(prev => prev.filter(leave => leave.id !== id));
         } catch (error) {
             alert("Failed to approve leave.");
@@ -128,87 +125,11 @@ function Dashboard() {
         }
     };
 
-    const [shiftEmployees, setShiftEmployees] = useState<EmployeeWithShift[]>([]);
-    const fetchEmployeesWithShifts = async () => {
-        const token = localStorage.getItem("token");
-        try {
-            const response = await axios.get("http://localhost:9090/api/v1/employees/with-shifts", {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            setShiftEmployees(response.data);
-        } catch (error) {
-            console.error("Failed to fetch employee shift data", error);
-        }
-    };
-
-    useEffect(() => {
-        fetchEmployeesWithShifts();
-    }, []);
-
-    const [selectedShift, setSelectedShift] = useState<ShiftRequest & { id: number } | null>(null);
-
-    const handleEdit = (shift: any) => {
-        setSelectedShift({
-            id: shift.id,
-            name: shift.name,
-            startTime: shift.startTime,
-            endTime: shift.endTime,
-            description: shift.description,
-            isRecurring: shift.isRecurring,
-            daysOfWeek: shift.daysOfWeek || [],
-            shiftBreaks: shift.shiftBreaks || [],
-        });
-        setShowShiftModal(true); // ✨ Modalı tekrar göster
-    };
-
-    const [weeklyShifts, setWeeklyShifts] = useState<any[]>([]);
-    const fetchWeeklyShifts = async () => {
-        const token = localStorage.getItem("token");
-        try {
-            const response = await axios.get("http://localhost:9090/shifts-this-week", {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            setWeeklyShifts(response.data);
-        } catch (error) {
-            console.error("Failed to fetch weekly shifts:", error);
-        }
-    };
-
-    useEffect(() => {
-        fetchWeeklyShifts();
-    }, []);
-
-    const handleShiftUpdate = (updatedShift: ShiftRequest) => {
-        setSelectedShift(null);
-        fetchEmployeesWithShifts();
-        fetchWeeklyShifts();
-        setShowShiftModal(false);
-    };
-
-    const handleShiftDelete = async (id: number) => {
-        const token = localStorage.getItem("token");
-        const confirm = window.confirm("Are you sure?");
-        if (!confirm) return;
-
-        try {
-            await axios.delete(`http://localhost:9090/delete-shift/${id}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            fetchEmployeesWithShifts();
-            fetchWeeklyShifts();
-            setShowShiftModal(false);
-        } catch (error) {
-            alert("Error deleting shift");
-        }
-    };
-
     return (
         <>
+
             <div className="row">
+                {/* Opinions Box */}
                 <div className="col-md-3 box-dashboard">
                     <div className="box1-dashboard">
                         <div className="profile-settings-header">
@@ -224,7 +145,7 @@ function Dashboard() {
                                 <h4>{titleName}</h4>
                                 <h6>{companyName}</h6>
                             </div>
-                            <hr />
+                            <hr/>
                             <div className="account-button-container">
                                 <button className="accountbutton">
                                     Account →
@@ -233,14 +154,15 @@ function Dashboard() {
                         </div>
                     </div>
                     <div className="box1-dashboard p-3">
-                        <p>Employee Number: {employeeList.length}</p>
+                        <p> <p>Employee Number: {employeeList.length}</p></p>
                     </div>
                 </div>
 
+                {/* Pending Leaves */}
                 <div className="col-md-3 box-dashboard">
                     <div className="pending-leaves-panel p-1">
                         <h3>Pending Leave Requests</h3>
-                        <hr />
+                        <hr/>
                         {pendingLeaves.length === 0 ? (
                             <p>No leave requests yet.</p>
                         ) : (
@@ -248,11 +170,23 @@ function Dashboard() {
                                 {pendingLeaves.map(leave => (
                                     <li key={leave.id}>
                                         <strong>{leave.leaveType}</strong> | {leave.startDate} → {leave.endDate} <br />
-                                        <em>Requested by: {leave.firstName} {leave.lastName}</em>
+                                        <em>
+                                            Requested by: {leave.firstName} {leave.lastName}
+                                        </em>
                                         {leave.description}
                                         <div className="action-buttons">
-                                            <button className="approve-button" onClick={() => handleApprove(leave.id)}>Approve</button>
-                                            <button className="reject-button" onClick={() => handleReject(leave.id)}>Reject</button>
+                                            <button
+                                                className="approve-button"
+                                                onClick={() => handleApprove(leave.id)}
+                                            >
+                                                Approve
+                                            </button>
+                                            <button
+                                                className="reject-button"
+                                                onClick={() => handleReject(leave.id)}
+                                            >
+                                                Reject
+                                            </button>
                                         </div>
                                         <hr />
                                     </li>
@@ -260,81 +194,70 @@ function Dashboard() {
                             </ul>
                         )}
                     </div>
-                    <div className="col-md-3 box-dashboard">
-                        <AssignLeavePanel />
-                    </div>
                 </div>
 
+
+                {/* Shift Box */}
                 <div className="col-md-3 box-dashboard">
                     <div className="box1-dashboard p-1">
                         <div>
-                            <h3>This Week's Shifts</h3>
-                            {weeklyShifts.map(shift => (
-                                <div key={shift.id}>
-                                    <p>
-                                        {shift.name} - {new Date(shift.startTime).toLocaleString()} to {new Date(shift.endTime).toLocaleString()}
-                                    </p>
-                                    <button onClick={() => handleEdit(shift)}>Edit</button>
-                                    <button onClick={() => handleShiftDelete(shift.id)}>Delete</button>
-                                </div>
-                            ))}
-
-
-                            <hr />
+                            <h3>Today's Shift List</h3>
+                            <hr/>
                         </div>
-                        {shiftEmployees.map((emp, index) => (
-                            <div key={index} className="d-flex justify-content-between align-items-center">
-                                <p>
-                                    {emp.firstName} {emp.lastName} <br />
-                                    {new Date(emp.shift.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(emp.shift.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                </p>
-                                <button
-                                    className="edit-button"
-                                    onClick={() => {
-                                        setSelectedShift({
-                                            id: 123,
-                                            name: "Shift Name",
-                                            startTime: emp.shift.startTime,
-                                            endTime: emp.shift.endTime,
-                                            description: "Optional",
-                                            isRecurring: false,
-                                            daysOfWeek: [],
-                                            shiftBreaks: [],
-                                        });
-                                        setShowShiftModal(true);
-                                    }}
-                                >
-                                    ✏️
-                                </button>
+                        <div className="row">
+                            <div className="col-5 fontstyle-shiftnames">
+                                FirstName LastName1
+                                FirstName LastName2
+                                FirstName LastName3
+                                FirstName LastName4
+                                FirstName LastName5
+                                FirstName LastName6
                             </div>
-                        ))}
-                        <hr />
-                        <button className="add-employee" onClick={() => setShowShiftModal(true)}>+ Add Shift</button>
+                            <div className="col-5 fontstyle-shifthours">
+                                08:00-12:00
+                                08:00-12:00
+                                13:00-17:00
+                                13:00-17:00
+                                18:00-22:00
+                                18:00-22:00
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
+
+                {/* Manage Employee */}
                 <div className="col-md-3 box-dashboard">
                     <div className="box2-dashboard p-1">
                         <div>
                             <h3>Manage Employee</h3>
-                            <hr />
+                            <hr/>
                         </div>
-                        <div className="fontstyle-shiftnames">
-                            {employeeList.length === 0 ? (
-                                <p>No employees yet.</p>
-                            ) : (
-                                employeeList.map((emp, index) => (
-                                    <p key={index}>{emp.fullName} - {emp.title}</p>
-                                ))
-                            )}
+                        <div>
+                            <div className="fontstyle-shiftnames">
+                                <div className="fontstyle-shiftnames">
+                                    {employeeList.length === 0 ? (
+                                        <p>No employees yet.</p>
+                                    ) : (
+                                        employeeList.map((name, index) => <p key={index}>{name}</p>)
+                                    )}
+                                </div>
+                            </div>
+                            <hr/>
+                            <div className="request-button-container">
+                                <button className="add-employee" onClick={() => setShowModal(true)}>
+                                    Add Employee →
+                                </button>
+                            </div>
                         </div>
-                        <hr />
-                        <div className="request-button-container">
-                            <button className="add-employee" onClick={() => setShowShiftModal(true)}>Create Shift →</button>
-                        </div>
+
                     </div>
                 </div>
-            </div>
+
+
+
+        </div>
 
             {showModal && (
                 <AddEmployeeModal
@@ -347,11 +270,11 @@ function Dashboard() {
                         const adaptedData = {
                             firstName: formData.firstName,
                             lastName: formData.lastName,
-                            email: formData.email,
-                            phoneNumber: formData.phoneNumber,
+                            email: formData.email,          // burada uyarlıyoruz
+                            phoneNumber: formData.phoneNumber,    // burada da
                             companyName: formData.companyName,
                             titleName: formData.titleName,
-                            shiftId: formData.shiftId,
+                            managerId: managerId
                         };
                         handleAddEmployee(adaptedData);
                         setShowModal(false);
@@ -359,17 +282,7 @@ function Dashboard() {
                 />
             )}
 
-            {showShiftModal && (
-                <ShiftRequestModal
-                    onClose={() => {
-                        setShowShiftModal(false);
-                        setSelectedShift(null);
-                    }}
-                    onSubmit={handleEdit}
-                    onDelete={handleShiftDelete}
-                    existingShift={selectedShift || undefined}
-                />
-            )}
+
         </>
     );
 }

@@ -4,16 +4,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record AddShiftRequestDto(
+
         String name,
-        String startTime,             // "21:00" gibi → LocalTime.parse(startTime)
-        String endTime,
+        LocalDateTime startTime,
+        LocalDateTime endTime,
         String description,
-        List<ShiftBreakRequest> shiftBreaks,
-        Boolean isRecurring,
-        List<Integer> daysOfWeek
+        List<ShiftBreakRequest> shiftBreaks
+
 ) {
     public record ShiftBreakRequest(
-            String startTime,
-            String endTime
+            LocalDateTime startTime,
+            LocalDateTime endTime
     ) {}
 }

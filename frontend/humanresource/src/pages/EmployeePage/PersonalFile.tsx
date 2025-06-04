@@ -265,9 +265,9 @@ const PersonalFile: React.FC = () => {
                             <img
                                 className="small-image-fixed-bar"
                                 src="/img/profileicon.png"
-                                alt="Profile"
+                                alt="Opinions"
                             />
-                            <span className="sidebar-text">Profile</span>
+                            <span className="sidebar-text">Opinions</span>
                         </button>
                         <button className="fixed-bar-buttons">
                             <img

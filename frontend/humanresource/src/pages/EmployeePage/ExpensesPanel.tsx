@@ -150,8 +150,8 @@ const ExpensesPanel: React.FC = () => {
                     <hr className="sidebar-divider" />
                     <div className="bottom-bar px-2 mt-4">
                         <button className="fixed-bar-buttons">
-                            <img className="small-image-fixed-bar" src="/img/profileicon.png" alt="Profile" />
-                            <span className="sidebar-text">Profile</span>
+                            <img className="small-image-fixed-bar" src="/img/profileicon.png" alt="Opinions" />
+                            <span className="sidebar-text">Opinions</span>
                         </button>
                         <button className="fixed-bar-buttons">
                             <img className="small-image-fixed-bar" src="/img/settingsicon.png" alt="Settings" />

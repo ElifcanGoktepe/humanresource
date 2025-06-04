@@ -63,7 +63,7 @@ function CreatePasswordPage(){
                             <input type="password" name="Password Area" placeholder="Create New Password" className="passwordinput-createpasswordpage" value={password} onChange={(e) => setPassword(e.target.value)} required />
 
 
-                            <label className="label">Password</label>
+                            <label className="Label">Password</label>
                             <input type="password" name="rePassword Area" placeholder="Re-Enter Password" className="repasswordinput-createpasswordpage" value={rePassword} onChange={(e) => setRePassword(e.target.value)} required />
 
 

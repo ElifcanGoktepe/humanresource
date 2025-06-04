@@ -1,12 +1,10 @@
 
-
 package com.project.humanresource.config;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -78,16 +76,6 @@ public class JwtManager {
                 .verify(token);
         return jwt.getClaim("userId").asLong();
     }
-    public Long extractUserIdFromToken(HttpServletRequest request) {
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
-            DecodedJWT jwt = JWT.require(Algorithm.HMAC512(secretKey))
-                    .build()
-                    .verify(token);
-            return jwt.getClaim("userId").asLong();
-        }
-        return null;
-    }
+
 
 }

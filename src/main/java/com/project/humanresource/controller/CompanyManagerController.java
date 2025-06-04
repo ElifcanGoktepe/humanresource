@@ -1,5 +1,6 @@
 package com.project.humanresource.controller;
 
+import com.project.humanresource.config.JwtUser;
 import com.project.humanresource.dto.request.AddCommentDto;
 import com.project.humanresource.dto.request.AddCompanyManagerDto;
 import com.project.humanresource.dto.request.CommentResponseDto;
@@ -9,6 +10,7 @@ import com.project.humanresource.entity.EmailVerification;
 import com.project.humanresource.entity.Employee;
 import com.project.humanresource.exception.ErrorType;
 import com.project.humanresource.exception.HumanResourceException;
+import com.project.humanresource.repository.CommentRepository;
 import com.project.humanresource.repository.EmployeeRepository;
 import com.project.humanresource.service.CompanyManagerService;
 import com.project.humanresource.service.EmailVerificationService;
@@ -26,7 +28,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -47,6 +48,9 @@ public class CompanyManagerController {
     private final EmailVerificationService emailVerificationService;
     private final EmployeeService employeeService;
     private final FileUploadService fileUploadService;
+    private final CommentRepository commentRepository;
+
+
 
     // başvuruyu employee tablosuna manager olarak kaydeder, isActivated = false, isApproved = false
     @PostMapping(REGISTER)
@@ -82,39 +86,21 @@ public class CompanyManagerController {
 
 
 
-    @PostMapping("/dev/v1/addcomment")
-    public ResponseEntity<BaseResponseShort<Boolean>> addComment(@RequestBody AddCommentDto dto, Authentication authentication) {
-        Long managerId = dto.managerId();
-
-        if (managerId == null) {
-            // Authentication'dan giriş yapan kullanıcının employee id'sini çek
-            Employee currentUser = employeeService.getCurrentEmployee(authentication);
-            managerId = currentUser.getId();
-        }
-
-        // Yeni DTO ile managerId set et (immutable record olduğu için yeni nesne oluştur)
-        AddCommentDto updatedDto = new AddCommentDto(managerId, dto.commentText(), dto.photoUrl());
-
-        companyManagerService.addComment(updatedDto);
-        return ResponseEntity.ok(BaseResponseShort.<Boolean>builder()
-                .code(200)
-                .message("Comment added successfully")
-                .data(true)
-                .build());
-    }
 
 
-    @GetMapping("/comments")
+
+    @GetMapping("/dev/v1/comments")
     public List<CommentResponseDto> getComments() {
         return companyManagerService.getAllComments();
     }
-    @DeleteMapping("/{id}")
+
+    @DeleteMapping("/dev/v1/comments/{id}")
     public ResponseEntity<Void> deleteComment(@PathVariable Long id) {
         companyManagerService.deleteCommentById(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/comment/{id}")
+    @PutMapping("/dev/v1/comments/{id}")
     public ResponseEntity<Comment> updateComment(
             @PathVariable Long id,
             @RequestBody AddCommentDto dto) {
@@ -132,27 +118,44 @@ public class CompanyManagerController {
     }
 
 
-    @PostMapping("/{id}/upload-profile")
-    public ResponseEntity<?> uploadEmployeeProfileImage(@PathVariable Long id,
-                                                        @RequestParam("file") MultipartFile file) {
-        Employee employee = employeeService.findById(id)
+
+
+    @PostMapping("/dev/v1/comments/with-photo")
+    public ResponseEntity<?> addCommentWithPhoto(@RequestPart("commentText") String commentText,
+                                                 @RequestPart(value = "file", required = false) MultipartFile file) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        JwtUser jwtUser = (JwtUser) auth.getPrincipal();
+        Long userId = jwtUser.getUserId();
+
+
+        Employee manager = employeeService.findById(userId)
                 .orElseThrow(() -> new HumanResourceException(ErrorType.EMPLOYEE_NOT_FOUND));
 
-        // Eski resmi silip yeniyi yükle
-        String imageRelativeUrl = fileUploadService.uploadProfileImage(file, id, employee.getProfileImageUrl());
+        String photoUrl = null;
+        if (file != null && !file.isEmpty()) {
+            String imageRelativeUrl = fileUploadService.uploadProfileImage(file, manager.getId(), manager.getProfileImageUrl());
+            photoUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                    .path(imageRelativeUrl)
+                    .toUriString();
 
-        // Tam URL'yi oluştur
-        String fullUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(imageRelativeUrl)
-                .toUriString();
+            // optional: çalışan kaydını da güncelle
+            manager.setProfileImageUrl(imageRelativeUrl);
+            employeeService.save(manager);
+        }
 
-        // Veritabanına relative path kaydedebilirsin
-        employee.setProfileImageUrl(imageRelativeUrl);
-        employeeService.save(employee);
+        Comment comment = Comment.builder()
+                .managerId(manager.getId())
+                .managerName(manager.getFirstName() + " " + manager.getLastName())
+                .commentText(commentText)
+                .photoUrl(photoUrl)
+                .createdAt(LocalDateTime.now())
+                .build();
 
-        // Frontend'e tam URL gönder
-        return ResponseEntity.ok(Map.of("url", fullUrl));
+        commentRepository.save(comment);
+
+        return ResponseEntity.ok(Map.of("message", "Comment saved", "data", comment));
     }
+
 
 
 

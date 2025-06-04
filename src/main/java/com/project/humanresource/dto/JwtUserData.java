@@ -1,4 +1,3 @@
-
 package com.project.humanresource.dto;
 
 import com.project.humanresource.utility.UserStatus;

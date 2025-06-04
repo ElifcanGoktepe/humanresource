@@ -1,4 +1,3 @@
-
 package com.project.humanresource.config;
 
 import com.project.humanresource.entity.Employee;
@@ -26,7 +25,6 @@ public class JwtUserDetails implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         throw new UnsupportedOperationException("Username login is not supported. Use loadUserById instead.");
-
     }
 
     public UserDetails loadUserById(Long userId) {
