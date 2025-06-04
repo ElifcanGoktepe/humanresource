@@ -9,5 +9,6 @@ public record LeaveRequestDto(
         LocalDateTime endDate,
         String description,
         LeaveTypes leaveType
+
 ) {
 }
