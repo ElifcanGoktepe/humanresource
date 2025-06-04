@@ -44,6 +44,9 @@ public enum ErrorType {
     INVALID_FILE_EXTENSION(4018, "Invalid file extension.", BAD_REQUEST);
 
 
+
+
+
     int code;
     String message;
     HttpStatus httpStatus;
