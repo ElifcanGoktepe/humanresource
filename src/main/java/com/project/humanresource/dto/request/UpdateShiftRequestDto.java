@@ -12,5 +12,6 @@ public record UpdateShiftRequestDto(
         List<ShiftBreakDto> shiftBreaks, // yeniden eklenen veya güncellenen break'ler
         Boolean isRecurring,
         List<Integer> daysOfWeek
+
 ) {
 }

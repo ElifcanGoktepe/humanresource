@@ -13,5 +13,6 @@ public record ShiftResponseDto(
         List<Integer> daysOfWeek,
         List<Long> shiftBreakIds,
         List<Long> employeeIds
+
 ) {
 }
