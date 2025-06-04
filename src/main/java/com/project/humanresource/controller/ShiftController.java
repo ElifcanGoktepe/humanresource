@@ -40,6 +40,7 @@ public class ShiftController {
                 .build());
     }
 
+
     @GetMapping(LIST_SHIFT)
     public ResponseEntity<BaseResponseShort<List<Shift>>> getShiftList(){
         return ResponseEntity.ok(BaseResponseShort.<List<Shift>>builder()

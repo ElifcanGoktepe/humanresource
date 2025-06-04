@@ -11,4 +11,5 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
     List<Shift> findByCompanyId(Long companyId);
 
     List<Shift> findAllByCompanyIdAndStartTimeBetween(Long companyId, LocalDateTime start, LocalDateTime end);
+
 }

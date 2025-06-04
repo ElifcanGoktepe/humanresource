@@ -55,4 +55,6 @@ public class Shift {
     @Column(name = "break_id")
     private List<Long> shiftBreakIds;
 
+
+
 }
