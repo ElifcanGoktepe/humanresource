@@ -28,6 +28,7 @@ function Dashboard() {
     const [companyName, setCompanyName] = useState("");
     const [showShiftModal, setShowShiftModal] = useState(false);
 
+
     const token = localStorage.getItem("token");
     const payload = token ? parseJwt(token) : null;
     const managerId = payload?.userId;
@@ -41,6 +42,23 @@ function Dashboard() {
         }
     }, []);
 
+    useEffect(() => {
+       const fetchPendingLeaves = async () => {
+            const token = localStorage.getItem("token");
+            try {
+                const response = await axios.get("http://localhost:9090/leaves/pending", {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                setPendingLeaves(response.data.data);
+            } catch (error) {
+                console.error("Failed to fetch pending leaves:", error);
+            }
+        };
+        fetchPendingLeaves();
+    }, []);
+
     const handleAddEmployee = async (employeeData: {
         firstName: string;
         lastName: string;
@@ -52,7 +70,7 @@ function Dashboard() {
     }) => {
         const token = localStorage.getItem("token");
         try {
-            const response = await axios.post("http://localhost:9090/api/v1/employee/add", employeeData, {
+            const response = await axios.post("http://localhost:9090/dev/v1/employee/add", employeeData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json",
@@ -330,12 +348,13 @@ function Dashboard() {
                         </div>
                         <hr />
                         <div className="request-button-container">
-                            <button className="add-employee" onClick={() => setShowShiftModal(true)}>Create Shift →</button>
+                            <button className="add-employee" onClick={() => setShowModal(true)}>Add Employee →</button>
                         </div>
                     </div>
                 </div>
             </div>
 
+            {/* Add Employee Modal */}
             {showModal && (
                 <AddEmployeeModal
                     onClose={() => setShowModal(false)}

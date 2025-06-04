@@ -24,8 +24,8 @@ type Props = {
 function AddEmployeeModal({ onClose, onSubmit }: Props) {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
-    const [email, setemail] = useState("");
-    const [phoneNumber, setphoneNumber] = useState("");
+    const [email, setEmail] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState("");
     const [companyName, setCompanyName] = useState("");
     const [titleName, setTitleName] = useState("");
     const [shiftId, setShiftId] = useState<number | null>(null);
@@ -35,37 +35,37 @@ function AddEmployeeModal({ onClose, onSubmit }: Props) {
         const fetchShifts = async () => {
             const token = localStorage.getItem("token");
             try {
-                const res = await fetch("http://localhost:9090/api/v1/shift/list", {
+                const response = await fetch("http://localhost:9090/dev/v1/shift/list", {
                     headers: {
-                        Authorization: `Bearer ${token}`
-                    }
+                        Authorization: `Bearer ${token}`,
+                    },
                 });
-                const data = await res.json();
-                setShiftList(data.data);
+                const result = await response.json();
+                setShiftList(result.data);
             } catch (err) {
                 console.error("Failed to fetch shift list", err);
             }
         };
+
         fetchShifts();
     }, []);
 
     const handleSubmit = () => {
-        if (shiftId === null) {
+        if (!shiftId) {
             alert("Please select a shift for the employee.");
             return;
         }
 
-        const employeeData = {
+        onSubmit({
             firstName,
             lastName,
             email,
             phoneNumber,
             companyName,
             titleName,
-            shiftId
-        };
+            shiftId,
+        });
 
-        onSubmit(employeeData);
         onClose();
     };
 
@@ -81,10 +81,10 @@ function AddEmployeeModal({ onClose, onSubmit }: Props) {
                 <input type="text" value={lastName} onChange={e => setLastName(e.target.value)} />
 
                 <label>Work Email:</label>
-                <input type="email" value={email} onChange={e => setemail(e.target.value)} />
+                <input type="email" value={email} onChange={e => setEmail(e.target.value)} />
 
                 <label>Work Phone:</label>
-                <input type="text" value={phoneNumber} onChange={e => setphoneNumber(e.target.value)} />
+                <input type="text" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} />
 
                 <label>Company Name:</label>
                 <input type="text" value={companyName} onChange={e => setCompanyName(e.target.value)} />
@@ -97,13 +97,17 @@ function AddEmployeeModal({ onClose, onSubmit }: Props) {
                     <option value="">-- Select Shift --</option>
                     {shiftList.map((shift) => (
                         <option key={shift.id} value={shift.id}>
-                            {shift.name} ({new Date(shift.startTime).toLocaleTimeString()} - {new Date(shift.endTime).toLocaleTimeString()})
+                            {shift.name} (
+                            {new Date(shift.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} -
+                            {new Date(shift.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})
                         </option>
                     ))}
                 </select>
 
-                <button onClick={handleSubmit} className="submit-btn">Submit</button>
-                <button onClick={onClose} className="close-btn">Cancel</button>
+                <div className="button-group">
+                    <button onClick={handleSubmit} className="submit-btn">Submit</button>
+                    <button onClick={onClose} className="close-btn">Cancel</button>
+                </div>
             </div>
         </div>
     );

@@ -9,6 +9,13 @@ export type ShiftRequest = {
     isRecurring: boolean;
     daysOfWeek: number[];
     shiftBreaks: { startTime: string; endTime: string }[];
+    employeeIds: number[];
+};
+
+type Employee = {
+    id: number;
+    firstName: string;
+    lastName: string;
 };
 
 type Props = {
@@ -26,6 +33,25 @@ function ShiftRequestModal({ onClose, onSubmit, existingShift, onDelete }: Props
     const [description, setDescription] = useState("");
     const [shiftBreaks, setShiftBreaks] = useState<{ startTime: string; endTime: string }[]>([]);
     const [selectedDays, setSelectedDays] = useState<number[]>([]);
+    const [employeeIds, setEmployeeIds] = useState<number[]>([]);
+    const [employeeList, setEmployeeList] = useState<Employee[]>([]);
+
+    useEffect(() => {
+        const fetchEmployees = async () => {
+            const token = localStorage.getItem("token");
+            try {
+                const res = await fetch("http://localhost:9090/api/v1/employees", {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const result = await res.json();
+                setEmployeeList(result.data); // ⬅️ API result
+            } catch (err) {
+                console.error("Failed to fetch employees", err);
+            }
+        };
+
+        fetchEmployees();
+    }, []);
 
     useEffect(() => {
         if (existingShift) {
@@ -36,6 +62,7 @@ function ShiftRequestModal({ onClose, onSubmit, existingShift, onDelete }: Props
             setSelectedDays(existingShift.daysOfWeek);
             setShiftBreaks(existingShift.shiftBreaks);
             setTab(existingShift.isRecurring ? 'recurring' : 'specific');
+            setEmployeeIds(existingShift.employeeIds);
         }
     }, [existingShift]);
 
@@ -60,7 +87,7 @@ function ShiftRequestModal({ onClose, onSubmit, existingShift, onDelete }: Props
     };
 
     const handleSubmit = async () => {
-        const nowDate = new Date().toISOString().split("T")[0]; // örn: "2025-06-03"
+        const nowDate = new Date().toISOString().split("T")[0];
         const formattedStartTime = tab === "recurring" ? `${nowDate}T${startTime}` : startTime;
         const formattedEndTime = tab === "recurring" ? `${nowDate}T${endTime}` : endTime;
 
@@ -75,11 +102,14 @@ function ShiftRequestModal({ onClose, onSubmit, existingShift, onDelete }: Props
                 startTime: tab === "recurring" ? `${nowDate}T${b.startTime}` : b.startTime,
                 endTime: tab === "recurring" ? `${nowDate}T${b.endTime}` : b.endTime,
             })),
+            employeeIds
         };
 
         try {
             const token = localStorage.getItem("token");
-            const url = existingShift ? "http://localhost:9090/dev/v1/shift/update" : "http://localhost:9090/dev/v1/shift/add";
+            const url = existingShift
+                ? "http://localhost:9090/dev/v1/shift/update"
+                : "http://localhost:9090/dev/v1/shift/add";
             const method = existingShift ? "PUT" : "POST";
 
             const response = await fetch(url, {
@@ -102,9 +132,7 @@ function ShiftRequestModal({ onClose, onSubmit, existingShift, onDelete }: Props
 
     const handleDelete = async () => {
         if (!existingShift || !onDelete) return;
-
-        const confirmDelete = window.confirm("Are you sure you want to delete this shift?");
-        if (!confirmDelete) return;
+        if (!window.confirm("Are you sure you want to delete this shift?")) return;
 
         try {
             const token = localStorage.getItem("token");
@@ -125,8 +153,12 @@ function ShiftRequestModal({ onClose, onSubmit, existingShift, onDelete }: Props
         <div className="overlay1">
             <div className="modal-board1">
                 <div className="tab-buttons">
-                    <button onClick={() => setTab('recurring')} className={tab === 'recurring' ? 'active-tab' : ''}>Recurring Shift</button>
-                    <button onClick={() => setTab('specific')} className={tab === 'specific' ? 'active-tab' : ''}>Specific Date Shift</button>
+                    <button onClick={() => setTab('recurring')} className={tab === 'recurring' ? 'active-tab' : ''}>
+                        Recurring Shift
+                    </button>
+                    <button onClick={() => setTab('specific')} className={tab === 'specific' ? 'active-tab' : ''}>
+                        Specific Date Shift
+                    </button>
                 </div>
 
                 <h3>{existingShift ? "Update Shift" : "Create Shift"}</h3>
@@ -168,6 +200,21 @@ function ShiftRequestModal({ onClose, onSubmit, existingShift, onDelete }: Props
 
                 <label>Description:</label>
                 <textarea value={description} onChange={e => setDescription(e.target.value)} />
+
+                <label>Assign Employees:</label>
+                <select
+                    multiple
+                    value={employeeIds.map(String)}
+                    onChange={(e) =>
+                        setEmployeeIds(Array.from(e.target.selectedOptions, option => Number(option.value)))
+                    }
+                >
+                    {employeeList.map(emp => (
+                        <option key={emp.id} value={emp.id}>
+                            {emp.firstName} {emp.lastName}
+                        </option>
+                    ))}
+                </select>
 
                 <label>Shift Breaks:</label>
                 {shiftBreaks.map((brk, i) => (

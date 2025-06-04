@@ -120,7 +120,8 @@ public class ShiftService {
         existingShift.setDescription(dto.description());
         existingShift.setIsRecurring(dto.isRecurring());
         existingShift.setDaysOfWeek(dto.daysOfWeek() != null ? new ArrayList<>(dto.daysOfWeek()) : new ArrayList<>());
-        existingShift.setShiftBreakIds(newBreaks.stream().map(ShiftBreak::getId).toList());
+        existingShift.setShiftBreakIds(new ArrayList<>(newBreaks.stream().map(ShiftBreak::getId).toList()));
+
 
         return shiftRepository.save(existingShift);
     }

@@ -8,7 +8,6 @@ import {
     Legend
 } from 'chart.js';
 import {useEffect, useState} from "react";
-import ShiftRequestModal from "../../components/organism/ShiftRequestModal.tsx";
 import axios from "axios";
 import {Doughnut} from "react-chartjs-2";
 import Settings from "../../components/molecules/Settings.tsx";
@@ -24,7 +23,6 @@ function EmployeePage() {
 
     const [chartData, setChartData] = useState({ total: 0, used: 0, remaining: 0 });
     const [showModal, setShowModal] = useState(false);
-    const [showShiftModal, setShowShiftModal] = useState(false);
     const [selectedTab, setSelectedTab] = useState('Dashboard');
 
     type LeaveChartProps = {
@@ -103,6 +101,7 @@ function EmployeePage() {
                 setLastName(payload.lastName || "");
                 setTitleName(payload.titleName || "");
                 setCompanyName(payload.companyName || "");
+                setEmployeeId(payload.userId);
             }
         }
     }, []);
@@ -122,12 +121,29 @@ function EmployeePage() {
         const fetchShifts = async () => {
             try {
                 const response = await axios.get("http://localhost:9090/list-shift");
+                console.log("Shift data:", response.data.data);
                 setShifts(response.data.data);
             } catch (error) {
                 console.error("Error fetching shifts", error);
             }
         };
         fetchShifts();
+    }, []);
+    // Shiftin employe sayfsında gözükmesi
+    const [employeeId, setEmployeeId] = useState<number | null>(null);
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            const payload = parseJwt(token);
+            if (payload) {
+                setFirstName(payload.firstName || "");
+                setLastName(payload.lastName || "");
+                setTitleName(payload.titleName || "");
+                setCompanyName(payload.companyName || "");
+                setEmployeeId(payload.userId); // ✅ bunu ekle
+            }
+        }
     }, []);
 
     return (
@@ -224,23 +240,17 @@ function EmployeePage() {
                                             {shifts.length === 0 ? (
                                                 <p>No shifts assigned.</p>
                                             ) : (
-                                                shifts.map((shift) => (
-                                                    <div key={shift.id} style={{ marginBottom: "10px" }}>
-                                                        <strong>{shift.name}</strong><br />
-                                                        {new Date(shift.startTime).toLocaleString()} - {new Date(shift.endTime).toLocaleString()}
-                                                        <hr />
-                                                    </div>
-                                                ))
+                                                shifts
+                                                    .filter((shift) => shift.employeeIds.includes(employeeId!)) // ✅ filtreleme
+                                                    .map((shift) => (
+                                                        <div key={shift.id} style={{ marginBottom: "10px" }}>
+                                                            <strong>{shift.name}</strong><br />
+                                                            {new Date(shift.startTime).toLocaleString()} - {new Date(shift.endTime).toLocaleString()}
+                                                            <hr />
+                                                        </div>
+                                                    ))
                                             )}
                                         </div>
-                                    </div>
-
-
-                                    <hr/>
-                                    <div className="request-button-container mb-2">
-                                        <button className="accountbutton" onClick={() => setShowShiftModal(true)}>
-                                            Request →
-                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -267,18 +277,6 @@ function EmployeePage() {
                     }}
                 />
             )}
-            {showShiftModal && (
-                <ShiftRequestModal
-                    onClose={() => setShowShiftModal(false)}
-                    onSubmit={(data) => {
-                        console.log("Shift request submitted:", data);
-                        // Burada fetch ile backend'e gönderebilirsin
-                        setShowShiftModal(false);
-                    }}
-                />
-            )}
-
-
         </div>
 
 
