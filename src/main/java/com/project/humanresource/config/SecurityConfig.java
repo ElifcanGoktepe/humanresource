@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -16,6 +17,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import static com.project.humanresource.config.RestApis.*;
 
 @Configuration
 @EnableWebSecurity
@@ -41,7 +44,6 @@ public class SecurityConfig {
                         .requestMatchers("/assign-manager").permitAll()
                         .requestMatchers("/api/users/login").permitAll()
                         .requestMatchers("/add-shift").permitAll()
-                        .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers("/list-shift").permitAll()
                         .requestMatchers("/dev/v1/shift","/dev/v1/employee","/dev/v1/user",
                                 "/api/users/create_user", "/api/users/login", "/api/users/by-email", "/api/user-roles", "/api/user-roles/by-email",
@@ -50,7 +52,11 @@ public class SecurityConfig {
                                 "/api/auth/**","/api/public/**",
                                 "/register"
                         ).permitAll()
-
+                        .requestMatchers(ADDSHIFT).hasAuthority("Manager")
+                        .requestMatchers(UPDATE_SHIFT).hasAuthority("Manager")
+                        .requestMatchers(LIST_SHIFT).hasAuthority("Manager")
+                        .requestMatchers(ADD_EMPLOYEE).hasAuthority("Manager")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/employees/with-shifts").hasAuthority("Manager")
                         .requestMatchers("/dev/v1/company/**").hasAuthority("Manager")
                         .requestMatchers("/{id}/upload-profile").hasAuthority("Manager")
                         .requestMatchers(HttpMethod.POST, "/dev/v1/company/add").hasAuthority("Manager")
@@ -61,7 +67,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/dev/v1/companybranch/delete/**").hasAuthority("Manager")
                         .requestMatchers(HttpMethod.DELETE, "/dev/v1/department/delete/{id}").hasAuthority("Manager")
                         .requestMatchers(HttpMethod.PUT,  "/comment/{id}").hasAuthority("Manager")
-                        .requestMatchers(HttpMethod.POST,  "/dev/v1/comments/with-photo").hasAuthority("Manager")
+                        .requestMatchers(HttpMethod.POST,  "/dev/v1/addcomment").hasAuthority("Manager")
                         .requestMatchers(HttpMethod.GET,  "/comments").hasAuthority("Manager")
                         .requestMatchers(HttpMethod.GET,  "/{id}").hasAuthority("Manager")
 
@@ -72,11 +78,15 @@ public class SecurityConfig {
                         .requestMatchers("/dev/v1/admin/**").hasAuthority("Admin")
                         .requestMatchers(HttpMethod.GET," /dev/v1/admin/company/get_all_company_branches_of_selected_company/{id}").hasAuthority("Admin")
                         .requestMatchers(HttpMethod.GET," /dev/v1/admin/company/get_all_company_branches").hasAuthority("Admin")
-
+                        .requestMatchers("/active-employees/**").hasAuthority("Manager")
+                        .requestMatchers(HttpMethod.PUT,"/employee/deactivate/**").hasAuthority("Manager")
+                        .requestMatchers(HttpMethod.PUT,"/employee/activate/**").hasAuthority("Manager")
                         .requestMatchers("/add-employee").hasAuthority("Manager")
                         .requestMatchers("/company-manager/approve/{employeeId}").hasAuthority("Manager")
                         .requestMatchers("/employee/**").hasAuthority("Employee")
-                        .requestMatchers("/actives-employees").hasAuthority("Manager")
+
+
+
                         .requestMatchers("/api/users/**").permitAll()
                         .anyRequest().authenticated()
                 )
