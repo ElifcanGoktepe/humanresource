@@ -42,6 +42,7 @@ function Dashboard() {
         }
     }, []);
 
+
     useEffect(() => {
        const fetchPendingLeaves = async () => {
             const token = localStorage.getItem("token");
