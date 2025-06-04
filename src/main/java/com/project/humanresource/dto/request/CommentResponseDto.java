@@ -1,15 +1,15 @@
-package com.project.humanresource.dto.response;
+
+package com.project.humanresource.dto.request;
+
 
 import java.time.LocalDateTime;
 
 public record CommentResponseDto(
-        Long id,
+        Long id,              // BURASI ZORUNLU
         Long managerId,
         String managerName,
         String commentText,
         String photoUrl,
-        LocalDateTime createdAt,
-        Long commenterId,
-        String commenterName
-) {
-} 
+        LocalDateTime createdAt
+) {}
+

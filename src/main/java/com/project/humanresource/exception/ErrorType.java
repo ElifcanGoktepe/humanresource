@@ -41,8 +41,7 @@ public enum ErrorType {
     INVALID_FILE_TYPE(4016, "Invalid file type. Only JPG, JPEG, PNG, GIF are allowed.", BAD_REQUEST),
     INVALID_FILE_NAME(4017, "Invalid file name.", BAD_REQUEST),
     INVALID_FILE_EXTENSION(4018, "Invalid file extension.", BAD_REQUEST),
-    ASSIGNMENT_NOT_FOUND(4019, "Assignment not found.", NOT_FOUND),
-    MANAGER_NOT_FOUND(4020, "Manager not found.", NOT_FOUND);
+    ASSIGNMENT_NOT_FOUND(4019, "Assignment not found.", NOT_FOUND);
 
 
     int code;

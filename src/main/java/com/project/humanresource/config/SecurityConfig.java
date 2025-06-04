@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -25,6 +26,10 @@ import static com.project.humanresource.config.RestApis.*;
 public class SecurityConfig {
     private final JwtTokenFilter jwtTokenFilter;
     private final JwtUserDetails jwtUserDetails;
+
+
+
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -53,6 +58,7 @@ public class SecurityConfig {
                         .requestMatchers(ADD_EMPLOYEE).hasAuthority("Manager")
                         .requestMatchers(HttpMethod.GET, "/api/v1/employees/with-shifts").hasAuthority("Manager")
                         .requestMatchers("/dev/v1/company/**").hasAuthority("Manager")
+                        .requestMatchers("/{id}/upload-profile").hasAuthority("Manager")
                         .requestMatchers(HttpMethod.POST, "/dev/v1/company/add").hasAuthority("Manager")
                         .requestMatchers(HttpMethod.GET,"/dev/v1/company/myCompany").hasAuthority("Manager")
                         .requestMatchers("/dev/v1/companybranch/listAll/{id}").hasAuthority("Manager")
@@ -78,6 +84,7 @@ public class SecurityConfig {
                         .requestMatchers("/add-employee").hasAuthority("Manager")
                         .requestMatchers("/company-manager/approve/{employeeId}").hasAuthority("Manager")
                         .requestMatchers("/employee/**").hasAuthority("Employee")
+
 
                         .requestMatchers("/api/users/**").permitAll()
                         .anyRequest().authenticated()

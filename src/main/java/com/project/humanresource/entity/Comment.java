@@ -1,3 +1,4 @@
+
 package com.project.humanresource.entity;
 
 import jakarta.persistence.*;
@@ -26,7 +27,4 @@ public class Comment {
     private String photoUrl; // Manager fotoğrafı veya company logo URL'si
 
     private LocalDateTime createdAt;
-
-    private Long commenterId; // Yorumu yapan kullanıcının ID'si
-    private String commenterName; // Yorumu yapan kullanıcının adı
 }

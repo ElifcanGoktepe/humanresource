@@ -1,18 +1,24 @@
+
 package com.project.humanresource.service;
 
 import com.project.humanresource.dto.request.AddCommentDto;
 import com.project.humanresource.dto.request.AddCompanyManagerDto;
 import com.project.humanresource.config.JwtUser;
-import com.project.humanresource.dto.response.CommentResponseDto;
+import com.project.humanresource.dto.request.AddRoleRequestDto;
+import com.project.humanresource.dto.request.CommentResponseDto;
 import com.project.humanresource.entity.Comment;
 import com.project.humanresource.entity.Employee;
+import com.project.humanresource.entity.UserRole;
 import com.project.humanresource.exception.ErrorType;
 import com.project.humanresource.exception.HumanResourceException;
 import com.project.humanresource.repository.CommentRepository;
+import com.project.humanresource.repository.CompanyRepository;
 import com.project.humanresource.repository.EmployeeRepository;
+import com.project.humanresource.repository.UserRoleRepository;
 import com.project.humanresource.utility.UserStatus;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -25,14 +31,15 @@ import java.util.Optional;
 public class CompanyManagerService {
 
     private final EmployeeRepository employeeRepository;
+    private final UserRoleRepository userRoleRepository;
     private final EmailVerificationService emailVerificationService;
     private final CommentRepository commentRepository;
 
+
+
+
     @Transactional
     public void appliedCompanyManager(AddCompanyManagerDto dto, String token) {
-        if (employeeRepository.findByEmail(dto.email()).isPresent()) {
-            throw new HumanResourceException(ErrorType.EMAIL_ALREADY_EXISTS);
-        }
 
         Employee manager = Employee.builder()
                 .firstName(dto.firstName())
@@ -41,34 +48,43 @@ public class CompanyManagerService {
                 .phoneNumber(dto.phoneNumber())
                 .companyName(dto.companyName())
                 .titleName(dto.titleName())
-                .userRole(UserStatus.Manager)
-                .isActive(false)
-                .isApproved(false)
                 .isActivated(false)
+                .isApproved(false)
                 .build();
 
+        // İlk kaydet
         manager = employeeRepository.save(manager);
 
+        // managerId olarak kendi id'sini set et
         manager.setManagerId(manager.getId());
         employeeRepository.save(manager);
+
+        UserRole managerRole = UserRole.builder()
+                .userStatus(UserStatus.Manager)
+                .userId(manager.getId())
+                .build();
+        userRoleRepository.save(managerRole);
 
         emailVerificationService.sendApprovalRequestToAdmin(manager, token);
     }
 
+
     public void addComment(AddCommentDto dto) {
+        // JWT üzerinden giriş yapan kullanıcıyı al
         JwtUser jwtUser = (JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long userId = jwtUser.getUserId();
 
+        // Yorumu yapılacak yöneticiyi bul
         Employee manager = employeeRepository.findById(dto.managerId())
-                .orElseThrow(() -> new HumanResourceException(ErrorType.MANAGER_NOT_FOUND, "Manager to be commented on not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Manager not found"));
 
+        // Comment nesnesini oluştur
         Comment comment = Comment.builder()
                 .managerId(manager.getId())
                 .managerName(manager.getFirstName() + " " + manager.getLastName())
                 .commentText(dto.commentText())
-                .photoUrl(dto.photoUrl())
+                .photoUrl(dto.photoUrl()) // kullanıcıdan gelen görsel URL'si
                 .createdAt(LocalDateTime.now())
-                .commenterId(jwtUser.getUserId())
-                .commenterName(jwtUser.getFirstName() + " " + jwtUser.getLastName())
                 .build();
 
         commentRepository.save(comment);
@@ -83,43 +99,48 @@ public class CompanyManagerService {
                         comment.getManagerName(),
                         comment.getCommentText(),
                         comment.getPhotoUrl(),
-                        comment.getCreatedAt(),
-                        comment.getCommenterId(),
-                        comment.getCommenterName()
+                        comment.getCreatedAt()
                 ))
                 .toList();
     }
 
+
+
     public void deleteCommentById(Long id) {
-        Comment comment = commentRepository.findById(id)
-            .orElseThrow(() -> new HumanResourceException(ErrorType.COMMENT_NOT_FOUND));
-
-        JwtUser jwtUser = (JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Long currentUserId = jwtUser.getUserId();
-        boolean isAdmin = jwtUser.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("Admin") || auth.getAuthority().equals("ROLE_Admin"));
-
-        if (!comment.getCommenterId().equals(currentUserId) && !isAdmin) {
-            throw new HumanResourceException(ErrorType.UNAUTHORIZED, "You are not authorized to delete this comment.");
+        if (!commentRepository.existsById(id)) {
+            throw new HumanResourceException(ErrorType.COMMENT_NOT_FOUND);
         }
-
         commentRepository.deleteById(id);
     }
 
+
+
     @Transactional
     public Comment updateComment(Long commentId, AddCommentDto dto) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new HumanResourceException(ErrorType.COMMENT_NOT_FOUND));
+        Optional<Comment> optionalComment = commentRepository.findById(commentId);
+        if (optionalComment.isEmpty()) {
+            throw new RuntimeException("Comment not found");
+        }
+        Comment comment = optionalComment.get();
 
-        JwtUser jwtUser = (JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        // JWT üzerinden giriş yapan kullanıcıyı al
+        JwtUser jwtUser = (JwtUser) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
         Long currentUserId = jwtUser.getUserId();
 
-        if (!comment.getCommenterId().equals(currentUserId)) {
-            throw new HumanResourceException(ErrorType.UNAUTHORIZED, "You are not authorized to update this comment.");
+        // Yorum sahibi manager mı kontrolü
+        if (!comment.getManagerId().equals(currentUserId)) {
+            throw new RuntimeException("Unauthorized to update this comment");
         }
 
+        // Güncelleme
         comment.setCommentText(dto.commentText());
         comment.setPhotoUrl(dto.photoUrl());
 
         return commentRepository.save(comment);
     }
+
+
 }
