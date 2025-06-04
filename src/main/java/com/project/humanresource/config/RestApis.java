@@ -20,11 +20,16 @@ public class RestApis {
     public static final String CREATEUSER = "/create_user";
     public static final String LOGIN = "/login";
     public static final String LOGOUT = "/logout";
-    public static final String ADDSHIFT = "/add-shift";
     public static final String REQUESTLEAVE = "/request-leave";
     public static final String REQUESTSHIFT = "/request-shift";
     public static final String REGISTER = "/register";
-    public static final String ADD_EMPLOYEE = "/add-employee";
+    public static final String ADDSHIFT = SHIFT + "/add";
+    public static final String UPDATE_SHIFT = SHIFT + "/update";
+    public static final String LIST_SHIFT = SHIFT + "/list";
+    public static final String ADD_EMPLOYEE = EMPLOYEE + "/add";
+    //yeni eklendi
+
+
 
 
 
