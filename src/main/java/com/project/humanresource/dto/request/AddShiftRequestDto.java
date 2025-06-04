@@ -10,6 +10,7 @@ public record AddShiftRequestDto(
         String description,
         List<ShiftBreakRequest> shiftBreaks,
         Boolean isRecurring,
+
         List<Integer> daysOfWeek
 ) {
     public record ShiftBreakRequest(

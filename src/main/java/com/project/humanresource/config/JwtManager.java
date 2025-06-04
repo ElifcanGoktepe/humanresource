@@ -79,6 +79,7 @@ public class JwtManager {
                 .verify(token);
         return jwt.getClaim("userId").asLong();
     }
+    //Burası çok önemli
     public Long extractUserIdFromToken(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
