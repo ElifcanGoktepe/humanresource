@@ -5,5 +5,7 @@ import java.time.LocalDateTime;
 public record ShiftBreakDto(
         LocalDateTime startTime,
         LocalDateTime endTime
+
+
 ) {
 }
